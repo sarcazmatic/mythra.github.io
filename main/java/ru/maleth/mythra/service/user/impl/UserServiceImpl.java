@@ -19,30 +19,27 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
 
     @Override
-    public String registerUser(@Valid UserDto userDto) {
-        if (userRepo.findByNameOrEmail(userDto.getName(), userDto.getEmail()).isPresent()) {
-            return "User already exists";
-        }
-        userRepo.save(UserMapper.fromUserDto(userDto));
-        return "Success";
+    public String loginUser(String name, String inputPassword) {
+        Optional<User> user = userRepo.findByName(name);
+
+        return user.map(u -> comparePass(u.getPassword(), inputPassword)).orElse("user_error");
+
     }
 
     @Override
-    public String loginUser(String name, String inputPassword) {
-        Optional<User> userOpt = userRepo.findByName(name);
-
-        return userOpt
-                .map(user -> comparePass(user.getPassword(), inputPassword))
-                .orElse("Нет такого пользователя!");
+    public String registerUser(@Valid UserDto userDto) {
+        if (userRepo.findByNameOrEmail(userDto.getName(), userDto.getEmail()).isPresent()) {
+            return "user_error";
+        }
+        userRepo.save(UserMapper.fromUserDto(userDto));
+        return "register";
     }
 
     private String comparePass(String userPassword, String inputPassword) {
         if (userPassword.equals(PassEncTech.encryptPass(inputPassword))) {
-            System.out.println("Passwords match!");
-            return "passwords match!";
+            return "login";
         } else {
-            System.out.println("Passwords DON'T match!");
-            return "passwords mismatch!";
+            return "pass_error";
         }
     }
 

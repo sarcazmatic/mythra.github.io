@@ -130,34 +130,34 @@
                     <div class="input-field">
                         <label for="strength">Сила:</label>
                         <br>
-                        <input type="number" id="strength" name="strength">
+                        <input type="number" id="strength" name="strength" min="3" max="18" required placeholder="От 3 до 18">
                     </div>
                     <div class="input-field">
                         <label for="dexterity">Ловкость:</label>
                         <br>
-                        <input type="number" id="dexterity" name="dexterity">
+                        <input type="number" id="dexterity" name="dexterity" min="3" max="18" required placeholder="От 3 до 18">
                     </div>
                     <div class="input-field">
                         <label for="constitution">Телосложение:</label>
                         <br>
-                        <input type="number" id="constitution" name="constitution">
+                        <input type="number" id="constitution" name="constitution" min="3" max="18" required placeholder="От 3 до 18">
                     </div>
                 </div>
                 <div class="atrbs">
                     <div class="input-field">
                         <label for="intelligence">Интеллект:</label>
                         <br>
-                        <input type="number" id="intelligence" name="intelligence">
+                        <input type="number" id="intelligence" name="intelligence" min="3" max="18" required placeholder="От 3 до 18">
                     </div>
                     <div class="input-field">
                         <label for="wisdom">Мудрость:</label>
                         <br>
-                        <input type="number" id="wisdom" name="wisdom">
+                        <input type="number" id="wisdom" name="wisdom" min="3" max="18" required placeholder="От 3 до 18">
                     </div>
                     <div class="input-field">
                         <label for="charisma">Харизма:</label>
                         <br>
-                        <input type="number" id="charisma" name="charisma">
+                        <input type="number" id="charisma" name="charisma" min="3" max="18" required placeholder="От 3 до 18">
                     </div>
                 </div>
             </div>

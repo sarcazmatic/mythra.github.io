@@ -85,7 +85,7 @@ public class CharacterCalculator {
         }
     }
 
-    public static int getSpped(CharRaceEnum charRaceEnum, CharClassEnum charClassEnum) {
+    public static int getSpeed(CharRaceEnum charRaceEnum, CharClassEnum charClassEnum) {
         return 1;
     }
 

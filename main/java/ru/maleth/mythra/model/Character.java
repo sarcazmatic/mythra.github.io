@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.maleth.mythra.service.character.enums.CharClassEnum;
 import ru.maleth.mythra.service.character.enums.CharRaceEnum;
 
 import java.util.Set;
@@ -22,9 +23,9 @@ public class Character {
     private Long id;
     @Column(name = "name")
     private String charName;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "race")
-    private CharRaceEnum charRaceEnum;
+    @ManyToOne
+    @JoinColumn (name = "race_id")
+    private Race charRace;
 
     private int strength;
     private int dexterity;
@@ -36,20 +37,19 @@ public class Character {
     private int experience;
     @Column(name = "armor_class")
     private int armorClass;
-    private int speed;
     private int initiative;
-
-    @ManyToMany
-    @JoinTable(name = "characters_proficiencies",
-            joinColumns = {@JoinColumn(name = "fk_character")},
-            inverseJoinColumns = {@JoinColumn(name = "fk_proficiency")})
-    private Set<Proficiency> proficiencies;
 
     @ManyToMany
     @JoinTable(name = "characters_classes",
             joinColumns = {@JoinColumn(name = "fk_character")},
             inverseJoinColumns = {@JoinColumn(name = "fk_class")})
     private Set<CharClass> characterClasses;
+
+    @ManyToMany
+    @JoinTable(name = "characters_proficiencies",
+            joinColumns = {@JoinColumn(name = "fk_character")},
+            inverseJoinColumns = {@JoinColumn(name = "fk_proficiency")})
+    private Set<Proficiency> proficiencies;
 
     @Column(name = "max_hp")
     private int maxHP;
@@ -59,5 +59,9 @@ public class Character {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
+
+    public String getClassName() {
+        return CharClassEnum.valueOf(this.getCharacterClasses().stream().findFirst().get().getName()).getName();
+    }
 
 }

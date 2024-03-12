@@ -153,9 +153,9 @@
         <br>
         <h3>Имя: ${charName}</h3>
         <br>
-        <h3>Раса: ${charRaceOne} ${charRaceTwo}</h3>
+        <h3>Раса: ${charRace}</h3>
         <br>
-        <h3>Класс: ${charClassOne} ${charClassTwo}</h3>
+        <h3>Класс: ${charClass}</h3>
         <br>
         <h5>Сила: ${strength}</h5>
         <h5>Ловкость: ${dexterity}</h5>
@@ -274,8 +274,8 @@
             </div>
             <button type="submit" class="submit-button">Дальше</button>
             <input type="text" name="charName" value=${charName} hidden>
-            <input type="text" name="charRace" value="${charRaceOne}${charRaceTwo}" hidden>
-            <input type="text" name="charClass" value="${charClassOne}${charClassTwo}" hidden>
+            <input type="text" name="charRace" value="${charRace}" hidden>
+            <input type="text" name="charClass" value="${charClass}" hidden>
 
             <input type="text" name="strength" value=${strength} hidden>
             <input type="text" name="dexterity" value=${dexterity} hidden>

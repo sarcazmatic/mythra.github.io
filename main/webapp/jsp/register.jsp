@@ -130,7 +130,7 @@
             <div class="input-field">
                 <select id="charRace" name="charRace" onchange="raceSelect()">
                     <option>Ааракокра</option>
-                    <option>Аасимар</option>
+                    <option value="Аасимар">Аасимар</option>
                     <option value="Гит">Гит</option>
                     <option value="Гном">Гном</option>
                     <option>Голиаф</option>
@@ -144,29 +144,29 @@
                     <option value="Эльф">Эльф</option>
                 </select>
                 <br>
+                <select id="aasimarSubrace" name="charSubrace" disabled hidden>
+                    <option value="Аасимар-защитник">Аасимар защитник</option>
+                    <option value="Аасимар-каратель">Аасимар каратель</option>
+                    <option value="Падший-аасимар">Падший аасимар</option>
+                </select>
                 <select id="githSubrace" name="charSubrace" disabled hidden>
-                    <option value="0">Выбери подрасу</option>
                     <option value="Гитьянки">Гитьянки</option>
                     <option value="Гитцерай">Гитцерай</option>
                 </select>
                 <select id="gnomeSubrace" name="charSubrace" disabled hidden>
-                    <option value="0">Выбери подрасу</option>
                     <option value="Лесной-гном">Лесной гном</option>
                     <option value="Скальный-гном">Скальный гном</option>
                 </select>
                 <select id="dwarfSubrace" name="charSubrace" disabled hidden>
-                    <option value="0">Выбери подрасу</option>
                     <option value="Горный-дварф">Горный дварф</option>
                     <option value="Холмовой-дварф">Холмовой дварф</option>
                 </select>
                 <select id="elfSubrace" name="charSubrace" disabled hidden>
-                    <option value="0">Выбери подрасу</option>
                     <option value="Высший-эльф">Высший эльф</option>
                     <option value="Лесной-эльф">Лесной эльф</option>
                     <option value="Дроу">Дроу</option>
                 </select>
                 <select id="halflingSubrace" name="charSubrace" disabled hidden>
-                    <option value="0">Выбери подрасу</option>
                     <option value="Коренастый-полурослик">Коренастый полурослик</option>
                     <option value="Легконогий-полурослик">Легконогий полурослик</option>
                 </select>
@@ -185,68 +185,93 @@
 
     function raceSelect() {
         var charRace = document.getElementById("charRace");
+        var aasimarSubrace = document.getElementById("aasimarSubrace");
         var githSubrace = document.getElementById("githSubrace");
         var gnomeSubrace = document.getElementById("gnomeSubrace");
         var dwarfSubrace = document.getElementById("dwarfSubrace");
         var elfSubrace = document.getElementById("elfSubrace");
         var halflingSubrace = document.getElementById("halflingSubrace");
 
-        if (charRace.value === "Гит") {
+        if (charRace.value === "Аасимар") {
+            aasimarSubrace.hidden = false;
+            githSubrace.hidden = true;
+            gnomeSubrace.hidden = true;
+            dwarfSubrace.hidden = true;
+            elfSubrace.hidden = true;
+            halflingSubrace.hidden = true;
+            aasimarSubrace.disabled = false;
+            githSubrace.disabled = true;
+            gnomeSubrace.disabled = true;
+            dwarfSubrace.disabled = true;
+            elfSubrace.disabled = true;
+            halflingSubrace.disabled = true;
+        } else if (charRace.value === "Гит") {
+            aasimarSubrace.hidden = true;
             githSubrace.hidden = false;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
+            aasimarSubrace.disabled = true;
             githSubrace.disabled = false;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Гном") {
+            aasimarSubrace.hidden = true;
             githSubrace.hidden = true;
             gnomeSubrace.hidden = false;
             dwarfSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
+            aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = false;
             dwarfSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Дварф") {
+            aasimarSubrace.hidden = true;
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = false;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
+            aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = false;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Эльф") {
+            aasimarSubrace.hidden = true;
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
             elfSubrace.hidden = false;
             halflingSubrace.hidden = true;
+            aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
             elfSubrace.disabled = false;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Полурослик") {
+            aasimarSubrace.hidden = true;
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = false;
+            aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = false;
         } else {
+            aasimarSubrace.hidden = true;
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;

@@ -6,7 +6,9 @@ import lombok.Getter;
 public enum CharRaceEnum {
 
     AARAKOCRA("Ааракокра"),
-    AASIMAR("Аасимар"),
+    PROTECTOR_AASIMAR("Аасимар защитник"),
+    SCOURGE_AASIMAR("Аасимар каратель"),
+    FALLEN_AASIMAR("Падший аасимар"),
     GITHYANKI("Гитьянки"),
     GITHZERAI("Гитцерай"),
     FOREST_GNOME("Лесной гном"),

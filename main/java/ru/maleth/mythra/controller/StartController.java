@@ -24,27 +24,20 @@ public class StartController {
 
     @PostMapping("/login")
     public String login(@RequestParam(value = "name") String name,
-                        @RequestParam(value = "password") String password,
-                        Model model) {
-        String response = userService.loginUser(name, password);
-        model.addAttribute("response", response);
-        model.addAttribute("name", name);
-        model.addAttribute("password", password);
-        return "charsheet2";
+                        @RequestParam(value = "password") String password) {
+        return userService.loginUser(name, password);
     }
 
     @PostMapping("{name}/register")
-    public String register(@PathVariable(value = "name", required = false) String name,
-                           @RequestParam(value = "email", required = false) String email,
-                           @RequestParam(value = "password", required = false) String password,
-                           Model model) {
-        UserDto userDto = UserDto.builder().name(name).password(PassEncTech.encryptPass(password)).email(email).build();
-        String response = userService.registerUser(userDto);
-        model.addAttribute("name", name);
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
-        model.addAttribute("response", response);
-        return "register";
+    public String register(@PathVariable("name") String name,
+                           @RequestParam(value = "email") String email,
+                           @RequestParam(value = "password") String password) {
+        UserDto userDto = UserDto.builder()
+                .name(name)
+                .password(PassEncTech.encryptPass(password))
+                .email(email)
+                .build();
+        return userService.registerUser(userDto);
     }
 
 }
