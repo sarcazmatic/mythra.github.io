@@ -208,7 +208,7 @@
         }
 
         .ability-use-button {
-            width: available;
+            width: 35%;
             font-size: smaller;
             padding: 0.5em 0.1em 0.5em 0.1em;
             font-family: 'Philosopher', cursive;

@@ -21,6 +21,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final ProficiencyRepo proficiencyRepo;
     private final UserRepo userRepo;
     private final AbilityRepo abilityRepo;
+    private final CharClassAbilityRepo charClassAbilityRepo;
 
     @Override
     public Map<String, String> goToAttributes(String charName, String charClass, String charRace, String charSubrace) {
@@ -120,6 +121,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         Character character = createNewCharacter(charName, charClass, charRace, strength, dexterity, constitution,
                 intelligence, wisdom, charisma, profs, hitPoints);
+
         attributes.put("charName", character.getCharName());
         attributes.put("charRace", character.getCharRace().getRaceName());
         attributes.put("charClass", character.getClassName());
@@ -229,15 +231,15 @@ public class CharacterServiceImpl implements CharacterService {
             attributes.put("darkvision", "Нет");
         }
 
-        List<Ability> abilitiesAtLevelOne = abilityRepo.findAllByCharClassAndClassLevel(CharClassEnum.getClassByName(character.getClassName()).toString(), 1); //тут не получится, т.е. он находит по классу и уровню, а кол-во использований не учитывает
+        List<CharClassAbility> abilitiesAtLevelOne = charClassAbilityFormer(character, character.getCharacterClasses().stream().findFirst().get()); //тут не получится, т.е. он находит по классу и уровню, а кол-во использований не учитывает
 
         for (int k = 0; k < abilitiesAtLevelOne.size(); k++) {
             attributes.put("abilUseButton"+(k+1), "abilUseButton"+(k+1));
-            attributes.put("abilName"+(k+1), abilitiesAtLevelOne.get(k).getName());
-            attributes.put("abilDesc"+(k+1), abilitiesAtLevelOne.get(k).getDescription());
-            attributes.put("abilCost"+(k+1), abilitiesAtLevelOne.get(k).getCost().getName());
-            //attributes.put("abilCharges"+(k+1), String.valueOf(abilitiesAtLevelOne.get(k).getNumberOfUses())); нужно увести из ability и вычислять иначе
-            attributes.put("abilRest"+(k+1), abilitiesAtLevelOne.get(k).getTypeOfRest().getName());
+            attributes.put("abilName"+(k+1), abilitiesAtLevelOne.get(k).getAbility().getName());
+            attributes.put("abilDesc"+(k+1), abilitiesAtLevelOne.get(k).getAbility().getDescription());
+            attributes.put("abilCost"+(k+1), abilitiesAtLevelOne.get(k).getAbility().getCost().getName());
+            attributes.put("abilCharges"+(k+1), String.valueOf(abilitiesAtLevelOne.get(k).getNumberOfUses())); //нужно увести из ability и вычислять иначе
+            attributes.put("abilRest"+(k+1), abilitiesAtLevelOne.get(k).getAbility().getTypeOfRest().getName());
         }
 
         attributes.put("directToPage", "charsheet");
@@ -268,8 +270,7 @@ public class CharacterServiceImpl implements CharacterService {
         }
 
         Set<CharClass> charClasses = new HashSet<>();
-        CharClass charClassPrep = classFormer(classesRepo.findByName(CharClassEnum.getClassByName(charClass).toString()), charisma);
-        charClasses.add(charClassPrep);
+        charClasses.add(classesRepo.findByName(CharClassEnum.getClassByName(charClass).toString()));
 
         Race race = raceRepo.findByName(CharRaceEnum.getRaceByName(charRace).toString());
 
@@ -304,64 +305,87 @@ public class CharacterServiceImpl implements CharacterService {
         return String.valueOf(mod);
     }
 
-    private CharClass classFormer(CharClass charClass, int charisma) {
+    private List<CharClassAbility> charClassAbilityFormer(Character character, CharClass charClass) {
+        List<CharClassAbility> charClassAbilitiesList = new ArrayList<>();
+        Ability ability;
         if (charClass.getName().equals("BARD")) {
-            int numberOfUses = Math.max(CharacterCalculator.calculateAttributeModifier(charisma), 1);
-            Ability ability = Ability.builder()
-                    .name("ВДОХНОВЕНИЕ БАРДА (к6)")
-                    .classLevel(1)
-                    .description("""
-                            Своими словами или музыкой вы можете вдохновлять других. Для этого вы должны бонусным \
-                            действием выбрать одно существо, отличное от вас, в пределах 60 футов, которое может вас \
-                            слышать. Это существо получает кость бардовского вдохновения — к6.<br>
-                            
-                            В течение следующих 10 минут это существо может один раз бросить эту кость и добавить \
-                            результат к проверке характеристики, броску атаки или спасброску, который оно совершает. \
-                            Существо может принять решение о броске кости вдохновения уже после броска к20, но должно \
-                            сделать это прежде, чем Мастер объявит результат броска. Как только кость бардовского \
-                            вдохновения брошена, она исчезает. Существо может иметь только одну такую кость одновременно.<br>
-                            
-                            Вы можете использовать это умение количество раз, равное модификатору вашей Харизмы, но \
-                            как минимум один раз. Потраченные использования этого умения восстанавливаются после \
-                            продолжительного отдыха.<br>
-                            
-                            Ваша кость бардовского вдохновения изменяется с ростом вашего уровня в этом классе. Она \
-                            становится к8 на 5-м уровне, к10 на 10-м уровне и к12 на 15-м уровне.""")
-                    .isActive(true)
-                    .requiresRest(true)
-                    .typeOfRest(TypesOfRestEnum.LONG)
+            int numberOfUses = Math.max(CharacterCalculator.calculateAttributeModifier(character.getCharisma()), 1);
+            Optional<Ability> abilityPresent = Optional.ofNullable(abilityRepo.findByName("ВДОХНОВЕНИЕ БАРДА (к6)"));
+            if (abilityPresent.isEmpty()) {
+                ability = Ability.builder()
+                        .name("ВДОХНОВЕНИЕ БАРДА (к6)")
+                        .classLevel(1)
+                        .description("""
+                                Своими словами или музыкой вы можете вдохновлять других. Для этого вы должны бонусным \
+                                действием выбрать одно существо, отличное от вас, в пределах 60 футов, которое может вас \
+                                слышать. Это существо получает кость бардовского вдохновения — к6.<br>
+                                В течение следующих 10 минут это существо может один раз бросить эту кость и добавить \
+                                результат к проверке характеристики, броску атаки или спасброску, который оно совершает. \
+                                Существо может принять решение о броске кости вдохновения уже после броска к20, но должно \
+                                сделать это прежде, чем Мастер объявит результат броска. Как только кость бардовского \
+                                вдохновения брошена, она исчезает. Существо может иметь только одну такую кость одновременно.<br>
+                                Вы можете использовать это умение количество раз, равное модификатору вашей Харизмы, но \
+                                как минимум один раз. Потраченные использования этого умения восстанавливаются после \
+                                продолжительного отдыха.<br>
+                                Ваша кость бардовского вдохновения изменяется с ростом вашего уровня в этом классе. Она \
+                                становится к8 на 5-м уровне, к10 на 10-м уровне и к12 на 15-м уровне.""")
+                        .isActive(true)
+                        .requiresRest(true)
+                        .typeOfRest(TypesOfRestEnum.LONG)
+                        .charClass(charClass)
+                        .cost(ActionCostEnum.BONUS_ACTION)
+                        .build();
+                abilityRepo.save(ability);
+            } else {
+                ability = abilityPresent.get();
+            }
+            CharClassAbility charClassAbility = CharClassAbility.builder()
+                    .character(character)
+                    .ability(ability)
                     .charClass(charClass)
-                    .cost(ActionCostEnum.BONUS_ACTION)
+                    .numberOfUses(numberOfUses)
                     .build();
-            System.out.println(ability);
-            abilityRepo.save(ability);
+            charClassAbilitiesList.add(charClassAbilityRepo.save(charClassAbility));
         } else if (charClass.getName().equals("BARBARIAN")) {
-            Ability ability = Ability.builder()
-                    .name("ЯРОСТЬ")
-                    .classLevel(1)
-                    .description("""
-                            В бою вы сражаетесь с первобытной свирепостью. В свой ход вы можете бонусным действием \
-                            войти в состояние ярости.<br>
-                            В состоянии ярости вы получаете следующие преимущества, если не носите тяжёлую броню:<br>
-                            – Вы совершаете с преимуществом проверки и спасброски Силы.<br>
-                            – Если вы совершаете рукопашную атаку оружием, используя Силу, вы получаете бонус к броску \
-                            урона, соответствующий вашему уровню варвара, как показано в колонке «урон ярости» таблицы «Варвар».<br>
-                            – Вы получаете сопротивление дробящему, колющему и рубящему урону.<br>
-                            Если вы способны накладывать заклинания, то вы не можете накладывать или концентрироваться \
-                            на заклинаниях, пока находитесь в состоянии ярости.<br>
-                            Ваша ярость длится 1 минуту. Она прекращается раньше, если вы потеряли сознание или если вы \
-                            закончили свой ход, не получив урон или не атаковав враждебное по отношению к вам существо \
-                            с момента окончания вашего прошлого хода. Также вы можете прекратить свою ярость бонусным действием.<br>
-                            Если вы впадали в состояние ярости максимальное для вашего уровня количество раз (смотрите колонку «ярость»), то вы должны совершить продолжительный отдых, прежде чем сможете использовать ярость ещё раз.""")
-                    .isActive(true)
-                    .requiresRest(true)
-                    .typeOfRest(TypesOfRestEnum.LONG)
+            int numberOfUses = 2;
+            Optional<Ability> abilityPresent = Optional.ofNullable(abilityRepo.findByName("ЯРОСТЬ"));
+            if (abilityPresent.isEmpty()) {
+                ability = Ability.builder()
+                        .name("ЯРОСТЬ")
+                        .classLevel(1)
+                        .description("""
+                                В бою вы сражаетесь с первобытной свирепостью. В свой ход вы можете бонусным действием \
+                                войти в состояние ярости.<br>
+                                В состоянии ярости вы получаете следующие преимущества, если не носите тяжёлую броню:<br>
+                                – Вы совершаете с преимуществом проверки и спасброски Силы.<br>
+                                – Если вы совершаете рукопашную атаку оружием, используя Силу, вы получаете бонус к броску \
+                                урона, соответствующий вашему уровню варвара, как показано в колонке «урон ярости» таблицы «Варвар».<br>
+                                – Вы получаете сопротивление дробящему, колющему и рубящему урону.<br>
+                                Если вы способны накладывать заклинания, то вы не можете накладывать или концентрироваться \
+                                на заклинаниях, пока находитесь в состоянии ярости.<br>
+                                Ваша ярость длится 1 минуту. Она прекращается раньше, если вы потеряли сознание или если вы \
+                                закончили свой ход, не получив урон или не атаковав враждебное по отношению к вам существо \
+                                с момента окончания вашего прошлого хода. Также вы можете прекратить свою ярость бонусным действием.<br>
+                                Если вы впадали в состояние ярости максимальное для вашего уровня количество раз (смотрите колонку «ярость»), то вы должны совершить продолжительный отдых, прежде чем сможете использовать ярость ещё раз.""")
+                        .isActive(true)
+                        .requiresRest(true)
+                        .typeOfRest(TypesOfRestEnum.LONG)
+                        .charClass(charClass)
+                        .cost(ActionCostEnum.BONUS_ACTION)
+                        .build();
+                abilityRepo.save(ability);
+            } else {
+                ability = abilityPresent.get();
+            }
+            CharClassAbility charClassAbility = CharClassAbility.builder()
+                    .character(character)
+                    .ability(ability)
                     .charClass(charClass)
-                    .cost(ActionCostEnum.BONUS_ACTION)
+                    .numberOfUses(numberOfUses)
                     .build();
-            abilityRepo.save(ability);
+            charClassAbilitiesList.add(charClassAbilityRepo.save(charClassAbility));
         }
-        return charClass;
+        return charClassAbilitiesList;
     }
 
 }
