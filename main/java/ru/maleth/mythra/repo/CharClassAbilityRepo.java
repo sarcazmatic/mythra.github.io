@@ -2,7 +2,6 @@ package ru.maleth.mythra.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.maleth.mythra.model.Ability;
 import ru.maleth.mythra.model.CharClassAbility;
 
 import java.util.List;
@@ -15,6 +14,6 @@ public interface CharClassAbilityRepo extends JpaRepository<CharClassAbility, Lo
             "LEFT JOIN CharClass AS cc ON c.id = cca.charClass.id " +
             "WHERE (:name IS NOT NULL AND c.charName = :name) " +
             "AND (:charClass IS NOT NULL AND cc.name = :charClass)")
-    List<CharClassAbility> findAllByCharacterNameAndCharClass(String name, String charClass);
+    List<CharClassAbility> findAllByCharacterNameAndCharacterClass(String name, String charClass);
 
 }

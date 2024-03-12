@@ -1,4 +1,4 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 

@@ -2,14 +2,14 @@ package ru.maleth.mythra.service.character;
 
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.maleth.mythra.service.character.enums.CharClassEnum;
-import ru.maleth.mythra.service.character.enums.CharRaceEnum;
+import ru.maleth.mythra.enums.ClassEnum;
+import ru.maleth.mythra.enums.RaceEnum;
 
 @NoArgsConstructor
 @Component
 public class CharacterCalculator {
 
-    public static int calculateDieHit(CharClassEnum charClassEnum) {
+    public static int calculateDieHit(ClassEnum charClassEnum) {
         return switch (charClassEnum.getName()) {
             case "Волшебник", "Чардей" -> 6;
             case "Воин", "Паладин", "Следопыт", "Кровавый охотник" -> 10;
@@ -85,7 +85,7 @@ public class CharacterCalculator {
         }
     }
 
-    public static int getSpeed(CharRaceEnum charRaceEnum, CharClassEnum charClassEnum) {
+    public static int getSpeed(RaceEnum charRaceEnum, ClassEnum charClassEnum) {
         return 1;
     }
 

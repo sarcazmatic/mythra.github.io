@@ -6,17 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.maleth.mythra.model.Character;
-import ru.maleth.mythra.model.Proficiency;
-import ru.maleth.mythra.repo.ProficiencyRepo;
-import ru.maleth.mythra.service.character.CharacterCalculator;
 import ru.maleth.mythra.service.character.CharacterService;
-import ru.maleth.mythra.service.character.enums.CharAttribEnum;
-import ru.maleth.mythra.service.character.enums.CharClassEnum;
-import ru.maleth.mythra.service.character.enums.CharProfEnum;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -56,20 +47,22 @@ public class CharController {
     }
 
     @PostMapping("{name}/{charName}/charsheet")
-    public String goToSheet(@PathVariable("charName") String charName,
-                               @RequestParam(value = "charClass") String charClass,
-                               @RequestParam(value = "charRace") String charRace,
-                               @RequestParam(value = "strength") int strength,
-                               @RequestParam(value = "dexterity") int dexterity,
-                               @RequestParam(value = "constitution") int constitution,
-                               @RequestParam(value = "intelligence") int intelligence,
-                               @RequestParam(value = "wisdom") int wisdom,
-                               @RequestParam(value = "charisma") int charisma,
-                               @RequestParam(name = "hitPoints") int hitPoints,
-                               @RequestParam(name = "prof") List<String> profs,
-                               Model model) {
-        Map<String, String> attributes = characterService.goToSheet(charName, charClass, charRace, strength, dexterity, constitution, intelligence, wisdom, charisma, hitPoints, profs);
+    public String goToSheet(@PathVariable("name") String userName,
+                            @PathVariable("charName") String charName,
+                            @RequestParam(value = "charClass") String charClass,
+                            @RequestParam(value = "charRace") String charRace,
+                            @RequestParam(value = "strength") int strength,
+                            @RequestParam(value = "dexterity") int dexterity,
+                            @RequestParam(value = "constitution") int constitution,
+                            @RequestParam(value = "intelligence") int intelligence,
+                            @RequestParam(value = "wisdom") int wisdom,
+                            @RequestParam(value = "charisma") int charisma,
+                            @RequestParam(name = "hitPoints") int hitPoints,
+                            @RequestParam(name = "prof") List<String> profs,
+                            Model model) {
+        Map<String, String> attributes = characterService.goToSheet(userName, charName, charClass, charRace, strength, dexterity, constitution, intelligence, wisdom, charisma, hitPoints, profs);
         model.addAllAttributes(attributes);
-        return attributes.get("directToPage");    }
+        return attributes.get("directToPage");
+    }
 
 }

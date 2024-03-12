@@ -22,7 +22,7 @@ public class PassEncTech {
                 s.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
 
-            /* Complete hashed password in hexadecimal format */
+            // Complete hashed password in hexadecimal format.
             encryptedPassword = s.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

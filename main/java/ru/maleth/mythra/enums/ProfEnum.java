@@ -1,9 +1,9 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum CharProfEnum {
+public enum ProfEnum {
 
     ACROBATICS("Акробатика"),
     ATHLETICS("Атлетика"),
@@ -26,12 +26,12 @@ public enum CharProfEnum {
 
     private final String name;
 
-    CharProfEnum(String name) {
+    ProfEnum(String name) {
         this.name = name;
     }
 
-    public static CharProfEnum getProfByName(String name) {
-        for (CharProfEnum c : CharProfEnum.values()) {
+    public static ProfEnum getProfByName(String name) {
+        for (ProfEnum c : ProfEnum.values()) {
             if (c.getName().equals(name)) {
                 return c;
             }

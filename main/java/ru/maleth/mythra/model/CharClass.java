@@ -3,7 +3,7 @@ package ru.maleth.mythra.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.maleth.mythra.service.character.enums.CharAttribEnum;
+import ru.maleth.mythra.enums.AttribEnum;
 
 @Table(name = "classes")
 @Entity
@@ -17,9 +17,9 @@ public class CharClass {
     private String name;
     @Enumerated(EnumType.STRING)
     @Column(name = "saving_throw_one")
-    private CharAttribEnum savingThrowOne;
+    private AttribEnum savingThrowOne;
     @Enumerated(EnumType.STRING)
     @Column(name = "saving_throw_two")
-    private CharAttribEnum savingThrowTwo;
+    private AttribEnum savingThrowTwo;
 
 }

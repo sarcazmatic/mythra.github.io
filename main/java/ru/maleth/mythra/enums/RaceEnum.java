@@ -1,9 +1,9 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum CharRaceEnum {
+public enum RaceEnum {
 
     AARAKOCRA("Ааракокра"),
     PROTECTOR_AASIMAR("Аасимар защитник"),
@@ -29,12 +29,12 @@ public enum CharRaceEnum {
 
     private final String name;
 
-    CharRaceEnum(String name) {
+    RaceEnum(String name) {
         this.name = name;
     }
 
-    public static CharRaceEnum getRaceByName(String name) {
-        for (CharRaceEnum c : CharRaceEnum.values()) {
+    public static RaceEnum getRaceByName(String name) {
+        for (RaceEnum c : RaceEnum.values()) {
             if (c.getName().equals(name)) {
                 return c;
             }

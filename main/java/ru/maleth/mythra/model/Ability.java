@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.maleth.mythra.service.character.enums.ActionCostEnum;
-import ru.maleth.mythra.service.character.enums.TypesOfRestEnum;
+import ru.maleth.mythra.enums.ActionCostEnum;
+import ru.maleth.mythra.enums.RestEnum;
 
 @Entity
 @Table(name = "abilities")
@@ -34,5 +34,5 @@ public class Ability {
     private boolean requiresRest;
     @Enumerated(EnumType.STRING)
     @Column(name = "type_of_rest")
-    private TypesOfRestEnum typeOfRest;
+    private RestEnum typeOfRest;
 }

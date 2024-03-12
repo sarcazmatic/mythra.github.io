@@ -1,9 +1,9 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum CharAttribEnum {
+public enum AttribEnum {
 
     STRENGTH("Сила"),
     DEXTERITY("Ловкость"),
@@ -14,12 +14,12 @@ public enum CharAttribEnum {
 
     private final String name;
 
-    CharAttribEnum(String name) {
+    AttribEnum(String name) {
         this.name = name;
     }
 
-    public static CharAttribEnum getAttribByName(String name) {
-        for (CharAttribEnum c : CharAttribEnum.values()) {
+    public static AttribEnum getAttribByName(String name) {
+        for (AttribEnum c : AttribEnum.values()) {
             if (c.getName().equals(name)) {
                 return c;
             }

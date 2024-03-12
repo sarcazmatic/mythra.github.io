@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.maleth.mythra.service.character.enums.CharClassEnum;
-import ru.maleth.mythra.service.character.enums.CharRaceEnum;
+import ru.maleth.mythra.enums.ClassEnum;
 
 import java.util.Set;
 
@@ -61,7 +60,7 @@ public class Character {
     private User creator;
 
     public String getClassName() {
-        return CharClassEnum.valueOf(this.getCharacterClasses().stream().findFirst().get().getName()).getName();
+        return ClassEnum.valueOf(this.getCharacterClasses().stream().findFirst().get().getName()).getName();
     }
 
 }

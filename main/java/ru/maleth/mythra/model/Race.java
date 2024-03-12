@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.maleth.mythra.service.character.enums.CharClassEnum;
-import ru.maleth.mythra.service.character.enums.CharRaceEnum;
-import ru.maleth.mythra.service.character.enums.CharSizeEnum;
+import ru.maleth.mythra.enums.RaceEnum;
+import ru.maleth.mythra.enums.SizeEnum;
 
 @Entity
 @Table(name = "races")
@@ -23,7 +22,7 @@ public class Race {
     @Column(name = "name")
     private String name;
     @Enumerated(EnumType.STRING)
-    private CharSizeEnum size;
+    private SizeEnum size;
     private int speed;
     @Column(name = "has_darkvision")
     private boolean hasDarkvision;
@@ -42,7 +41,7 @@ public class Race {
     private int charismaBonus;
 
     public String getRaceName() {
-        return CharRaceEnum.valueOf(this.name).getName();
+        return RaceEnum.valueOf(this.name).getName();
     }
 
 }

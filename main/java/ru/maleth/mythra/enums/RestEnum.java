@@ -1,21 +1,21 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum TypesOfRestEnum {
+public enum RestEnum {
 
     SHORT("Короткий отдых"),
     LONG("Продолжительный отдых");
 
     private final String name;
 
-    TypesOfRestEnum(String name) {
+    RestEnum(String name) {
         this.name = name;
     }
 
-    public static TypesOfRestEnum getRestByName(String name) {
-        for (TypesOfRestEnum c : TypesOfRestEnum.values()) {
+    public static RestEnum getRestByName(String name) {
+        for (RestEnum c : RestEnum.values()) {
             if (c.getName().equals(name)) {
                 return c;
             }

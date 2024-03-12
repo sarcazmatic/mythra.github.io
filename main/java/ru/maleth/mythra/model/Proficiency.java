@@ -3,7 +3,7 @@ package ru.maleth.mythra.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.maleth.mythra.service.character.enums.CharAttribEnum;
+import ru.maleth.mythra.enums.AttribEnum;
 
 @Entity
 @Table(name = "proficiencies")
@@ -17,6 +17,6 @@ public class Proficiency {
     private String name;
     @Enumerated(EnumType.STRING)
     @Column(name = "base_attribute")
-    private CharAttribEnum baseAttribute;
+    private AttribEnum baseAttribute;
 
 }

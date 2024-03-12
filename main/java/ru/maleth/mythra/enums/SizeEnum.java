@@ -1,9 +1,9 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum CharSizeEnum {
+public enum SizeEnum {
 
     SMALL("Маленький"),
     MEDIUM("Средний"),
@@ -12,12 +12,12 @@ public enum CharSizeEnum {
 
     private final String name;
 
-    CharSizeEnum(String name) {
+    SizeEnum(String name) {
         this.name = name;
     }
 
-    public static CharSizeEnum getSizeByName(String name) {
-        for (CharSizeEnum c : CharSizeEnum.values()) {
+    public static SizeEnum getSizeByName(String name) {
+        for (SizeEnum c : SizeEnum.values()) {
             if (c.getName().equals(name)) {
                 return c;
             }

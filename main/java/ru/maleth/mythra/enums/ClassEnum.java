@@ -1,9 +1,9 @@
-package ru.maleth.mythra.service.character.enums;
+package ru.maleth.mythra.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum CharClassEnum {
+public enum ClassEnum {
 
     BARD("Бард"),
     BARBARIAN("Варвар"),
@@ -21,12 +21,12 @@ public enum CharClassEnum {
 
     private final String name;
 
-    CharClassEnum(String name) {
+    ClassEnum(String name) {
         this.name = name;
     }
 
-    public static CharClassEnum getClassByName(String name) {
-        for (CharClassEnum c : CharClassEnum.values()) {
+    public static ClassEnum getClassByName(String name) {
+        for (ClassEnum c : ClassEnum.values()) {
             if (c.getName().equals(name)) {
                 return c;
             }
