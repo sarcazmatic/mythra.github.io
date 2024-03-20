@@ -1,18 +1,27 @@
 package ru.maleth.mythra.service.character.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.maleth.mythra.dto.CharacterFullDto;
+import ru.maleth.mythra.dto.NewCharacterDto;
+import ru.maleth.mythra.dto.NewCharacterFullDto;
 import ru.maleth.mythra.enums.*;
 import ru.maleth.mythra.model.*;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.*;
 import ru.maleth.mythra.service.character.CharacterCalculator;
 import ru.maleth.mythra.service.character.CharacterService;
+import ru.maleth.mythra.utility.classes.barbarian.BarbarianUtils;
+import ru.maleth.mythra.utility.classes.bard.BardUtils;
+import ru.maleth.mythra.utility.classes.druid.DruidUtils;
+import ru.maleth.mythra.utility.classes.warrior.WarriorUtils;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CharacterServiceImpl implements CharacterService {
 
     private final CharacterRepo characterRepo;
@@ -20,13 +29,98 @@ public class CharacterServiceImpl implements CharacterService {
     private final ClassesRepo classesRepo;
     private final ProficiencyRepo proficiencyRepo;
     private final UserRepo userRepo;
-    private final AbilityRepo abilityRepo;
-    private final CharClassAbilityRepo charClassAbilityRepo;
+
+    private final BardUtils bardUtils;
+    private final BarbarianUtils barbarianUtils;
+    private final WarriorUtils warriorUtils;
+    private final DruidUtils druidUtils;
+
+    private static final String PAGE = "directToPAge";
 
     @Override
-    public Map<String, String> goToAttributes(String charName, String charClass, String charRace, String charSubrace) {
+    public Character createCharacter(String userName, CharacterFullDto characterFullDto) {
+        log.info("Создаем персонажа для пользователя под именем " + userName + "!");
+
+        Optional<Character> characterOptional = characterRepo.findByCreator_NameAndCharName(userName, characterFullDto.getCharName());
+        if (characterOptional.isPresent()) {
+            return characterOptional.get();
+        }
+
+        List<String> profs = characterFullDto.getProfs().stream().map(p
+                -> p.toUpperCase().replace('-', '_')).toList();
+
         /*
-        Создаем мапу, чтобы собирать в нее атрибуты.
+        Тут создаем нового персонажа. Для начала создаем SET (в котором не повторяются данные).
+        В него отправляем все специализации персонажа. Чтобы все было чин по чину, мы находим специализации
+        в репозитории по имени, которое берем в списе profs
+        */
+        Set<Proficiency> proficiencies = new HashSet<>();
+        for (String s : profs) {
+            try {
+                proficiencies.add(proficiencyRepo.findByName(s));
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Нет такого владения");
+            }
+        }
+
+        /*
+        Теперь создаем SET с классами (на этом этапе класс у персонажа может быть только один, но далее возможно
+        мультиклассирование, и нужно будет куда-то засовывать доп классы.
+        В сет засовываем класс из репозитория; в репозитории класс находим по названию.
+        */
+        Set<CharClass> charClasses = new HashSet<>();
+        charClasses.add(classesRepo.findByName(ClassEnum.getClassByName(characterFullDto.getCharClass()).toString()));
+
+        /*
+        Тут просто - находим в репозитории расу и присваиваем персонажу.
+        */
+        Race race = raceRepo.findByName(RaceEnum.getRaceByName(characterFullDto.getCharRace()).toString());
+
+        /*
+        Тут находим юзера по имени, переданному из контроера
+        */
+        User user = userRepo.findByName(userName).get();
+
+        /*
+        Ну и создаем персонажа через @Builder
+        */
+        Character character = Character.builder()
+                .charName(characterFullDto.getCharName())
+                .charRace(race)
+                .strength(characterFullDto.getStrength())
+                .dexterity(characterFullDto.getDexterity())
+                .constitution(characterFullDto.getConstitution())
+                .intelligence(characterFullDto.getIntelligence())
+                .wisdom(characterFullDto.getWisdom())
+                .charisma(characterFullDto.getCharisma())
+                .maxHP(characterFullDto.getHitPoints())
+                .currentHP(characterFullDto.getHitPoints())
+                .experience(0)
+                .armorClass(10 + CharacterCalculator.calculateAttributeModifier(characterFullDto.getDexterity()))
+                .initiative(CharacterCalculator.calculateAttributeModifier(characterFullDto.getDexterity()))
+                .proficiencies(proficiencies)
+                .characterClasses(charClasses)
+                .creator(user)
+                .build();
+
+        log.info("Персонаж под именем " + character.getCharName() + " для пользователя " + character.getCreator().getName() + "создан!");
+
+        return characterRepo.save(character);
+    }
+
+
+    @Override
+    public Map<String, String> goToAttributes(NewCharacterDto newCharacterDto) {
+        log.info("Собираем атрибуты для персонажа " + newCharacterDto.getCharName() + "!");
+
+        String charName = newCharacterDto.getCharName();
+        String charClass = newCharacterDto.getCharClass();
+        String charRace = newCharacterDto.getCharRace();
+        String charSubrace = newCharacterDto.getCharSubrace();
+
+        /*
+        Создаем мапу, чтобы собирать в нее атрибуты – ее в конце и передадим в контролер, чтобы тот отобразил
+        атрибуты на странице.
          */
         Map<String, String> attributes = new HashMap<>();
 
@@ -77,21 +171,27 @@ public class CharacterServiceImpl implements CharacterService {
         /*
         Здесь передаем мапу с атрибутами в контролер и указываем, на какую страницу будет осуществляться переход.
         */
-        attributes.put("directToPage", "attributes");
+        attributes.put(PAGE, "attributes");
+
+        log.info("Атрибуты персонажа " + newCharacterDto.getCharName() + " собраны, отправляем на страницу навыков");
 
         return attributes;
     }
 
     @Override
-    public Map<String, String> goToSkills(String charName,
-                                          String charClass,
-                                          String charRace,
-                                          int strength,
-                                          int dexterity,
-                                          int constitution,
-                                          int intelligence,
-                                          int wisdom,
-                                          int charisma) {
+    public Map<String, String> goToSkills(NewCharacterFullDto newCharacterFullDto) {
+        log.info("Собираем навыки для персонажа " + newCharacterFullDto.getCharName() + "!");
+
+        String charName = newCharacterFullDto.getCharName();
+        String charClass = newCharacterFullDto.getCharClass();
+        String charRace = newCharacterFullDto.getCharRace();
+        int strength = newCharacterFullDto.getStrength();
+        int dexterity = newCharacterFullDto.getDexterity();
+        int constitution = newCharacterFullDto.getConstitution();
+        int intelligence = newCharacterFullDto.getIntelligence();
+        int wisdom = newCharacterFullDto.getWisdom();
+        int charisma = newCharacterFullDto.getCharisma();
+
         /*
         Создаем мапу, чтобы собирать в нее атрибуты.
          */
@@ -130,24 +230,32 @@ public class CharacterServiceImpl implements CharacterService {
         attributes.put("wisdomMod", String.valueOf(CharacterCalculator.calculateAttributeModifier(wisdomAtr)));
         attributes.put("charismaMod", String.valueOf(CharacterCalculator.calculateAttributeModifier(charismaAtr)));
 
-        attributes.put("directToPage", "skills");
+        attributes.put(PAGE, "skills");
+
+        log.info("Навыки персонажа " + newCharacterFullDto.getCharName() + " собраны, отправляем на создание персонажа!");
 
         return attributes;
     }
 
     @Override
-    public Map<String, String> goToSheet(String userName,
-                                         String charName,
-                                         String charClass,
-                                         String charRace,
-                                         int strength,
-                                         int dexterity,
-                                         int constitution,
-                                         int intelligence,
-                                         int wisdom,
-                                         int charisma,
-                                         int hitPoints,
-                                         List<String> profs) {
+    public Map<String, String> goToSheet(Character character) {
+        log.info("Собираем модель персонажа " + character.getCharName() + " для вывода на чаршит!");
+
+        /*
+        Создаем ключевые переменные, чтобы формировать атрибуты
+         */
+        int strength = character.getStrength();
+        int dexterity = character.getDexterity();
+        int constitution = character.getConstitution();
+        int intelligence = character.getIntelligence();
+        int wisdom = character.getWisdom();
+        int charisma = character.getCharisma();
+        int experience = character.getExperience();
+        int curHitPoints = character.getCurrentHP();
+        int maxHitPoints = character.getMaxHP();
+
+        List<String> profs = character.getProficiencies().stream().map(p
+                -> p.getName().toUpperCase().replace('-', '_')).toList();
         /*
         Создаем мапу, чтобы собирать в нее атрибуты.
          */
@@ -158,12 +266,6 @@ public class CharacterServiceImpl implements CharacterService {
         сохраняем опыт в переменной для рассчетов дальше.
          */
         List<String> allProficienciesList = Arrays.stream(ProfEnum.values()).map(Enum::toString).toList();
-        profs = profs.stream().map(p -> p.toUpperCase().replace('-', '_')).toList();
-
-        Character character = createNewCharacter(userName, charName, charClass, charRace, strength, dexterity, constitution,
-                intelligence, wisdom, charisma, profs, hitPoints);
-        int experience = character.getExperience();
-
         /*
         Продолжаем собирать переменные.
         allProficienciesList – список всех имеющихся специализаций в навыках в формате SLEIGHT_OF_HAND.
@@ -279,8 +381,10 @@ public class CharacterServiceImpl implements CharacterService {
         Второй репо нужен, чтобы у нас не было миллиона одинаковых Ability, разница в которых исключительно в кол-ве
         применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
         */
+        log.info("Собираем возможности " + character.getCharName() + " на основе возможностей классов!");
         List<CharClassAbility> abilitiesAtLevelOne = charClassAbilityFormer(character,
                 character.getCharacterClasses().stream().findFirst().get());
+
         /*
         Тут переносим умения в мапу через цикл. А что, а вдруг больше одного.
         */
@@ -317,7 +421,8 @@ public class CharacterServiceImpl implements CharacterService {
         attributes.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
         attributes.put("charisma", String.valueOf(charisma));
         attributes.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
-        attributes.put("hitPoints", String.valueOf(hitPoints));
+        attributes.put("curHitPoints", String.valueOf(curHitPoints));
+        attributes.put("maxHitPoints", String.valueOf(maxHitPoints));
 
         if (character.getCharRace().isHasDarkvision()) {
             attributes.put("darkvision", "Да");
@@ -325,78 +430,10 @@ public class CharacterServiceImpl implements CharacterService {
             attributes.put("darkvision", "Нет");
         }
 
-        attributes.put("directToPage", "charsheet");
+        attributes.put(PAGE, "charsheet");
 
+        log.info("Отправляем персонажа " + character.getCharName() + " на фронт!");
         return attributes;
-    }
-
-    public Character createNewCharacter(String userName,
-                                        String charName,
-                                        String charClass,
-                                        String charRace,
-                                        int strength,
-                                        int dexterity,
-                                        int constitution,
-                                        int intelligence,
-                                        int wisdom,
-                                        int charisma,
-                                        List<String> profs,
-                                        int hitPoints) {
-        /*
-        Тут создаем нового персонажа. Для начала создаем SET (в котором не повторяются данные).
-        В него отправляем все специализации персонажа. Чтобы все было чин по чину, мы находим специализации
-        в репозитории по имени, которое берем в списе profs
-        */
-        Set<Proficiency> proficiencies = new HashSet<>();
-        for (String s : profs) {
-            try {
-                proficiencies.add(proficiencyRepo.findByName(s));
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Нет такого владения");
-            }
-        }
-
-        /*
-        Теперь создаем SET с классами (на этом этапе класс у персонажа может быть только один, но далее возможно
-        мультиклассирование, и нужно будет куда-то засовывать доп классы.
-        В сет засовываем класс из репозитория; в репозитории класс находим по названию.
-        */
-        Set<CharClass> charClasses = new HashSet<>();
-        charClasses.add(classesRepo.findByName(ClassEnum.getClassByName(charClass).toString()));
-
-        /*
-        Тут просто - находим в репозитории расу и присваиваем персонажу.
-        */
-        Race race = raceRepo.findByName(RaceEnum.getRaceByName(charRace).toString());
-
-        /*
-        Тут находим юзера по имени, переданному из контроера
-        */
-        User user = userRepo.findByName(userName).get();
-
-        /*
-        Ну и создаем персонажа через @Builder
-        */
-        Character character = Character.builder()
-                .charName(charName)
-                .charRace(race)
-                .strength(strength)
-                .dexterity(dexterity)
-                .constitution(constitution)
-                .intelligence(intelligence)
-                .wisdom(wisdom)
-                .charisma(charisma)
-                .maxHP(hitPoints)
-                .currentHP(hitPoints)
-                .experience(0)
-                .armorClass(10 + CharacterCalculator.calculateAttributeModifier(dexterity))
-                .initiative(CharacterCalculator.calculateAttributeModifier(dexterity))
-                .proficiencies(proficiencies)
-                .characterClasses(charClasses)
-                .creator(user)
-                .build();
-
-        return characterRepo.save(character);
     }
 
     private String formatMods(int mod) {
@@ -408,84 +445,19 @@ public class CharacterServiceImpl implements CharacterService {
 
     private List<CharClassAbility> charClassAbilityFormer(Character character, CharClass charClass) {
         List<CharClassAbility> charClassAbilitiesList = new ArrayList<>();
-        Ability ability;
+        Ability ability = new Ability();
         if (charClass.getName().equals("BARD")) {
-            int numberOfUses = Math.max(CharacterCalculator.calculateAttributeModifier(character.getCharisma()), 1);
-            Optional<Ability> abilityPresent = Optional.ofNullable(abilityRepo.findByName("ВДОХНОВЕНИЕ БАРДА (к6)"));
-            if (abilityPresent.isEmpty()) {
-                ability = Ability.builder()
-                        .name("ВДОХНОВЕНИЕ БАРДА (к6)")
-                        .classLevel(1)
-                        .description("""
-                                Своими словами или музыкой вы можете вдохновлять других. Для этого вы должны бонусным \
-                                действием выбрать одно существо, отличное от вас, в пределах 60 футов, которое может вас \
-                                слышать. Это существо получает кость бардовского вдохновения — к6.<br>
-                                В течение следующих 10 минут это существо может один раз бросить эту кость и добавить \
-                                результат к проверке характеристики, броску атаки или спасброску, который оно совершает. \
-                                Существо может принять решение о броске кости вдохновения уже после броска к20, но должно \
-                                сделать это прежде, чем Мастер объявит результат броска. Как только кость бардовского \
-                                вдохновения брошена, она исчезает. Существо может иметь только одну такую кость одновременно.<br>
-                                Вы можете использовать это умение количество раз, равное модификатору вашей Харизмы, но \
-                                как минимум один раз. Потраченные использования этого умения восстанавливаются после \
-                                продолжительного отдыха.<br>
-                                Ваша кость бардовского вдохновения изменяется с ростом вашего уровня в этом классе. Она \
-                                становится к8 на 5-м уровне, к10 на 10-м уровне и к12 на 15-м уровне.""")
-                        .isActive(true)
-                        .requiresRest(true)
-                        .typeOfRest(RestEnum.LONG)
-                        .charClass(charClass)
-                        .cost(ActionCostEnum.BONUS_ACTION)
-                        .build();
-                abilityRepo.save(ability);
-            } else {
-                ability = abilityPresent.get();
-            }
-            CharClassAbility charClassAbility = CharClassAbility.builder()
-                    .character(character)
-                    .ability(ability)
-                    .charClass(charClass)
-                    .numberOfUses(numberOfUses)
-                    .build();
-            charClassAbilitiesList.add(charClassAbilityRepo.save(charClassAbility));
+            charClassAbilitiesList = bardUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
         } else if (charClass.getName().equals("BARBARIAN")) {
-            int numberOfUses = 2;
-            Optional<Ability> abilityPresent = Optional.ofNullable(abilityRepo.findByName("ЯРОСТЬ"));
-            if (abilityPresent.isEmpty()) {
-                ability = Ability.builder()
-                        .name("ЯРОСТЬ")
-                        .classLevel(1)
-                        .description("""
-                                В бою вы сражаетесь с первобытной свирепостью. В свой ход вы можете бонусным действием \
-                                войти в состояние ярости.<br>
-                                В состоянии ярости вы получаете следующие преимущества, если не носите тяжёлую броню:<br>
-                                – Вы совершаете с преимуществом проверки и спасброски Силы.<br>
-                                – Если вы совершаете рукопашную атаку оружием, используя Силу, вы получаете бонус к броску \
-                                урона, соответствующий вашему уровню варвара, как показано в колонке «урон ярости» таблицы «Варвар».<br>
-                                – Вы получаете сопротивление дробящему, колющему и рубящему урону.<br>
-                                Если вы способны накладывать заклинания, то вы не можете накладывать или концентрироваться \
-                                на заклинаниях, пока находитесь в состоянии ярости.<br>
-                                Ваша ярость длится 1 минуту. Она прекращается раньше, если вы потеряли сознание или если вы \
-                                закончили свой ход, не получив урон или не атаковав враждебное по отношению к вам существо \
-                                с момента окончания вашего прошлого хода. Также вы можете прекратить свою ярость бонусным действием.<br>
-                                Если вы впадали в состояние ярости максимальное для вашего уровня количество раз (смотрите колонку «ярость»), то вы должны совершить продолжительный отдых, прежде чем сможете использовать ярость ещё раз.""")
-                        .isActive(true)
-                        .requiresRest(true)
-                        .typeOfRest(RestEnum.LONG)
-                        .charClass(charClass)
-                        .cost(ActionCostEnum.BONUS_ACTION)
-                        .build();
-                abilityRepo.save(ability);
-            } else {
-                ability = abilityPresent.get();
-            }
-            CharClassAbility charClassAbility = CharClassAbility.builder()
-                    .character(character)
-                    .ability(ability)
-                    .charClass(charClass)
-                    .numberOfUses(numberOfUses)
-                    .build();
-            charClassAbilitiesList.add(charClassAbilityRepo.save(charClassAbility));
+            charClassAbilitiesList = barbarianUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
+        } else if (charClass.getName().equals("WARRIOR")) {
+            charClassAbilitiesList = warriorUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
+        } else if (charClass.getName().equals("DRUID")) {
+            charClassAbilitiesList = druidUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
         }
+
+        log.info("Передаем собранные возможности персонажа " + character.getCharName() + " обратно в метод!");
+
         return charClassAbilitiesList;
     }
 

@@ -177,98 +177,98 @@
                     <div class="input-field">
                         <label for="acrobatics">Акробатика:</label>
                         <input name="acrobatics" value="${dexterityMod}" readonly>
-                        <input type="checkbox" id="acrobatics" name="prof" value="acrobatics">
+                        <input type="checkbox" id="acrobatics" name="profs" value="acrobatics">
                     </div>
                     <div class="input-field">
                         <label for="athletics">Атлетика:</label>
                         <input name="athletics" value="${strengthMod}" readonly>
-                        <input type="checkbox" id="athletics" name="prof" value="athletics">
+                        <input type="checkbox" id="athletics" name="profs" value="athletics">
                     </div>
                     <div class="input-field">
                         <label for="arcana">Магия:</label>
                         <input name="arcana" value="${intelligenceMod}" readonly>
-                        <input type="checkbox" id="arcana" name="prof" value="arcana">
+                        <input type="checkbox" id="arcana" name="profs" value="arcana">
                     </div>
                     <div class="input-field">
                         <label for="deception">Обман:</label>
                         <input name="deception" value="${charismaMod}" readonly>
-                        <input type="checkbox" id="deception" name="prof" value="deception">
+                        <input type="checkbox" id="deception" name="profs" value="deception">
                     </div>
                     <div class="input-field">
                         <label for="history">История:</label>
                         <input name="history" value="${intelligenceMod}" readonly>
-                        <input type="checkbox" id="history" name="prof" value="history">
+                        <input type="checkbox" id="history" name="profs" value="history">
                     </div>
                     <div class="input-field">
                         <br>
                         <label for="insight">Проницательность:</label>
                         <input name="insight" value="${wisdomMod}" readonly>
-                        <input type="checkbox" id="insight" name="prof" value="insight">
+                        <input type="checkbox" id="insight" name="profs" value="insight">
                     </div>
                 </div>
                 <div class="skills">
                     <div class="input-field">
                         <label for="intimidation">Запугивание:</label>
                         <input name="intimidation" value="${charismaMod}" readonly>
-                        <input type="checkbox" id="intimidation" name="prof" value="intimidation">
+                        <input type="checkbox" id="intimidation" name="profs" value="intimidation">
                     </div>
                     <div class="input-field">
                         <label for="investigation">Расследование:</label>
                         <input name="investigation" value="${intelligenceMod}" readonly>
-                        <input type="checkbox" id="investigation" name="prof" value="investigation">
+                        <input type="checkbox" id="investigation" name="profs" value="investigation">
                     </div>
                     <div class="input-field">
                         <label for="medicine">Медицина:</label>
                         <input name="medicine" value="${wisdomMod}" readonly>
-                        <input type="checkbox" id="medicine" name="prof" value="medicine">
+                        <input type="checkbox" id="medicine" name="profs" value="medicine">
                     </div>
                     <div class="input-field">
                         <label for="nature">Природа:</label>
                         <input name="nature" value="${intelligenceMod}" readonly>
-                        <input type="checkbox" id="nature" name="prof" value="nature">
+                        <input type="checkbox" id="nature" name="profs" value="nature">
                     </div>
                     <div class="input-field">
                         <label for="perception">Восприятие:</label>
                         <input name="perception" value="${wisdomMod}" readonly>
-                        <input type="checkbox" id="perception" name="prof" value="perception">
+                        <input type="checkbox" id="perception" name="profs" value="perception">
                     </div>
                     <div class="input-field">
                         <br>
                         <label for="performance">Выступление:</label>
                         <input name="performance" value="${charismaMod}" readonly>
-                        <input type="checkbox" id="performance" name="prof" value="performance">
+                        <input type="checkbox" id="performance" name="profs" value="performance">
                     </div>
                 </div>
                 <div class="skills">
                     <div class="input-field">
                         <label for="persuasion">Убеждение:</label>
                         <input name="persuasion" value="${charismaMod}" readonly>
-                        <input type="checkbox" id="persuasion" name="prof" value="persuasion">
+                        <input type="checkbox" id="persuasion" name="profs" value="persuasion">
                     </div>
                     <div class="input-field">
                         <label for="religion">Религия:</label>
                         <input name="religion" value="${intelligenceMod}" readonly>
-                        <input type="checkbox" id="religion" name="prof" value="religion">
+                        <input type="checkbox" id="religion" name="profs" value="religion">
                     </div>
                     <div class="input-field">
                         <label for="sleight-of-hand">Ловкость рук:</label>
                         <input name="sleight-of-hand" value="${dexterityMod}" readonly>
-                        <input type="checkbox" id="sleight-of-hand" name="prof" value="sleight-of-hand">
+                        <input type="checkbox" id="sleight-of-hand" name="profs" value="sleight-of-hand">
                     </div>
                     <div class="input-field">
                         <label for="stealth">Скрытность:</label>
                         <input name="stealth" value="${dexterityMod}" readonly>
-                        <input type="checkbox" id="stealth" name="prof" value="stealth">
+                        <input type="checkbox" id="stealth" name="profs" value="stealth">
                     </div>
                     <div class="input-field">
                         <label for="survival">Выживание:</label>
                         <input name="survival" value="${wisdomMod}" readonly>
-                        <input type="checkbox" id="survival" name="prof" value="survival">
+                        <input type="checkbox" id="survival" name="profs" value="survival">
                     </div>
                     <div class="input-field">
                         <label for="animal-handling">Обращение с животнымии:</label>
                         <input name="animal-handling" value="${wisdomMod}" readonly>
-                        <input type="checkbox" id="animal-handling" name="prof" value="animal-handling">
+                        <input type="checkbox" id="animal-handling" name="profs" value="animal-handling">
                     </div>
                 </div>
             </div>

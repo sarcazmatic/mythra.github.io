@@ -1,14 +1,16 @@
 package ru.maleth.mythra.controller;
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import ru.maleth.mythra.dto.CharacterFullDto;
+import ru.maleth.mythra.dto.NewCharacterDto;
+import ru.maleth.mythra.dto.NewCharacterFullDto;
+import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.service.character.CharacterService;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -16,53 +18,29 @@ import java.util.Map;
 public class CharController {
 
     private final CharacterService characterService;
+    private static final String PAGE = "directToPAge";
 
     @PostMapping("{name}/{charName}/attributes")
-    public String goToAttributes(@PathVariable("charName") String charName,
-                                 @RequestParam(value = "charClass") String charClass,
-                                 @RequestParam(value = "charRace") String charRace,
-                                 @RequestParam(value = "charSubrace", required = false) String charSubrace,
-                                 Model model) {
-        Map<String, String> attributes = characterService.goToAttributes(charName, charClass, charRace, charSubrace);
+    public String goToAttributes(NewCharacterDto newCharacterDto, Model model) {
+        Map<String, String> attributes = characterService.goToAttributes(newCharacterDto);
         model.addAllAttributes(attributes);
-        return attributes.get("directToPage");
+        return attributes.get(PAGE);
     }
 
     @PostMapping("{name}/{charName}/skills")
-    public String goToSkills(@PathVariable("charName") String charName,
-                             @RequestParam(value = "charClass") String charClass,
-                             @RequestParam(value = "charRace") String charRace,
-                             @RequestParam(value = "strength") int strength,
-                             @RequestParam(value = "dexterity") int dexterity,
-                             @RequestParam(value = "constitution") int constitution,
-                             @RequestParam(value = "intelligence") int intelligence,
-                             @RequestParam(value = "wisdom") int wisdom,
-                             @RequestParam(value = "charisma") int charisma,
-                             Model model) {
-        Map<String, String> attributes = characterService.goToSkills(charName, charClass, charRace,
-                strength, dexterity, constitution,
-                intelligence, wisdom, charisma);
+    public String goToSkills(NewCharacterFullDto newCharacterFullDto, Model model) {
+        Map<String, String> attributes = characterService.goToSkills(newCharacterFullDto);
         model.addAllAttributes(attributes);
-        return attributes.get("directToPage");
+        return attributes.get(PAGE);
     }
 
     @PostMapping("{name}/{charName}/charsheet")
-    public String goToSheet(@PathVariable("name") String userName,
-                            @PathVariable("charName") String charName,
-                            @RequestParam(value = "charClass") String charClass,
-                            @RequestParam(value = "charRace") String charRace,
-                            @RequestParam(value = "strength") int strength,
-                            @RequestParam(value = "dexterity") int dexterity,
-                            @RequestParam(value = "constitution") int constitution,
-                            @RequestParam(value = "intelligence") int intelligence,
-                            @RequestParam(value = "wisdom") int wisdom,
-                            @RequestParam(value = "charisma") int charisma,
-                            @RequestParam(name = "hitPoints") int hitPoints,
-                            @RequestParam(name = "prof") List<String> profs,
-                            Model model) {
-        Map<String, String> attributes = characterService.goToSheet(userName, charName, charClass, charRace, strength, dexterity, constitution, intelligence, wisdom, charisma, hitPoints, profs);
+    @ResponseStatus(HttpStatus.CREATED)
+    public String goToSheet(@PathVariable("name") String userName, CharacterFullDto characterFullDto, Model model) {
+        Character character = characterService.createCharacter(userName, characterFullDto);
+        Map<String, String> attributes = characterService.goToSheet(character);
         model.addAllAttributes(attributes);
-        return attributes.get("directToPage");
+        return attributes.get(PAGE);
     }
 
 }

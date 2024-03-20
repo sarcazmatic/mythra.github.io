@@ -3,6 +3,7 @@ package ru.maleth.mythra.service.user.impl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import ru.maleth.mythra.dto.UserDto;
 import ru.maleth.mythra.dto.UserMapper;
 import ru.maleth.mythra.encrypter.PassEncTech;
@@ -10,6 +11,8 @@ import ru.maleth.mythra.model.User;
 import ru.maleth.mythra.repo.UserRepo;
 import ru.maleth.mythra.service.user.UserService;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -19,10 +22,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
 
     @Override
-    public String loginUser(String name, String inputPassword) {
-        Optional<User> user = userRepo.findByName(name);
+    public Map<String, String> loginUser(String login, String inputPassword) {
+        Optional<User> user = userRepo.findByName(login);
 
-        return user.map(u -> comparePass(u.getPassword(), inputPassword)).orElse("user_error");
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("login", login);
+        attributes.put("inputField", inputPassword);
+        attributes.put("directToPage", "test");
+        return attributes;
+
+        /*
+        return user.map(u
+                -> comparePass(u.getPassword(), inputPassword)).orElse("user_error");
+        */
 
     }
 

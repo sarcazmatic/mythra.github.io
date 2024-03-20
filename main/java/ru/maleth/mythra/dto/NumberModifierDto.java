@@ -5,11 +5,9 @@ import lombok.Data;
 
 @Builder
 @Data
-public class NewCharacterDto {
+public class NumberModifierDto {
 
     private String charName;
-    private String charClass;
-    private String charRace;
-    private String charSubrace;
+    private Integer modifier;
 
 }

@@ -1,11 +1,14 @@
 package ru.maleth.mythra.service.user;
 
+import org.springframework.ui.Model;
 import ru.maleth.mythra.dto.UserDto;
+
+import java.util.Map;
 
 public interface UserService {
 
-    String registerUser(UserDto userDto);
+    Map<String, String> loginUser(String login, String inputPassword);
 
-    String loginUser(String name, String password);
+    String registerUser(UserDto userDto);
 
 }

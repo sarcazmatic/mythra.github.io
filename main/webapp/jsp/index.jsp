@@ -88,32 +88,31 @@
 <div class="shiny-text">Welcome ti MinDnD!</div>
 <div class="shiny-text">Login</div>
 <div class="form-container">
-    <form action="login" method="post">
+    <form id="login-form" action="login" method="post">
         <div class="form-group">
             <label for="name-login">Login:</label>
-            <input type="text" id="name-login" name="name" placeholder="Enter your login" required>
+            <input type="text" id="name-login" name="login" placeholder="Enter your login" required>
             <input type="password" id="password-login" name="password" placeholder="Enter your password" required>
         </div>
-        <button type="submit" class="custom-button">Submit</button>
+        <button id="submit-login" type="submit" class="custom-button">Submit</button>
     </form>
 </div>
 <div class="shiny-text">Register</div>
 <div class="form-container">
-    <form id="reg-form" action="register" method="post">
+    <form id="register-form" method="post">>
         <div class="form-group">
-            <label for="name-reg">Register:</label>
-            <input type="text" id="name-reg" name="name-reg" placeholder="Enter your login" required>
+            <label for="name-register">Register:</label>
+            <input type="text" id="name-register" name="name" placeholder="Enter your login" required>
             <input type="email" id="email-register" name="email" placeholder="Enter your email" required>
             <input type="password" id="password-register" name="password" placeholder="Enter your password" required>
         </div>
         <button id="submit-register" type="submit" class="custom-button">Submit</button>
     </form>
 </div>
-<div class="shiny-text">${response}</div>
 
 <script>
-    document.getElementById('submit-register').addEventListener('click', function() {
-        document.getElementById('reg-form').action = document.getElementById('name-reg').value.toString()+"/register";
+    document.getElementById('submit-register').addEventListener('click', function () {
+        document.getElementById('register-form').action = document.getElementById('name-register').value.toString() + "/register";
     })
 </script>
 

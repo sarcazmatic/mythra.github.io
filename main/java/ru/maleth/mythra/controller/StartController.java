@@ -1,11 +1,10 @@
 package ru.maleth.mythra.controller;
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import ru.maleth.mythra.dto.UserDto;
 import ru.maleth.mythra.encrypter.PassEncTech;
 import ru.maleth.mythra.service.user.UserService;
@@ -17,25 +16,23 @@ public class StartController {
     private final UserService userService;
 
     @GetMapping({"/", "/index"})
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public String hello() {
         return "index";
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam(value = "name") String name,
-                        @RequestParam(value = "password") String password) {
-        return userService.loginUser(name, password);
+    public String login(@RequestParam(value = "login") String login,
+                        @RequestParam(value = "password ") String inputPassword,
+                        Model model) {
+        model.addAllAttributes(userService.loginUser(login, inputPassword));
+        return model.getAttribute("directToPage").toString();
     }
 
     @PostMapping("{name}/register")
-    public String register(@PathVariable("name") String name,
-                           @RequestParam(value = "email") String email,
-                           @RequestParam(value = "password") String password) {
-        UserDto userDto = UserDto.builder()
-                .name(name)
-                .password(PassEncTech.encryptPass(password))
-                .email(email)
-                .build();
+    @ResponseStatus(HttpStatus.CREATED)
+    public String register(UserDto userDto) {
+        userDto.setPassword(PassEncTech.encryptPass(userDto.getPassword()));
         return userService.registerUser(userDto);
     }
 

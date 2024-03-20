@@ -1,33 +1,21 @@
 package ru.maleth.mythra.service.character;
 
-import java.util.List;
+import ru.maleth.mythra.dto.CharacterFullDto;
+import ru.maleth.mythra.dto.NumberModifierDto;
+import ru.maleth.mythra.dto.NewCharacterDto;
+import ru.maleth.mythra.dto.NewCharacterFullDto;
+import ru.maleth.mythra.model.Character;
+
 import java.util.Map;
 
 public interface CharacterService {
 
-    Map<String, String> goToAttributes(String charName, String charClass, String charRace, String charSubrace);
+    Character createCharacter(String userName, CharacterFullDto characterFullDto);
 
-    Map<String, String> goToSkills(String charName,
-                                   String charClass,
-                                   String charRace,
-                                   int strength,
-                                   int dexterity,
-                                   int constitution,
-                                   int intelligence,
-                                   int wisdom,
-                                   int charisma);
+    Map<String, String> goToAttributes(NewCharacterDto newCharacterDto);
 
-    Map<String, String> goToSheet(String userName,
-                                  String charName,
-                                  String charClass,
-                                  String charRace,
-                                  int strength,
-                                  int dexterity,
-                                  int constitution,
-                                  int intelligence,
-                                  int wisdom,
-                                  int charisma,
-                                  int hitPoints,
-                                  List<String> profs);
+    Map<String, String> goToSkills(NewCharacterFullDto newCharacterFullDto);
+
+    Map<String, String> goToSheet(Character character);
 
 }

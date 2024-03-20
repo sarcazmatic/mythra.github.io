@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum RestEnum {
 
+    NONE("Не требует отдыха"),
     SHORT("Короткий отдых"),
     LONG("Продолжительный отдых");
 

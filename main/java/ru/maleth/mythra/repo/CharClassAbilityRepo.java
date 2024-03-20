@@ -1,19 +1,24 @@
 package ru.maleth.mythra.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.maleth.mythra.model.CharClassAbility;
 
-import java.util.List;
 
 public interface CharClassAbilityRepo extends JpaRepository<CharClassAbility, Long> {
 
-    @Query("SELECT cca FROM CharClassAbility cca " +
-            "LEFT JOIN Ability AS a ON a.id = cca.ability.id "+
-            "LEFT JOIN Character AS c ON c.id = cca.character.id " +
-            "LEFT JOIN CharClass AS cc ON c.id = cca.charClass.id " +
-            "WHERE (:name IS NOT NULL AND c.charName = :name) " +
-            "AND (:charClass IS NOT NULL AND cc.name = :charClass)")
-    List<CharClassAbility> findAllByCharacterNameAndCharacterClass(String name, String charClass);
+    CharClassAbility findByCharacter_CharNameAndAbility_NameAndCharClass_Name(String name, String ability, String charClass);
+
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE CharClassAbility cca " +
+            "SET cca.numberOfUses = :charges " +
+            "WHERE cca.ability.name = :ability " +
+            "AND cca.character.charName = :name " +
+            "AND cca.charClass.name = :charClass")
+    void updateCharges(String ability, String name, String charClass, Integer charges);
 
 }

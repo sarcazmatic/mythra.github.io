@@ -422,12 +422,14 @@
     <div class="box-top">
         <div class="input-field">
             <p>Имя: ${charName}</p>
+            <p id="char-name" hidden>${charName}</p>
         </div>
         <div class="input-field">
             <p>Раса: ${charRace}</p>
         </div>
         <div class="input-field">
             <p>Класс: ${charClass}</p>
+            <p id="char-class" hidden>${charClass}</p>
         </div>
     </div>
     <div class="box-top">
@@ -435,7 +437,8 @@
             <p>Уровень: ${level}</p>
         </div>
         <div class="input-field">
-            <p id="exp-label" class="exp-label">Опыт: ${experience}</p>
+            <output id="exp-button" class="exp-label" onclick="expShow()">Опыт:</output>
+            <output id="expNumber">${experience}</output>
         </div>
         <div class="input-field">
             <p>Мастерство: ${proficiency}</p>
@@ -453,24 +456,188 @@
         </div>
     </div>
 </div>
+<div class="modal" id="expModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>${experience}</h2>
+        </div>
+        <div class="modal-body">
+            <input type="number" id="incoming-exp">
+            <button class="heal-button" id="sec-exp-button" name="sec-heal-button">ОПЫТ</button>
+        </div>
+    </div>
+</div>
+<script>
+    var charName = document.getElementById("char-name").innerText;
+
+    var expModal = document.getElementById("expModal");
+    var expButton = document.getElementById("sec-exp-button");
+
+    var incomingExp;
+    var currentExperience = document.getElementById("expNumber");
+
+    function expShow() {
+        expModal.style.display = "block";
+    }
+
+    window.onclick = function (event) {
+        if (event.target === expModal) {
+            expModal.style.display = "none";
+        }
+    }
+
+    expButton.addEventListener("click", function () {
+        incomingExp = document.getElementById("incoming-exp").value;
+        expModal.style.display = "none";
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('PUT', '/charsheet/calcExp');
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        const body = JSON.stringify({
+            charName: charName,
+            modifier: incomingExp
+        });
+        ourRequest.onload = function () {
+            var ourData = JSON.parse(ourRequest.responseText);
+            console.log(ourData);
+            renderThis(ourData);
+        }
+        console.log(body)
+        ourRequest.send(body);
+    })
+
+    function renderThis(data) {
+        currentExperience.innerText = data.experience;
+    }
+
+</script>
 
 <div class="container-left-bottom">
     <div class=box-hp-top>
         <div class="input-field">
-            <output class="savethrow-text">${hitPoints}</output>
+            <output id="currentHP" class="savethrow-text">${curHitPoints}</output>
         </div>
     </div>
     <div class=box-hp-bottom>
         <div class="input-field">
-            <output class="savethrow-text">${hitPoints}</output>
+            <output id="max-hit-points" class="savethrow-text">${maxHitPoints}</output>
         </div>
     </div>
     <div class="buttons-class">
-        <button class="heal-button" id="heal-button" name="heal-button">ЛЕЧЕНИЕ</button>
+        <button class="heal-button" id="heal-button" name="heal-button" onclick="hpHealShow()">ЛЕЧЕНИЕ</button>
         <button class="rest-button" id="rest-button" name="rest-button">ОТДЫХ</button>
-        <button class="dmg-button" id="dmg-button" name="dmg-button">УРОН</button>
+        <button class="dmg-button" id="dmg-button" name="dmg-button" onclick="hpDmgShow()">УРОН</button>
     </div>
 </div>
+
+<div class="modal" id="healModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>${curHitPoints}</h2>
+        </div>
+        <div class="modal-body">
+            <input type="number" id="incoming-heal">
+            <button class="heal-button" id="sec-heal-button" name="sec-heal-button">ЛЕЧЕНИЕ</button>
+        </div>
+    </div>
+</div>
+<script>
+    var charName = document.getElementById("char-name").innerText;
+
+    var healModal = document.getElementById("healModal");
+    var healButton = document.getElementById("sec-heal-button");
+
+    var incomingHeal;
+    var currentHP = document.getElementById("currentHP");
+
+    function hpHealShow() {
+        healModal.style.display = "block";
+    }
+
+    window.onclick = function (event) {
+        if (event.target === healModal) {
+            healModal.style.display = "none";
+        }
+    }
+
+    healButton.addEventListener("click", function () {
+        incomingHeal = document.getElementById("incoming-heal").value;
+        healModal.style.display = "none";
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('PUT', '/charsheet/calcHeal');
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        const body = JSON.stringify({
+            charName: charName,
+            modifier: incomingHeal
+        });
+        ourRequest.onload = function () {
+            var ourData = JSON.parse(ourRequest.responseText);
+            console.log(ourData)
+            renderHTML(ourData);
+        }
+        console.log(body)
+        ourRequest.send(body);
+    })
+
+    function renderHTML(data) {
+        currentHP.innerText = data.currentHP;
+    }
+
+</script>
+
+<div class="modal" id="dmgModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>${curHitPoints}</h2>
+        </div>
+        <div class="modal-body">
+            <input type="number" id="incoming-damage">
+            <button class="dmg-button" id="sec-dmg-button" name="sec-dmg-button">УРОН</button>
+        </div>
+    </div>
+</div>
+<script>
+    var charName = document.getElementById("char-name").innerText;
+
+    var dmgModal = document.getElementById("dmgModal");
+    var dmgButton = document.getElementById("sec-dmg-button");
+
+    var incomingDamage;
+    var currentHP = document.getElementById("currentHP");
+
+    function hpDmgShow() {
+        dmgModal.style.display = "block";
+    }
+
+    window.onclick = function (event) {
+        if (event.target === dmgModal) {
+            dmgModal.style.display = "none";
+        }
+    }
+
+    dmgButton.addEventListener("click", function () {
+        incomingDamage = document.getElementById("incoming-damage").value;
+        dmgModal.style.display = "none";
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('PUT', '/charsheet/calcDmg');
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        const body = JSON.stringify({
+            charName: charName,
+            modifier: incomingDamage
+        });
+        ourRequest.onload = function () {
+            var ourData = JSON.parse(ourRequest.responseText);
+            console.log(ourData)
+            renderHTML(ourData);
+        }
+        console.log(body)
+        ourRequest.send(body);
+    })
+
+    function renderHTML(data) {
+        currentHP.innerText = data.currentHP;
+    }
+
+</script>
 
 <div class="container-left-bottom-bottom">
     <div style="border-bottom: 1px #444 solid; font-size: medium" class="abilities-row">
@@ -480,7 +647,7 @@
         <output>Восстановление</output>
     </div>
     <div class="abilities-row">
-        <output class="ability-name" onclick="descriptionShow()">${abilName1}</output>
+        <output id="ability-name-1" class="ability-name" onclick="descriptionShow()">${abilName1}</output>
         <output>${abilCost1}</output>
         <button class="ability-use-button" id="${abilUseButton1}"
                 name="ability-use-button" onclick="minusCharge()">${abilCharges1}</button>
@@ -489,12 +656,32 @@
 </div>
 
 <script>
+    var charName = document.getElementById("char-name").innerText;
+    var abilName = document.getElementById("ability-name-1").innerText;
+    var charClass = document.getElementById("char-class").innerText;
+
+    var button = document.querySelector('#${abilUseButton1}');
     var currentCharge = ${abilCharges1};
 
     function minusCharge() {
         if (currentCharge > 0) {
             currentCharge--;
-            document.querySelector('#${abilUseButton1}').innerText = currentCharge;
+            button.innerText = currentCharge;
+            var ourRequest = new XMLHttpRequest();
+            ourRequest.open('PUT', '/charsheet/abilCharge');
+            ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+            const body = JSON.stringify({
+                charName: charName,
+                charClass: charClass,
+                abilName: abilName,
+                modifier: button.innerText
+            });
+            ourRequest.onload = function () {
+                var ourData = JSON.parse(ourRequest.responseText);
+                console.log(ourData)
+            }
+            console.log(body)
+            ourRequest.send(body);
         } else {
             currentCharge = 0;
         }
