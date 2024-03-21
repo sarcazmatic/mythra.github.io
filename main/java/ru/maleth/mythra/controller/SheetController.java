@@ -14,6 +14,13 @@ public class SheetController {
 
     private final CharsheetService charsheetService;
 
+    @GetMapping("/charAbil/{charId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String abilityLoader(@PathVariable (name = "charId") Long charId) {
+        String response = charsheetService.abilityLoader(charId);
+        return response;
+    }
+
     @PutMapping("/abilCharge")
     @ResponseStatus(HttpStatus.OK)
     public String updAbilityCharge(@RequestBody AbilityChargeModifierDto abilityChargeModifierDto) {

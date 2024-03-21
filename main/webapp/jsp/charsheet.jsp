@@ -423,6 +423,7 @@
         <div class="input-field">
             <p>Имя: ${charName}</p>
             <p id="char-name" hidden>${charName}</p>
+            <p id="char-id" hidden>${charId}</p>
         </div>
         <div class="input-field">
             <p>Раса: ${charRace}</p>
@@ -639,31 +640,110 @@
 
 </script>
 
-<div class="container-left-bottom-bottom">
-    <div style="border-bottom: 1px #444 solid; font-size: medium" class="abilities-row">
+<div id="clbb-parent" class="container-left-bottom-bottom">
+    <div id="abilities-main" style="border-bottom: 1px #444 solid; font-size: medium" class="abilities-row">
         <output>Название</output>
         <output>Стоимость</output>
         <output>Заряды</output>
         <output>Восстановление</output>
     </div>
-    <div class="abilities-row">
-        <output id="ability-name-1" class="ability-name" onclick="descriptionShow()">${abilName1}</output>
-        <output>${abilCost1}</output>
-        <button class="ability-use-button" id="${abilUseButton1}"
-                name="ability-use-button" onclick="minusCharge()">${abilCharges1}</button>
-        <output>${abilRest1}</output>
-    </div>
 </div>
 
 <script>
-    var charName = document.getElementById("char-name").innerText;
-    var abilName = document.getElementById("ability-name-1").innerText;
-    var charClass = document.getElementById("char-class").innerText;
+    var charId = document.getElementById("char-id").innerText;
 
-    var button = document.querySelector('#${abilUseButton1}');
-    var currentCharge = ${abilCharges1};
+    var uriText = "/charsheet/charAbil/" + charId;
+    var elementToAdd = document.getElementById("abilities-locator");
 
-    function minusCharge() {
+    function loadLine() {
+        var abilRequest = new XMLHttpRequest();
+        abilRequest.open('GET', uriText);
+        abilRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        abilRequest.onload = function () {
+            var ourData = JSON.parse(abilRequest.responseText);
+            console.log(ourData)
+            for (let i = 0; i < ourData.length; i++) {
+                var newDiv = document.createElement("div");
+                newDiv.id = "abilities-row-" + i;
+                newDiv.className = "abilities-row";
+                document.getElementById('clbb-parent').appendChild(newDiv);
+                var newDiv1 = document.createElement("output");
+                newDiv1.id = "ability-name-" + i;
+                newDiv1.className = "ability-name";
+                newDiv1.innerText = ourData[i].name;
+                newDiv1.setAttribute("onclick", "descriptionShow(" + i + ")");
+                document.getElementById(newDiv.id).appendChild(newDiv1);
+                var newDiv2 = document.createElement("output");
+                newDiv2.innerText = ourData[0].cost;
+                document.getElementById(newDiv.id).appendChild(newDiv2);
+                var newDiv3 = document.createElement("button");
+                newDiv3.id = "ability-use-button-" + i;
+                newDiv3.className = "ability-use-button";
+                newDiv3.name = "ability-use-button";
+                newDiv3.innerText = ourData[i].numberOfCharges;
+                document.getElementById(newDiv.id).appendChild(newDiv3);
+                var newDiv4 = document.createElement("output");
+                newDiv4.innerText = ourData[i].recharge;
+                document.getElementById(newDiv.id).appendChild(newDiv4);
+
+                var modalDesc = document.createElement("div");
+                modalDesc.id = "descModal" + i;
+                modalDesc.className = "modal";
+                document.querySelector('body').appendChild(modalDesc);
+                var modalCont = document.createElement("div");
+                modalCont.id = "contModal" + i;
+                modalCont.className = "modal-content";
+                document.getElementById(modalDesc.id).appendChild(modalCont);
+                var modalHead = document.createElement("div");
+                modalHead.id = "headModal" + i;
+                modalHead.className = "modal-header";
+                document.getElementById(modalCont.id).appendChild(modalHead);
+                var abName = document.createElement("h2");
+                abName.innerText = ourData[i].name
+                document.getElementById(modalHead.id).appendChild(abName);
+                var modalBody = document.createElement("div");
+                modalBody.id = "bodyModal" + i;
+                modalBody.className = "modal-body";
+                document.getElementById(modalCont.id).appendChild(modalBody);
+                var abDesc = document.createElement("p");
+                abDesc.innerText = ourData[i].description
+                document.getElementById(modalBody.id).appendChild(abDesc);
+            }
+            const buttons = document.querySelectorAll('.ability-use-button');
+            for (let k = 0; k < buttons.length; k++) {
+                document.getElementById(buttons[k].id).setAttribute("onclick", "minusCharge(" + k + ")");
+            }
+        }
+        abilRequest.send();
+    }
+
+    window.onload = loadLine();
+
+    function descriptionShow(id) {
+        console.log("Мой id – " + id);
+        let elId = "descModal" + id;
+        var modal = document.getElementById(elId);
+
+        modal.style.display = "block";
+
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+
+    function minusCharge(id) {
+        var elId = "ability-name-" + id;
+        var butId = "ability-use-button-" + id;
+        var charName = document.getElementById("char-name").innerText;
+        var abilName = document.getElementById(elId).innerText;
+        var charClass = document.getElementById("char-class").innerText;
+
+        var button = document.getElementById(butId);
+        var currentCharge = button.innerText;
+
         if (currentCharge > 0) {
             currentCharge--;
             button.innerText = currentCharge;
@@ -683,33 +763,9 @@
             console.log(body)
             ourRequest.send(body);
         } else {
-            currentCharge = 0;
+            console.log("Ну а тут и так 0")
         }
-    }
-</script>
 
-<div class="modal" id="descModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>${abilName1}</h2>
-        </div>
-        <div class="modal-body">
-            <p>${abilDesc1}</p>
-        </div>
-    </div>
-</div>
-
-<script>
-    var modal = document.getElementById("descModal");
-
-    function descriptionShow() {
-        modal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
     }
 </script>
 

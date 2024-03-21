@@ -1,10 +1,11 @@
 package ru.maleth.mythra.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Builder
 @Data
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class AbilityChargeModifierDto {
 
     private String charName;

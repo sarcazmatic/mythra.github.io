@@ -430,6 +430,7 @@ public class CharacterServiceImpl implements CharacterService {
             attributes.put("darkvision", "Нет");
         }
 
+        attributes.put("charId", String.valueOf(character.getId()));
         attributes.put(PAGE, "charsheet");
 
         log.info("Отправляем персонажа " + character.getCharName() + " на фронт!");
