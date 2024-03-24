@@ -12,10 +12,8 @@ import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.*;
 import ru.maleth.mythra.service.character.CharacterCalculator;
 import ru.maleth.mythra.service.character.CharacterService;
-import ru.maleth.mythra.utility.classes.barbarian.BarbarianUtils;
-import ru.maleth.mythra.utility.classes.bard.BardUtils;
-import ru.maleth.mythra.utility.classes.druid.DruidUtils;
-import ru.maleth.mythra.utility.classes.warrior.WarriorUtils;
+import ru.maleth.mythra.utility.classes.ClassUtils;
+import ru.maleth.mythra.utility.races.RaceUtils;
 
 import java.util.*;
 
@@ -29,11 +27,9 @@ public class CharacterServiceImpl implements CharacterService {
     private final ClassesRepo classesRepo;
     private final ProficiencyRepo proficiencyRepo;
     private final UserRepo userRepo;
+    private final ClassUtils classUtils;
+    private final RaceUtils raceUtils;
 
-    private final BardUtils bardUtils;
-    private final BarbarianUtils barbarianUtils;
-    private final WarriorUtils warriorUtils;
-    private final DruidUtils druidUtils;
 
     private static final String PAGE = "directToPAge";
 
@@ -74,7 +70,7 @@ public class CharacterServiceImpl implements CharacterService {
         /*
         Тут просто - находим в репозитории расу и присваиваем персонажу.
         */
-        Race race = raceRepo.findByName(RaceEnum.getRaceByName(characterFullDto.getCharRace()).toString());
+        Race race = raceRepo.findByName(RaceEnum.getRaceByName(characterFullDto.getCharRace()));
 
         /*
         Тут находим юзера по имени, переданному из контроера
@@ -153,6 +149,7 @@ public class CharacterServiceImpl implements CharacterService {
                 || charRace.equals("Гит")
                 || charRace.equals("Гном")
                 || charRace.equals("Дварф")
+                || charRace.equals("Драконорожденный")
                 || charRace.equals("Полурослик")
                 || charRace.equals("Эльф")) {
             if (charSubrace.contains("-")) {
@@ -203,7 +200,7 @@ public class CharacterServiceImpl implements CharacterService {
          */
         int hitPoints = CharacterCalculator.calculateDieHit(ClassEnum.getClassByName(charClass)) +
                 CharacterCalculator.calculateAttributeModifier(constitution);
-        Race race = raceRepo.findByName(RaceEnum.getRaceByName(charRace).toString());
+        Race race = raceRepo.findByName(RaceEnum.getRaceByName(charRace)); //тутут
         int strengthAtr = strength + race.getStrengthBonus();
         int dexterityAtr = dexterity + race.getDexterityBonus();
         int constitutionAtr = constitution + race.getConstitutionBonus();
@@ -285,26 +282,22 @@ public class CharacterServiceImpl implements CharacterService {
                         -> p.getName().equals(s)).findFirst().get();
                 AttribEnum baseAttrib = AttribEnum.valueOf(proficiency.getBaseAttribute().toString());
                 switch (baseAttrib) {
-                    case STRENGTH ->
-                            attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                                    formatMods(CharacterCalculator.calculateAttributeModifier(strength)
-                                            + CharacterCalculator.getProfBonus(character.getExperience())));
-                    case DEXTERITY ->
-                        attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                                formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)
-                                        + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case STRENGTH -> attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
+                            formatMods(CharacterCalculator.calculateAttributeModifier(strength)
+                                    + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case DEXTERITY -> attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
+                            formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)
+                                    + CharacterCalculator.getProfBonus(character.getExperience())));
                     case INTELLIGENCE ->
                             attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
                                     formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)
                                             + CharacterCalculator.getProfBonus(character.getExperience())));
-                    case WISDOM ->
-                            attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
+                    case WISDOM -> attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
                             formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)
                                     + CharacterCalculator.getProfBonus(character.getExperience())));
-                    case CHARISMA ->
-                            attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                                    formatMods(CharacterCalculator.calculateAttributeModifier(charisma)
-                                            + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case CHARISMA -> attributes.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
+                            formatMods(CharacterCalculator.calculateAttributeModifier(charisma)
+                                    + CharacterCalculator.getProfBonus(character.getExperience())));
                     default -> throw new RuntimeException("Тут такое вообще произошло");
                 }
             } else {
@@ -313,20 +306,16 @@ public class CharacterServiceImpl implements CharacterService {
                 И засовывается в мапу. Формат навыка, который отправляется в мапу в итоге получается sleight_of_hand.
                  */
                 switch (s) {
-                    case "ATHLETICS" ->
-                            attributes.put(s.toLowerCase(),
+                    case "ATHLETICS" -> attributes.put(s.toLowerCase(),
                             formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
-                    case "ACROBATICS", "STEALTH", "SLEIGHT_OF_HAND" ->
-                            attributes.put(s.toLowerCase(),
+                    case "ACROBATICS", "STEALTH", "SLEIGHT_OF_HAND" -> attributes.put(s.toLowerCase(),
                             formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
-                    case "ARCANA", "HISTORY", "INVESTIGATION", "NATURE", "RELIGION" ->
-                            attributes.put(s.toLowerCase(),
-                                    formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
+                    case "ARCANA", "HISTORY", "INVESTIGATION", "NATURE", "RELIGION" -> attributes.put(s.toLowerCase(),
+                            formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
                     case "INSIGHT", "MEDICINE", "PERCEPTION", "SURVIVAL", "ANIMAL_HANDLING" ->
                             attributes.put(s.toLowerCase(),
                                     formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
-                    case "DECEPTION", "INTIMIDATION", "PERFORMANCE", "PERSUASION" ->
-                            attributes.put(s.toLowerCase(),
+                    case "DECEPTION", "INTIMIDATION", "PERFORMANCE", "PERSUASION" -> attributes.put(s.toLowerCase(),
                             formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
                     default -> throw new RuntimeException("Тут такое вообще произошло");
                 }
@@ -382,26 +371,30 @@ public class CharacterServiceImpl implements CharacterService {
         применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
         */
         log.info("Собираем возможности " + character.getCharName() + " на основе возможностей классов!");
-        List<CharClassAbility> abilitiesAtLevelOne = charClassAbilityFormer(character,
-                character.getCharacterClasses().stream().findFirst().get());
 
-        /*
-        Тут переносим умения в мапу через цикл. А что, а вдруг больше одного.
-        */
-        for (int k = 0; k < abilitiesAtLevelOne.size(); k++) {
-            attributes.put("abilUseButton" + (k + 1), "abilUseButton" + (k + 1));
-            attributes.put("abilName" + (k + 1), abilitiesAtLevelOne.get(k).getAbility().getName());
-            attributes.put("abilDesc" + (k + 1), abilitiesAtLevelOne.get(k).getAbility().getDescription());
-            attributes.put("abilCost" + (k + 1), abilitiesAtLevelOne.get(k).getAbility().getCost().getName());
-            attributes.put("abilCharges" + (k + 1), String.valueOf(abilitiesAtLevelOne.get(k).getNumberOfUses())); //нужно увести из ability и вычислять иначе
-            attributes.put("abilRest" + (k + 1), abilitiesAtLevelOne.get(k).getAbility().getTypeOfRest().getName());
+        /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
+        List<CharClassAbility> abilities = classUtils.charClassAbilityFormer(character);
+        if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("МОНАХ: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
+            character.setArmorClass(10
+                    + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
+                    + CharacterCalculator.calculateAttributeModifier(character.getWisdom()));
         }
+        if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("ВАРВАР: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
+            character.setArmorClass(10
+                    + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
+                    + CharacterCalculator.calculateAttributeModifier(character.getConstitution()));
+        }
+        List<CharRaceAbility> raceAbilities = raceUtils.charRaceAbilityFormer(character);
+        /*
+        Из интересного – сперва я передавал все абилки в атрибуты и там выводил, а потом научился динамически формировать
+        список в SheetController – поэтому эти вот два списка сверху спорно актуальны.
+         */
 
         /*
         Тут переносим атрибуты в мапу. И указываем адрес страницы.
         */
         attributes.put("charName", character.getCharName());
-        attributes.put("charRace", character.getCharRace().getRaceName());
+        attributes.put("charRace", character.getCharRace().getName().getName());
         attributes.put("charClass", character.getClassName());
         attributes.put("ac", String.valueOf(character.getArmorClass()));
         attributes.put("speed", String.valueOf(character.getCharRace().getSpeed()));
@@ -442,24 +435,6 @@ public class CharacterServiceImpl implements CharacterService {
             return ("+" + mod);
         }
         return String.valueOf(mod);
-    }
-
-    private List<CharClassAbility> charClassAbilityFormer(Character character, CharClass charClass) {
-        List<CharClassAbility> charClassAbilitiesList = new ArrayList<>();
-        Ability ability = new Ability();
-        if (charClass.getName().equals("BARD")) {
-            charClassAbilitiesList = bardUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
-        } else if (charClass.getName().equals("BARBARIAN")) {
-            charClassAbilitiesList = barbarianUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
-        } else if (charClass.getName().equals("WARRIOR")) {
-            charClassAbilitiesList = warriorUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
-        } else if (charClass.getName().equals("DRUID")) {
-            charClassAbilitiesList = druidUtils.formAbilities(charClassAbilitiesList, ability, character, charClass);
-        }
-
-        log.info("Передаем собранные возможности персонажа " + character.getCharName() + " обратно в метод!");
-
-        return charClassAbilitiesList;
     }
 
 }

@@ -499,10 +499,8 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            console.log(ourData);
             renderThis(ourData);
         }
-        console.log(body)
         ourRequest.send(body);
     })
 
@@ -572,10 +570,8 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            console.log(ourData)
             renderHTML(ourData);
         }
-        console.log(body)
         ourRequest.send(body);
     })
 
@@ -627,10 +623,8 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            console.log(ourData)
             renderHTML(ourData);
         }
-        console.log(body)
         ourRequest.send(body);
     })
 
@@ -661,26 +655,35 @@
         abilRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         abilRequest.onload = function () {
             var ourData = JSON.parse(abilRequest.responseText);
-            console.log(ourData)
             for (let i = 0; i < ourData.length; i++) {
                 var newDiv = document.createElement("div");
                 newDiv.id = "abilities-row-" + i;
                 newDiv.className = "abilities-row";
                 document.getElementById('clbb-parent').appendChild(newDiv);
+                var newDivClass = document.createElement("output");
+                newDivClass.id = "is-class-based-" + i;
+                newDivClass.innerText = ourData[i].isFromClass;
+                newDivClass.hidden = true;
+                document.getElementById('clbb-parent').appendChild(newDivClass);
                 var newDiv1 = document.createElement("output");
                 newDiv1.id = "ability-name-" + i;
+                newDiv1.style.textAlign = "center";
                 newDiv1.className = "ability-name";
                 newDiv1.innerText = ourData[i].name;
                 newDiv1.setAttribute("onclick", "descriptionShow(" + i + ")");
                 document.getElementById(newDiv.id).appendChild(newDiv1);
                 var newDiv2 = document.createElement("output");
-                newDiv2.innerText = ourData[0].cost;
+                newDiv2.innerText = ourData[i].cost;
                 document.getElementById(newDiv.id).appendChild(newDiv2);
                 var newDiv3 = document.createElement("button");
                 newDiv3.id = "ability-use-button-" + i;
                 newDiv3.className = "ability-use-button";
                 newDiv3.name = "ability-use-button";
-                newDiv3.innerText = ourData[i].numberOfCharges;
+                if (ourData[i].recharge === "Не требует отдыха") {
+                    newDiv3.innerText = "-";
+                } else {
+                    newDiv3.innerText = ourData[i].numberOfCharges;
+                }
                 document.getElementById(newDiv.id).appendChild(newDiv3);
                 var newDiv4 = document.createElement("output");
                 newDiv4.innerText = ourData[i].recharge;
@@ -720,12 +723,11 @@
     window.onload = loadLine();
 
     function descriptionShow(id) {
-        console.log("Мой id – " + id);
         let elId = "descModal" + id;
+
         var modal = document.getElementById(elId);
 
         modal.style.display = "block";
-
 
         window.onclick = function (event) {
             if (event.target === modal) {
@@ -737,36 +739,30 @@
     function minusCharge(id) {
         var elId = "ability-name-" + id;
         var butId = "ability-use-button-" + id;
-        var charName = document.getElementById("char-name").innerText;
-        var abilName = document.getElementById(elId).innerText;
-        var charClass = document.getElementById("char-class").innerText;
+        var isFromClassId = "is-class-based-" + id;
 
+        var abilName = document.getElementById(elId).innerText;
         var button = document.getElementById(butId);
+        var isFromClassBool = document.getElementById(isFromClassId).innerText;
+
         var currentCharge = button.innerText;
 
         if (currentCharge > 0) {
             currentCharge--;
             button.innerText = currentCharge;
-            var ourRequest = new XMLHttpRequest();
-            ourRequest.open('PUT', '/charsheet/abilCharge');
-            ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+            var abilRequest = new XMLHttpRequest();
+            abilRequest.open('PUT', '/charsheet/abilCharge');
+            abilRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
             const body = JSON.stringify({
-                charName: charName,
-                charClass: charClass,
+                charId: charId,
                 abilName: abilName,
-                modifier: button.innerText
+                modifier: currentCharge,
+                isFromClass: isFromClassBool
             });
-            ourRequest.onload = function () {
-                var ourData = JSON.parse(ourRequest.responseText);
-                console.log(ourData)
-            }
-            console.log(body)
-            ourRequest.send(body);
-        } else {
-            console.log("Ну а тут и так 0")
+            abilRequest.send(body);
         }
-
     }
+
 </script>
 
 <div class="container-second-left">

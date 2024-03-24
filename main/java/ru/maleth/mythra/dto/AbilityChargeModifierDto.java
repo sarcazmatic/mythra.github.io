@@ -8,9 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 public class AbilityChargeModifierDto {
 
-    private String charName;
+    private Long charId;
     private String abilName;
-    private String charClass;
     private Integer modifier;
+    private Boolean isFromClass;
 
 }

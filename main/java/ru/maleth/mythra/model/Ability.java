@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Type;
+import ru.maleth.mythra.enums.AbilityEnum;
 import ru.maleth.mythra.enums.ActionCostEnum;
 import ru.maleth.mythra.enums.RestEnum;
 
@@ -21,11 +23,9 @@ public class Ability {
     private Long id;
     private String name;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "char_class_id")
-    private CharClass charClass;
-    @Column(name = "class_level")
-    private int classLevel;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ability_source")
+    private AbilityEnum abilitySource;
     @Column(name = "is_active")
     private boolean isActive;
     @Enumerated(EnumType.STRING)

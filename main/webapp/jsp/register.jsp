@@ -135,7 +135,7 @@
                     <option value="Гном">Гном</option>
                     <option>Голиаф</option>
                     <option value="Дварф">Дварф</option>
-                    <option>Драконорожденный</option>
+                    <option value="Драконорожденный">Драконорожденный</option>
                     <option>Полуорк</option>
                     <option value="Полурослик">Полурослик</option>
                     <option>Полуэльф</option>
@@ -160,6 +160,18 @@
                 <select id="dwarfSubrace" name="charSubrace" disabled hidden>
                     <option value="Горный-дварф">Горный дварф</option>
                     <option value="Холмовой-дварф">Холмовой дварф</option>
+                </select>
+                <select id="dragonbornSubrace" name="charSubrace" disabled hidden>
+                    <option value="Драконорожденный-(белый)">Белый</option>
+                    <option value="Драконорожденный-(бронзовый)">Бронзовый</option>
+                    <option value="Драконорожденный-(зеленый)">Зеленый</option>
+                    <option value="Драконорожденный-(золотой)">Золотой</option>
+                    <option value="Драконорожденный-(красный)">Красный</option>
+                    <option value="Драконорожденный-(латунный)">Латунный</option>
+                    <option value="Драконорожденный-(медный)">Медный</option>
+                    <option value="Драконорожденный-(серебряный)">Серебряный</option>
+                    <option value="Драконорожденный-(синий)">Синий</option>
+                    <option value="Драконорожденный-(черный)">Чёрный</option>
                 </select>
                 <select id="elfSubrace" name="charSubrace" disabled hidden>
                     <option value="Высший-эльф">Высший эльф</option>
@@ -195,6 +207,7 @@
         var githSubrace = document.getElementById("githSubrace");
         var gnomeSubrace = document.getElementById("gnomeSubrace");
         var dwarfSubrace = document.getElementById("dwarfSubrace");
+        var dragonbornSubrace = document.getElementById("dragonbornSubrace");
         var elfSubrace = document.getElementById("elfSubrace");
         var halflingSubrace = document.getElementById("halflingSubrace");
 
@@ -203,12 +216,14 @@
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
             aasimarSubrace.disabled = false;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
+            dragonbornSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Гит") {
@@ -216,12 +231,14 @@
             githSubrace.hidden = false;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
             aasimarSubrace.disabled = true;
             githSubrace.disabled = false;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
+            dragonbornSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Гном") {
@@ -229,12 +246,14 @@
             githSubrace.hidden = true;
             gnomeSubrace.hidden = false;
             dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
             aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = false;
             dwarfSubrace.disabled = true;
+            dragonbornSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Дварф") {
@@ -242,12 +261,29 @@
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = false;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
             aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = false;
+            dragonbornSubrace.disabled = true;
+            elfSubrace.disabled = true;
+            halflingSubrace.disabled = true;
+        } else if (charRace.value === "Драконорожденный") {
+            aasimarSubrace.hidden = true;
+            githSubrace.hidden = true;
+            gnomeSubrace.hidden = true;
+            dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = false;
+            elfSubrace.hidden = true;
+            halflingSubrace.hidden = true;
+            aasimarSubrace.disabled = true;
+            githSubrace.disabled = true;
+            gnomeSubrace.disabled = true;
+            dwarfSubrace.disabled = true;
+            dragonbornSubrace.disabled = false;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Эльф") {
@@ -255,12 +291,14 @@
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = false;
             halflingSubrace.hidden = true;
             aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
+            dragonbornSubrace.disabled = true;
             elfSubrace.disabled = false;
             halflingSubrace.disabled = true;
         } else if (charRace.value === "Полурослик") {
@@ -268,12 +306,14 @@
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = false;
             aasimarSubrace.disabled = true;
             githSubrace.disabled = true;
             gnomeSubrace.disabled = true;
             dwarfSubrace.disabled = true;
+            dragonbornSubrace.disabled = true;
             elfSubrace.disabled = true;
             halflingSubrace.disabled = false;
         } else {
@@ -281,6 +321,7 @@
             githSubrace.hidden = true;
             gnomeSubrace.hidden = true;
             dwarfSubrace.hidden = true;
+            dragonbornSubrace.hidden = true;
             elfSubrace.hidden = true;
             halflingSubrace.hidden = true;
         }

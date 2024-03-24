@@ -20,7 +20,8 @@ public class Race {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name")
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RaceEnum name;
     @Enumerated(EnumType.STRING)
     private SizeEnum size;
     private int speed;
@@ -39,9 +40,5 @@ public class Race {
     private int wisdomBonus;
     @Column(name = "charisma_bonus")
     private int charismaBonus;
-
-    public String getRaceName() {
-        return RaceEnum.valueOf(this.name).getName();
-    }
 
 }

@@ -85,7 +85,7 @@
     </style>
 </head>
 <body>
-<div class="shiny-text">Welcome ti MinDnD!</div>
+<div class="shiny-text">Welcome to Mythra!</div>
 <div class="shiny-text">Login</div>
 <div class="form-container">
     <form id="login-form" action="login" method="post">

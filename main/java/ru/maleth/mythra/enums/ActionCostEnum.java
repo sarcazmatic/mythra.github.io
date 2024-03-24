@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ActionCostEnum {
 
+    BLANK("-"),
     BONUS_ACTION("Бонусное действие"),
     ACTION("Действие"),
     FREE_ACTION("Свободное действие"),
