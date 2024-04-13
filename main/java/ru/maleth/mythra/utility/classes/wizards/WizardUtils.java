@@ -29,7 +29,7 @@ public class WizardUtils {
         Ability ability;
         String name = "МАГИЧЕСКОЕ ВОССТАНОВЛЕНИЕ";
         int characterLevel = CharacterCalculator.getLevel(character.getExperience());
-        int numberOfUses = Math.max((int) Math.ceil(characterLevel/2), 1);
+        int numberOfUses = Math.max((int) Math.ceil(characterLevel / 2), 1);
         Optional<Ability> abilityPresent = Optional.ofNullable(abilityRepo.findByName(name));
         if (abilityPresent.isEmpty()) {
             ability = Ability.builder()

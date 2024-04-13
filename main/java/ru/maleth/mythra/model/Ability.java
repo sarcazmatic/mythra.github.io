@@ -35,4 +35,12 @@ public class Ability {
     @Enumerated(EnumType.STRING)
     @Column(name = "type_of_rest")
     private RestEnum typeOfRest;
+    @Column(name = "level_available")
+    private Integer levelAvailable;
+    @ManyToOne
+    @JoinColumn(name = "class_source_id")
+    private CharClass charClass;
+    @ManyToOne
+    @JoinColumn(name = "race_source_id")
+    private Race race;
 }

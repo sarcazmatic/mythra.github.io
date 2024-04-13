@@ -26,6 +26,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final RaceRepo raceRepo;
     private final ClassesRepo classesRepo;
     private final ProficiencyRepo proficiencyRepo;
+    private final CharClassLevelRepo charClassLevelRepo;
     private final UserRepo userRepo;
     private final ClassUtils classUtils;
     private final RaceUtils raceUtils;
@@ -64,23 +65,23 @@ public class CharacterServiceImpl implements CharacterService {
         мультиклассирование, и нужно будет куда-то засовывать доп классы.
         В сет засовываем класс из репозитория; в репозитории класс находим по названию.
         */
-        Set<CharClass> charClasses = new HashSet<>();
-        charClasses.add(classesRepo.findByName(ClassEnum.getClassByName(characterFullDto.getCharClass()).toString()));
+
+        CharClass charClass = classesRepo.findByName(ClassEnum.getClassByName(characterFullDto.getCharClass()).toString());
 
         /*
         Тут просто - находим в репозитории расу и присваиваем персонажу.
         */
-        Race race = raceRepo.findByName(RaceEnum.getRaceByName(characterFullDto.getCharRace()));
+        Race race = raceRepo.findByRaceEnum(RaceEnum.getRaceByName(characterFullDto.getCharRace()));
 
         /*
         Тут находим юзера по имени, переданному из контроера
         */
-        User user = userRepo.findByName(userName).get();
+        User user = userRepo.findByName(userName).orElseThrow(() -> new RuntimeException("Нет такого юзера"));
 
         /*
         Ну и создаем персонажа через @Builder
         */
-        Character character = Character.builder()
+        Character character = characterRepo.save(Character.builder()
                 .charName(characterFullDto.getCharName())
                 .charRace(race)
                 .strength(characterFullDto.getStrength())
@@ -95,13 +96,19 @@ public class CharacterServiceImpl implements CharacterService {
                 .armorClass(10 + CharacterCalculator.calculateAttributeModifier(characterFullDto.getDexterity()))
                 .initiative(CharacterCalculator.calculateAttributeModifier(characterFullDto.getDexterity()))
                 .proficiencies(proficiencies)
-                .characterClasses(charClasses)
                 .creator(user)
+                .mainClass(charClass)
+                .build());
+        CharClassLevel charClassLevel = CharClassLevel.builder()
+                .character(character)
+                .charClass(charClass)
+                .classLevel(1)
                 .build();
+        charClassLevelRepo.save(charClassLevel);
 
         log.info("Персонаж под именем " + character.getCharName() + " для пользователя " + character.getCreator().getName() + "создан!");
 
-        return characterRepo.save(character);
+        return character;
     }
 
 
@@ -200,7 +207,7 @@ public class CharacterServiceImpl implements CharacterService {
          */
         int hitPoints = CharacterCalculator.calculateDieHit(ClassEnum.getClassByName(charClass)) +
                 CharacterCalculator.calculateAttributeModifier(constitution);
-        Race race = raceRepo.findByName(RaceEnum.getRaceByName(charRace)); //тутут
+        Race race = raceRepo.findByRaceEnum(RaceEnum.getRaceByName(charRace)); //тутут
         int strengthAtr = strength + race.getStrengthBonus();
         int dexterityAtr = dexterity + race.getDexterityBonus();
         int constitutionAtr = constitution + race.getConstitutionBonus();
@@ -328,8 +335,8 @@ public class CharacterServiceImpl implements CharacterService {
         добавляем в список спасбросков.
         */
         List<AttribEnum> savingThrows = new ArrayList<>();
-        savingThrows.add(character.getCharacterClasses().stream().findFirst().get().getSavingThrowOne());
-        savingThrows.add(character.getCharacterClasses().stream().findFirst().get().getSavingThrowTwo());
+        savingThrows.add(character.getMainClass().getSavingThrowOne());
+        savingThrows.add(character.getMainClass().getSavingThrowTwo());
 
         /*
         Проходимся по списку спасбросков, в которых есть специализация и выставляем повышенное значение.
@@ -394,8 +401,8 @@ public class CharacterServiceImpl implements CharacterService {
         Тут переносим атрибуты в мапу. И указываем адрес страницы.
         */
         attributes.put("charName", character.getCharName());
-        attributes.put("charRace", character.getCharRace().getName().getName());
-        attributes.put("charClass", character.getClassName());
+        attributes.put("charRace", character.getCharRace().getRaceEnum().getName());
+        attributes.put("charClass", ClassEnum.valueOf(character.getMainClass().getName()).getName());
         attributes.put("ac", String.valueOf(character.getArmorClass()));
         attributes.put("speed", String.valueOf(character.getCharRace().getSpeed()));
         attributes.put("initiative", formatMods(character.getInitiative()));

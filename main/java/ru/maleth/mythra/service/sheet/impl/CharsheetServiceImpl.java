@@ -8,13 +8,15 @@ import ru.maleth.mythra.dto.AbilityChargeModifierDto;
 import ru.maleth.mythra.dto.AbilityJsonResponseDto;
 import ru.maleth.mythra.dto.AbilityJsonResponseMapper;
 import ru.maleth.mythra.dto.NumberModifierDto;
-import ru.maleth.mythra.enums.RaceEnum;
 import ru.maleth.mythra.model.CharClassAbility;
 import ru.maleth.mythra.model.CharRaceAbility;
 import ru.maleth.mythra.model.Character;
+import ru.maleth.mythra.model.Race;
 import ru.maleth.mythra.repo.CharClassAbilityRepo;
 import ru.maleth.mythra.repo.CharRaceAbilityRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
+import ru.maleth.mythra.repo.RaceRepo;
+import ru.maleth.mythra.service.character.CharacterCalculator;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
 import java.util.ArrayList;
@@ -28,12 +30,14 @@ public class CharsheetServiceImpl implements CharsheetService {
     private final CharacterRepo characterRepo;
     private final CharClassAbilityRepo charClassAbilityRepo;
     private final CharRaceAbilityRepo charRaceAbilityRepo;
+    private final RaceRepo raceRepo;
 
     @Override
     public String abilityLoader(Long charId) {
+        Character character = characterRepo.findById(charId).get();
         List<AbilityJsonResponseDto> ccaList = charClassAbilityRepo.findAllByCharacter_IdOrderByAbilityAsc(charId)
                 .stream().map(AbilityJsonResponseMapper::fromCharClassAbility).toList();
-        List<AbilityJsonResponseDto> craList = charRaceAbilityRepo.findByCharacter_IdOrderByAbility(charId)
+        List<AbilityJsonResponseDto> craList = charRaceAbilityRepo.findAllByCharacter_IdAndRaceLimitByLevelOrderByAbility_Name(character, character.getCharRace(), CharacterCalculator.getLevel(character.getExperience()))
                 .stream().map(AbilityJsonResponseMapper::fromCharRaceAbility).toList();
         List<AbilityJsonResponseDto> abilList = new ArrayList<>();
         abilList.addAll(ccaList);
@@ -55,7 +59,7 @@ public class CharsheetServiceImpl implements CharsheetService {
         } else {
             CharRaceAbility cra = charRaceAbilityRepo.findByCharacter_IdAndAbility_Name(abilityChargeModifierDto.getCharId(), abilityChargeModifierDto.getAbilName());
             cra.setNumberOfUses(abilityChargeModifierDto.getModifier());
-            charRaceAbilityRepo.updateCharges(cra.getAbility().getName(), cra.getCharacter().getCharName(), cra.getRace().getName(), cra.getNumberOfUses());
+            charRaceAbilityRepo.updateCharges(cra.getAbility().getName(), cra.getCharacter().getCharName(), cra.getRace(), cra.getNumberOfUses());
             Gson gson = new Gson();
             String response = gson.toJson(cra);
             return response;

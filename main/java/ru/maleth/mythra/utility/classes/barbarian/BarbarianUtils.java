@@ -5,12 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.maleth.mythra.enums.AbilityEnum;
 import ru.maleth.mythra.enums.ActionCostEnum;
 import ru.maleth.mythra.enums.RestEnum;
-import ru.maleth.mythra.model.Ability;
-import ru.maleth.mythra.model.CharClass;
-import ru.maleth.mythra.model.CharClassAbility;
+import ru.maleth.mythra.model.*;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.AbilityRepo;
 import ru.maleth.mythra.repo.CharClassAbilityRepo;
+import ru.maleth.mythra.repo.ClassesRepo;
 import ru.maleth.mythra.service.character.CharacterCalculator;
 
 import java.util.ArrayList;
@@ -23,29 +22,75 @@ public class BarbarianUtils {
 
     private final AbilityRepo abilityRepo;
     private final CharClassAbilityRepo charClassAbilityRepo;
+    private final ClassesRepo classesRepo;
 
-    public List<CharClassAbility> formAbilities(Character character, CharClass charClass) {
+    public List<CharClassAbility> formAbilities(CharClassLevel ccl) {
+        Character character = ccl.getCharacter();
+        CharClass charClass = classesRepo.findByName("BARBARIAN");
+        Integer level = ccl.getClassLevel();
+        List<CharClassAbility> ccaList = new ArrayList<>();
+        List<Ability> abilities = abilityRepo.findAllByClassLimitByLevel("BARBARIAN", level);
+        for (Ability a : abilities) {
+            Optional<CharClassAbility> ccaOptional = Optional.ofNullable(charClassAbilityRepo.findByCharacter_IdAndAbility_Name(character.getId(), a.getName()));
+            CharClassAbility cca;
+            if (ccaOptional.isEmpty()) {
+                cca = CharClassAbility.builder()
+                        .ability(a)
+                        .charClass(charClass)
+                        .character(character)
+                        .build();
+                switch (a.getName()) {
+                    case "ВАРВАР: ЗАЩИТА БЕЗ ДОСПЕХОВ" -> cca.setNumberOfUses(0);
+                    case "ЯРОСТЬ +2" -> {
+                        if (ccl.getClassLevel() < 3) {
+                            cca.setNumberOfUses(2);
+                        } else if (ccl.getClassLevel() >= 3 && ccl.getClassLevel() <= 5) {
+                            cca.setNumberOfUses(3);
+                        } else if (ccl.getClassLevel() >= 6 && ccl.getClassLevel() <= 8) {
+                            cca.setNumberOfUses(4);
+                        }
+                    }
+                    default -> cca.setNumberOfUses(0);
+                }
+                charClassAbilityRepo.save(cca);
+            } else {
+                cca = ccaOptional.get();
+            }
+            ccaList.add(cca);
+        }
+        return ccaList;
+    }
+
+}
+/*
+    private final AbilityRepo abilityRepo;
+    private final CharClassAbilityRepo charClassAbilityRepo;
+    private final ClassesRepo classesRepo;
+
+    public List<CharClassAbility> formAbilities(CharClassLevel ccl) {
+        Character character = ccl.getCharacter();
+        CharClass charClass = classesRepo.findByName("BARBARIAN");
         List<CharClassAbility> charClassAbilitiesList = new ArrayList<>();
-        int characterLevel = CharacterCalculator.getLevel(character.getExperience());
+        int barbLevel = ccl.getClassLevel();
         int numberOfUses = 2;
         String name = "ЯРОСТЬ +2";
-        if (characterLevel >= 3 && characterLevel <= 5) {
+        if (barbLevel >= 3 && barbLevel <= 5) {
             numberOfUses = 3;
-        } else if (characterLevel >= 6 && characterLevel <= 8) {
+        } else if (barbLevel >= 6 && barbLevel <= 8) {
             numberOfUses = 4;
-        } else if (characterLevel >= 9 && characterLevel <= 11) {
+        } else if (barbLevel >= 9 && barbLevel <= 11) {
             numberOfUses = 4;
             name = "ЯРОСТЬ +3";
-        } else if (characterLevel >= 12 && characterLevel <= 15) {
+        } else if (barbLevel >= 12 && barbLevel <= 15) {
             numberOfUses = 5;
             name = "ЯРОСТЬ +3";
-        } else if (characterLevel == 16) {
+        } else if (barbLevel == 16) {
             numberOfUses = 5;
             name = "ЯРОСТЬ +4";
-        } else if (characterLevel >= 17 && characterLevel <= 19) {
+        } else if (barbLevel >= 17 && barbLevel <= 19) {
             numberOfUses = 6;
             name = "ЯРОСТЬ +4";
-        } else if (characterLevel >= 20) {
+        } else if (barbLevel >= 20) {
             numberOfUses = 0;
             name = "ЯРОСТЬ +4";
         }
@@ -121,4 +166,4 @@ public class BarbarianUtils {
         }
         return charClassAbilitiesList;
     }
-}
+}*/

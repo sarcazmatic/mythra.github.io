@@ -1,4 +1,4 @@
-package ru.maleth.mythra.utility.races.aasimar;
+package ru.maleth.mythra.utility.races.elves;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class FallenAasimarUtils {
+public class DrowUtils {
 
     private final AbilityRepo abilityRepo;
     private final CharRaceAbilityRepo charRaceAbilityRepo;
@@ -24,7 +24,7 @@ public class FallenAasimarUtils {
     public List<CharRaceAbility> formAbilities(Character character) {
         Integer level = CharacterCalculator.getLevel(character.getExperience());
         List<CharRaceAbility> craList = new ArrayList<>();
-        List<Ability> abilities = abilityRepo.findAllByRaceLimitByLevel(RaceEnum.AASIMAR, level);
+        List<Ability> abilities = abilityRepo.findAllByRaceLimitByLevel(RaceEnum.ELF, level);
         abilities.addAll(abilityRepo.findAllByRaceLimitByLevel(character.getCharRace().getRaceEnum(), level));
         for (Ability a : abilities) {
             Optional<CharRaceAbility> craOptional = Optional.ofNullable(charRaceAbilityRepo.findByCharacter_IdAndAbility_Name(character.getId(), a.getName()));
@@ -36,8 +36,7 @@ public class FallenAasimarUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ИСЦЕЛЯЮЩИЕ РУКИ" -> cra.setNumberOfUses(CharacterCalculator.getLevel(character.getExperience()));
-                    case "САВАН СМЕРТИ" -> cra.setNumberOfUses(1);
+                    case "МАГИЯ ДРОУ УР.2", "МАГИЯ ДРОУ УР.3" -> cra.setNumberOfUses(1);
                     default -> cra.setNumberOfUses(0);
                 }
                 charRaceAbilityRepo.save(cra);

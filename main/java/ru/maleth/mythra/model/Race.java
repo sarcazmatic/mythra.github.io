@@ -21,7 +21,7 @@ public class Race {
     private Long id;
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    private RaceEnum name;
+    private RaceEnum raceEnum;
     @Enumerated(EnumType.STRING)
     private SizeEnum size;
     private int speed;

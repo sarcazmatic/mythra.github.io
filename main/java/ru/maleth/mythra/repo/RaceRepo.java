@@ -6,6 +6,6 @@ import ru.maleth.mythra.model.Race;
 
 public interface RaceRepo extends JpaRepository<Race, Long> {
 
-    Race findByName(RaceEnum name);
+    Race findByRaceEnum(RaceEnum name);
 
 }

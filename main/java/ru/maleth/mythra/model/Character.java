@@ -37,12 +37,9 @@ public class Character {
     @Column(name = "armor_class")
     private int armorClass;
     private int initiative;
-
-    @ManyToMany
-    @JoinTable(name = "characters_classes",
-            joinColumns = {@JoinColumn(name = "fk_character")},
-            inverseJoinColumns = {@JoinColumn(name = "fk_class")})
-    private Set<CharClass> characterClasses;
+    @OneToOne
+    @JoinColumn(name = "main_class_id")
+    private CharClass mainClass;
 
     @ManyToMany
     @JoinTable(name = "characters_proficiencies",
@@ -58,9 +55,5 @@ public class Character {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
-
-    public String getClassName() {
-        return ClassEnum.valueOf(this.getCharacterClasses().stream().findFirst().get().getName()).getName();
-    }
 
 }

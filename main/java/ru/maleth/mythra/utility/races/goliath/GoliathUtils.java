@@ -1,8 +1,7 @@
-package ru.maleth.mythra.utility.races.aasimar;
+package ru.maleth.mythra.utility.races.goliath;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.maleth.mythra.enums.RaceEnum;
 import ru.maleth.mythra.model.Ability;
 import ru.maleth.mythra.model.CharRaceAbility;
 import ru.maleth.mythra.model.Character;
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class FallenAasimarUtils {
+public class GoliathUtils {
 
     private final AbilityRepo abilityRepo;
     private final CharRaceAbilityRepo charRaceAbilityRepo;
@@ -24,8 +23,7 @@ public class FallenAasimarUtils {
     public List<CharRaceAbility> formAbilities(Character character) {
         Integer level = CharacterCalculator.getLevel(character.getExperience());
         List<CharRaceAbility> craList = new ArrayList<>();
-        List<Ability> abilities = abilityRepo.findAllByRaceLimitByLevel(RaceEnum.AASIMAR, level);
-        abilities.addAll(abilityRepo.findAllByRaceLimitByLevel(character.getCharRace().getRaceEnum(), level));
+        List<Ability> abilities = abilityRepo.findAllByRaceLimitByLevel(character.getCharRace().getRaceEnum(), level);
         for (Ability a : abilities) {
             Optional<CharRaceAbility> craOptional = Optional.ofNullable(charRaceAbilityRepo.findByCharacter_IdAndAbility_Name(character.getId(), a.getName()));
             CharRaceAbility cra;
@@ -36,8 +34,7 @@ public class FallenAasimarUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ИСЦЕЛЯЮЩИЕ РУКИ" -> cra.setNumberOfUses(CharacterCalculator.getLevel(character.getExperience()));
-                    case "САВАН СМЕРТИ" -> cra.setNumberOfUses(1);
+                    case "ВЫНОСЛИВОСТЬ КАМНЯ" -> cra.setNumberOfUses(1);
                     default -> cra.setNumberOfUses(0);
                 }
                 charRaceAbilityRepo.save(cra);

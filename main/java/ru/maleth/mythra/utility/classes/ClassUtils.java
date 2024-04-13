@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.maleth.mythra.model.CharClass;
 import ru.maleth.mythra.model.CharClassAbility;
+import ru.maleth.mythra.model.CharClassLevel;
 import ru.maleth.mythra.model.Character;
+import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.utility.classes.artificer.ArtificerUtils;
 import ru.maleth.mythra.utility.classes.barbarian.BarbarianUtils;
 import ru.maleth.mythra.utility.classes.bard.BardUtils;
@@ -25,6 +27,7 @@ import java.util.List;
 @Slf4j
 public class ClassUtils {
 
+    private final CharClassLevelRepo charClassLevelRepo;
     private final BardUtils bardUtils;
     private final BarbarianUtils barbarianUtils;
     private final WarriorUtils warriorUtils;
@@ -39,20 +42,20 @@ public class ClassUtils {
 
 
     public List<CharClassAbility> charClassAbilityFormer(Character character) {
-        List<CharClass> characterClasses = character.getCharacterClasses().stream().toList();
+        List<CharClassLevel> cclList = charClassLevelRepo.findAllByCharacter_IdOrderByCharClass(character.getId());
         List<CharClassAbility> charClassAbilitiesList = new ArrayList<>();
-        for (CharClass charClass : characterClasses) {
-            switch (charClass.getName()) {
-                case "BARD" -> charClassAbilitiesList.addAll(bardUtils.formAbilities(character, charClass));
-                case "BARBARIAN" -> charClassAbilitiesList.addAll(barbarianUtils.formAbilities(character, charClass));
-                case "WARRIOR" -> charClassAbilitiesList.addAll(warriorUtils.formAbilities(character, charClass));
-                case "DRUID" -> charClassAbilitiesList.addAll(druidUtils.formAbilities(character, charClass));
-                case "MONK" -> charClassAbilitiesList.addAll(monkUtils.formAbilities(character, charClass));
-                case "PALADIN" -> charClassAbilitiesList.addAll(paladinUtils.formAbilities(character, charClass));
-                case "RANGER" -> charClassAbilitiesList.addAll(rangerUtils.formAbilities(character, charClass));
-                case "ROGUE" -> charClassAbilitiesList.addAll(rogueUtils.formAbilities(character, charClass));
-                case "WIZARD" -> charClassAbilitiesList.addAll(wizardUtils.formAbilities(character, charClass));
-                case "ARTIFICER" -> charClassAbilitiesList.addAll(artificerUtils.formAbilities(character, charClass));
+        for (CharClassLevel ccl : cclList) {
+            switch (ccl.getCharClass().getName()) {
+                case "BARD" -> charClassAbilitiesList.addAll(bardUtils.formAbilities(ccl));
+                case "BARBARIAN" -> charClassAbilitiesList.addAll(barbarianUtils.formAbilities(ccl));
+                case "WARRIOR" -> charClassAbilitiesList.addAll(warriorUtils.formAbilities(ccl));
+                case "DRUID" -> charClassAbilitiesList.addAll(druidUtils.formAbilities(ccl));
+                case "MONK" -> charClassAbilitiesList.addAll(monkUtils.formAbilities(ccl));
+                case "PALADIN" -> charClassAbilitiesList.addAll(paladinUtils.formAbilities(ccl));
+                case "RANGER" -> charClassAbilitiesList.addAll(rangerUtils.formAbilities(character, character.getMainClass()));
+                case "ROGUE" -> charClassAbilitiesList.addAll(rogueUtils.formAbilities(character, character.getMainClass()));
+                case "WIZARD" -> charClassAbilitiesList.addAll(wizardUtils.formAbilities(character, character.getMainClass()));
+                case "ARTIFICER" -> charClassAbilitiesList.addAll(artificerUtils.formAbilities(character, character.getMainClass()));
                 default -> new ArrayList<>();
             }
         }
