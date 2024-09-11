@@ -32,7 +32,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final RaceUtils raceUtils;
 
 
-    private static final String PAGE = "directToPAge";
+    private static final String PAGE = "directToPage";
 
     @Override
     public Character createCharacter(String userName, CharacterFullDto characterFullDto) {
@@ -93,6 +93,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .maxHP(characterFullDto.getHitPoints())
                 .currentHP(characterFullDto.getHitPoints())
                 .experience(0)
+                .isLevelUpReady(false)
                 .armorClass(10 + CharacterCalculator.calculateAttributeModifier(characterFullDto.getDexterity()))
                 .initiative(CharacterCalculator.calculateAttributeModifier(characterFullDto.getDexterity()))
                 .proficiencies(proficiencies)
@@ -258,6 +259,10 @@ public class CharacterServiceImpl implements CharacterService {
         int curHitPoints = character.getCurrentHP();
         int maxHitPoints = character.getMaxHP();
 
+        /*
+        Создаем список (почему не сет), и засовываем сюда названия всех профишиенси, отмеченных галочкой на странице skills.jsp.
+        <input type="checkbox" id="acrobatics" name="profs" value="acrobatics"> -- так как у всех чекбоксов имя profs, то их values будут переданы в списке под названием profs
+         */
         List<String> profs = character.getProficiencies().stream().map(p
                 -> p.getName().toUpperCase().replace('-', '_')).toList();
         /*
@@ -381,21 +386,19 @@ public class CharacterServiceImpl implements CharacterService {
 
         /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
         List<CharClassAbility> abilities = classUtils.charClassAbilityFormer(character);
-        if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("МОНАХ: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
-            character.setArmorClass(10
-                    + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
-                    + CharacterCalculator.calculateAttributeModifier(character.getWisdom()));
+        /*Тут, стало быть, убираем дубль, если он случится*/
+        if (character.getExperience() < 1) {
+            if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("МОНАХ: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
+                character.setArmorClass(10
+                        + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
+                        + CharacterCalculator.calculateAttributeModifier(character.getWisdom()));
+            }
+            if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("ВАРВАР: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
+                character.setArmorClass(10
+                        + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
+                        + CharacterCalculator.calculateAttributeModifier(character.getConstitution()));
+            }
         }
-        if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("ВАРВАР: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
-            character.setArmorClass(10
-                    + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
-                    + CharacterCalculator.calculateAttributeModifier(character.getConstitution()));
-        }
-        List<CharRaceAbility> raceAbilities = raceUtils.charRaceAbilityFormer(character);
-        /*
-        Из интересного – сперва я передавал все абилки в атрибуты и там выводил, а потом научился динамически формировать
-        список в SheetController – поэтому эти вот два списка сверху спорно актуальны.
-         */
 
         /*
         Тут переносим атрибуты в мапу. И указываем адрес страницы.

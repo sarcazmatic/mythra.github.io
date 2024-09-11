@@ -499,13 +499,17 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            renderThis(ourData);
+            if (ourData.isLevelUpReady === true) {
+                window.location.replace("levelup");
+            } else {
+                renderThis(ourData);
+            }
         }
         ourRequest.send(body);
     })
 
     function renderThis(data) {
-        currentExperience.innerText = data.experience;
+            currentExperience.innerText = data.experience;
     }
 
 </script>

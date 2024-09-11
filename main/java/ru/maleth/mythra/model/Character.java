@@ -55,5 +55,7 @@ public class Character {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
+    @Column(name = "is_level_up_ready")
+    private Boolean isLevelUpReady;
 
 }

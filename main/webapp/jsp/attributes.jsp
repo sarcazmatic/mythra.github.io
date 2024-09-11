@@ -124,7 +124,7 @@
     </div>
     <div class="atrb-container">
         <h2>Выберем характеристики</h2>
-        <form action="skills" method="post">
+        <form action="skills" method="post"> <%--тут указано в action "skills" -- значит страница, на которую переходим, текущий адрес + /skills--%>
             <div class="atrb-collumn">
                 <div class="atrbs">
                     <div class="input-field">

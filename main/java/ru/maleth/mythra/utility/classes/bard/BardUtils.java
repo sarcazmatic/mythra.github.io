@@ -29,7 +29,8 @@ public class BardUtils {
     public List<CharClassAbility> formAbilities(CharClassLevel ccl) {
         Character character = ccl.getCharacter();
         CharClass charClass = classesRepo.findByName("BARD");
-        Integer level = ccl.getClassLevel();
+        //Integer level = ccl.getClassLevel();
+        Integer level = CharacterCalculator.getLevel(character.getExperience());
         List<CharClassAbility> ccaList = new ArrayList<>();
         List<Ability> abilities = abilityRepo.findAllByClassLimitByLevel("BARD", level);
         for (Ability a : abilities) {

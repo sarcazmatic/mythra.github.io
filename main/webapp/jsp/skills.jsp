@@ -111,7 +111,6 @@
             color: #666;
         }
 
-
         .summary-box .skills-container .skills-collumn .input-field input {
             width: 75%;
             padding: 8px;

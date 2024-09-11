@@ -194,7 +194,7 @@
     var charName = document.getElementById("charName");
     var charClass = document.getElementById("charClass");
     var charRace = document.getElementById("charRace");
-    var charSubrace = document.getElementsByName("charSubrace");
+    var charSubrace = document.getElementsByName("charSubrace").values();
 
         document.getElementById('submit-character').addEventListener('click', function() {
         document.getElementById('myForm').action = document.getElementById('charName').value.toString()+"/attributes";

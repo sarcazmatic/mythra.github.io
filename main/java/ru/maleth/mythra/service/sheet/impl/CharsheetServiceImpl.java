@@ -69,10 +69,13 @@ public class CharsheetServiceImpl implements CharsheetService {
     @Override
     public String updExp(NumberModifierDto numberModifierDto) {
         Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
-        character.setExperience(character.getExperience() + numberModifierDto.getModifier());
-        characterRepo.updateExp(character.getCharName(), character.getExperience());
         Gson gson = new Gson();
+        if (CharacterCalculator.getLevel(character.getExperience() + numberModifierDto.getModifier()) > CharacterCalculator.getLevel(character.getExperience())) {
+            character.setIsLevelUpReady(true);
+        }
+        character.setExperience(character.getExperience() + numberModifierDto.getModifier());
         String response = gson.toJson(character);
+        characterRepo.updateExp(character.getCharName(), character.getExperience());
         return response;
     }
 

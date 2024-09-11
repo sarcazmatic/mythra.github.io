@@ -15,7 +15,7 @@ public class CharClassAbility {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "charater_id")
+    @JoinColumn(name = "character_id")
     private Character character;
     @ManyToOne
     @JoinColumn(name = "char_class_id")
