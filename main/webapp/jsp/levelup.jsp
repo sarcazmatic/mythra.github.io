@@ -78,8 +78,8 @@
         }
 
         .creation-box .form-container .submit-button {
-            margin-top: 10%;
-            width: 75%;
+            margin-top: 2%;
+            width: 25%;
             font-size: 0.8em;
             padding: 0.7em 0.7em 0.7em 1em;
             font-family: 'Philosopher', cursive;
@@ -99,233 +99,58 @@
 </head>
 <body>
 <div class="creation-box">
-    <h2>Создадим твоего персонажа</h2>
+    <h2>Новый уровень!</h2>
     <div class="form-container">
-        <form id="myForm" action="attributes" method="post">
-            <label for="charName">Имя:</label>
-            <div class="input-field">
-                <input type="text" id="charName" name="charName">
-                <br>
+        <form id="class-choice-form">
+            <label>Выбери класс:</label>
+            <div id="put-classes-here" class="input-field">
             </div>
-            <label for="charClass">Класс:</label>
-            <div class="input-field">
-                <select id="charClass" name="charClass">
-                    <option>Бард</option>
-                    <option>Варвар</option>
-                    <option>Воин</option>
-                    <option>Волшебник</option>
-                    <option>Друид</option>
-                    <option>Колдун</option>
-                    <option value="Кровавый-охотник">Кровавый охотник</option>
-                    <option>Монах</option>
-                    <option>Изобретатель</option>
-                    <option>Паладин</option>
-                    <option>Плут</option>
-                    <option>Следопыт</option>
-                    <option>Чародей</option>
-                </select>
-                <br>
+            <br>
+            <label>Мультикласс:</label>
+            <div id="put-multiclasses-here" class="input-field">
             </div>
-            <label for="charRace">Раса:</label>
-            <div class="input-field">
-                <select id="charRace" name="charRace" onchange="raceSelect()">
-                    <option>Ааракокра</option>
-                    <option value="Аасимар">Аасимар</option>
-                    <option value="Гит">Гит</option>
-                    <option value="Гном">Гном</option>
-                    <option>Голиаф</option>
-                    <option value="Дварф">Дварф</option>
-                    <option value="Драконорожденный">Драконорожденный</option>
-                    <option>Полуорк</option>
-                    <option value="Полурослик">Полурослик</option>
-                    <option>Полуэльф</option>
-                    <option>Тифлинг</option>
-                    <option>Человек</option>
-                    <option value="Эльф">Эльф</option>
-                </select>
-                <br>
-                <select id="aasimarSubrace" name="charSubrace" disabled hidden>
-                    <option value="Аасимар-защитник">Аасимар защитник</option>
-                    <option value="Аасимар-каратель">Аасимар каратель</option>
-                    <option value="Падший-аасимар">Падший аасимар</option>
-                </select>
-                <select id="githSubrace" name="charSubrace" disabled hidden>
-                    <option value="Гитьянки">Гитьянки</option>
-                    <option value="Гитцерай">Гитцерай</option>
-                </select>
-                <select id="gnomeSubrace" name="charSubrace" disabled hidden>
-                    <option value="Лесной-гном">Лесной гном</option>
-                    <option value="Скальный-гном">Скальный гном</option>
-                </select>
-                <select id="dwarfSubrace" name="charSubrace" disabled hidden>
-                    <option value="Горный-дварф">Горный дварф</option>
-                    <option value="Холмовой-дварф">Холмовой дварф</option>
-                </select>
-                <select id="dragonbornSubrace" name="charSubrace" disabled hidden>
-                    <option value="Драконорожденный-(белый)">Белый</option>
-                    <option value="Драконорожденный-(бронзовый)">Бронзовый</option>
-                    <option value="Драконорожденный-(зеленый)">Зеленый</option>
-                    <option value="Драконорожденный-(золотой)">Золотой</option>
-                    <option value="Драконорожденный-(красный)">Красный</option>
-                    <option value="Драконорожденный-(латунный)">Латунный</option>
-                    <option value="Драконорожденный-(медный)">Медный</option>
-                    <option value="Драконорожденный-(серебряный)">Серебряный</option>
-                    <option value="Драконорожденный-(синий)">Синий</option>
-                    <option value="Драконорожденный-(черный)">Чёрный</option>
-                </select>
-                <select id="elfSubrace" name="charSubrace" disabled hidden>
-                    <option value="Высший-эльф">Высший эльф</option>
-                    <option value="Лесной-эльф">Лесной эльф</option>
-                    <option value="Дроу">Дроу</option>
-                </select>
-                <select id="halflingSubrace" name="charSubrace" disabled hidden>
-                    <option value="Коренастый-полурослик">Коренастый полурослик</option>
-                    <option value="Легконогий-полурослик">Легконогий полурослик</option>
-                </select>
-                <br>
-            </div>
-            <button id="submit-character" type="submit" class="submit-button">Дальше</button>
         </form>
+        <output id="amount-of-classes" hidden>${size}</output>
     </div>
 </div>
 
 <script>
+    var numOfClasses = document.getElementById("amount-of-classes").innerText;
+    let arrayWithClassesAndLevels = ${array};
 
-    var charName = document.getElementById("charName");
-    var charClass = document.getElementById("charClass");
-    var charRace = document.getElementById("charRace");
-    var charSubrace = document.getElementsByName("charSubrace").values();
 
-        document.getElementById('submit-character').addEventListener('click', function() {
-        document.getElementById('myForm').action = document.getElementById('charName').value.toString()+"/attributes";
-        stop()
-    })
-
-    function raceSelect() {
-        var charRace = document.getElementById("charRace");
-        var aasimarSubrace = document.getElementById("aasimarSubrace");
-        var githSubrace = document.getElementById("githSubrace");
-        var gnomeSubrace = document.getElementById("gnomeSubrace");
-        var dwarfSubrace = document.getElementById("dwarfSubrace");
-        var dragonbornSubrace = document.getElementById("dragonbornSubrace");
-        var elfSubrace = document.getElementById("elfSubrace");
-        var halflingSubrace = document.getElementById("halflingSubrace");
-
-        if (charRace.value === "Аасимар") {
-            aasimarSubrace.hidden = false;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = true;
-            aasimarSubrace.disabled = false;
-            githSubrace.disabled = true;
-            gnomeSubrace.disabled = true;
-            dwarfSubrace.disabled = true;
-            dragonbornSubrace.disabled = true;
-            elfSubrace.disabled = true;
-            halflingSubrace.disabled = true;
-        } else if (charRace.value === "Гит") {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = false;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = true;
-            aasimarSubrace.disabled = true;
-            githSubrace.disabled = false;
-            gnomeSubrace.disabled = true;
-            dwarfSubrace.disabled = true;
-            dragonbornSubrace.disabled = true;
-            elfSubrace.disabled = true;
-            halflingSubrace.disabled = true;
-        } else if (charRace.value === "Гном") {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = false;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = true;
-            aasimarSubrace.disabled = true;
-            githSubrace.disabled = true;
-            gnomeSubrace.disabled = false;
-            dwarfSubrace.disabled = true;
-            dragonbornSubrace.disabled = true;
-            elfSubrace.disabled = true;
-            halflingSubrace.disabled = true;
-        } else if (charRace.value === "Дварф") {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = false;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = true;
-            aasimarSubrace.disabled = true;
-            githSubrace.disabled = true;
-            gnomeSubrace.disabled = true;
-            dwarfSubrace.disabled = false;
-            dragonbornSubrace.disabled = true;
-            elfSubrace.disabled = true;
-            halflingSubrace.disabled = true;
-        } else if (charRace.value === "Драконорожденный") {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = false;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = true;
-            aasimarSubrace.disabled = true;
-            githSubrace.disabled = true;
-            gnomeSubrace.disabled = true;
-            dwarfSubrace.disabled = true;
-            dragonbornSubrace.disabled = false;
-            elfSubrace.disabled = true;
-            halflingSubrace.disabled = true;
-        } else if (charRace.value === "Эльф") {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = false;
-            halflingSubrace.hidden = true;
-            aasimarSubrace.disabled = true;
-            githSubrace.disabled = true;
-            gnomeSubrace.disabled = true;
-            dwarfSubrace.disabled = true;
-            dragonbornSubrace.disabled = true;
-            elfSubrace.disabled = false;
-            halflingSubrace.disabled = true;
-        } else if (charRace.value === "Полурослик") {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = false;
-            aasimarSubrace.disabled = true;
-            githSubrace.disabled = true;
-            gnomeSubrace.disabled = true;
-            dwarfSubrace.disabled = true;
-            dragonbornSubrace.disabled = true;
-            elfSubrace.disabled = true;
-            halflingSubrace.disabled = false;
-        } else {
-            aasimarSubrace.hidden = true;
-            githSubrace.hidden = true;
-            gnomeSubrace.hidden = true;
-            dwarfSubrace.hidden = true;
-            dragonbornSubrace.hidden = true;
-            elfSubrace.hidden = true;
-            halflingSubrace.hidden = true;
+    function loadLine() {
+        for (let i = 0; i < numOfClasses; i = i + 2) {
+            var newDiv2 = document.createElement("button");
+            newDiv2.className = "submit-button";
+            let classText = arrayWithClassesAndLevels[i];
+            let levelText = arrayWithClassesAndLevels[i + 1];
+            let levelUpText = parseInt(levelText) + 1;
+            newDiv2.id = classText;
+            newDiv2.innerText = classText + " : " + levelText + " -> " + levelUpText;
+            newDiv2.setAttribute("onclick", "setValue(" + i + ")");
+            document.getElementById('put-classes-here').appendChild(newDiv2);
+            console.log(newDiv2.onclick);
+            console.log(classText);
         }
     }
+
+    function setValue(i) {
+        var popp = arrayWithClassesAndLevels[i];
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('PUT', 'charsheet/updCharacterLevel');
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        const newBody = JSON.stringify({
+            "charClassToLevelUp": popp
+        });
+        console.log(newBody);
+        ourRequest.send(newBody);
+        document.getElementById('class-choice-form').method = "get";
+        document.getElementById('class-choice-form').action = "charsheet";
+    }
+
+    window.onload = loadLine();
+
 </script>
 
 </body>

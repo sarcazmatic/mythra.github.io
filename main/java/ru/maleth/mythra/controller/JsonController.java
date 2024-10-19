@@ -20,7 +20,7 @@ public class JsonController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String postJson(@RequestBody UserDto userDto) {
-        System.out.println(userDto);
+        //System.out.println(userDto);
         //User user = User.builder().email("pp@pp").name("ppp").password("password").build();
         userService.registerUser(userDto);
         Gson gson = new Gson();
