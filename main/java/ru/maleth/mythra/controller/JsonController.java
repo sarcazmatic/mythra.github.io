@@ -26,7 +26,7 @@ public class JsonController {
         Gson gson = new Gson();
         User user = userRepo.findByName(userDto.getName()).get();
         String json = gson.toJson(user);
-        System.out.println(json);
+        //System.out.println(json);
         return json;
     }
 
@@ -36,7 +36,7 @@ public class JsonController {
         User user = userRepo.findByName("ppp").get();
         Gson gson = new Gson();
         String json = gson.toJson(user);
-        System.out.println(json);
+        //System.out.println(json);
         return json;
     }
 

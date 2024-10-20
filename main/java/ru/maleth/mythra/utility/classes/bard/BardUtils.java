@@ -27,7 +27,7 @@ public class BardUtils {
     private final ClassesRepo classesRepo;
 
     public List<CharClassAbility> formAbilities(CharClassLevel ccl) {
-        System.out.println(ccl);
+        //System.out.println(ccl);
         Character character = ccl.getCharacter();
         CharClass charClass = classesRepo.findByName("BARD");
         Integer level = ccl.getClassLevel();

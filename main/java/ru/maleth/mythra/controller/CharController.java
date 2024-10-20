@@ -61,15 +61,22 @@ public class CharController {
     @GetMapping("/charsheet")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String updSheet(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(300);
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-        }
         Character character = characterRepo.findByCreator_NameAndCharName(userName, charName).get();
         Map<String, String> attributes = characterService.goToSheet(character);
-        model.addAllAttributes(attributes);
-        return attributes.get(PAGE);
+        Callable callable = () -> {
+            model.addAllAttributes(attributes);
+            return attributes.get(PAGE);
+        };
+        FutureTask<String> futureTask = new FutureTask<>(callable);
+        Thread th1 = new Thread(futureTask);
+        th1.start();
+        try {
+            th1.join();
+            return futureTask.get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @GetMapping("/levelup")
