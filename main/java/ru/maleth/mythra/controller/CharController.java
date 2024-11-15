@@ -63,7 +63,7 @@ public class CharController {
     public String updSheet(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
         Character character = characterRepo.findByCreator_NameAndCharName(userName, charName).get();
         Map<String, String> attributes = characterService.goToSheet(character);
-        Callable callable = () -> {
+        Callable<String> callable = () -> {
             model.addAllAttributes(attributes);
             return attributes.get(PAGE);
         };
