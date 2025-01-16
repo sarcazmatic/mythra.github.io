@@ -33,7 +33,7 @@ public class JsonController {
     @GetMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String getJson() {
-        User user = userRepo.findByName("ppp").get();
+        User user = userRepo.findByName("asd").get();
         Gson gson = new Gson();
         String json = gson.toJson(user);
         //System.out.println(json);

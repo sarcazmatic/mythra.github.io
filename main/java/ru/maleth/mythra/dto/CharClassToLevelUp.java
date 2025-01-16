@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class CharClassToLevelUp {
 
     private String charClassToLevelUp;
-    private String charName;
+    private Long charId;
 
 }

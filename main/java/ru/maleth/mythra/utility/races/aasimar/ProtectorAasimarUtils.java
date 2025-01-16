@@ -2,17 +2,13 @@ package ru.maleth.mythra.utility.races.aasimar;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.maleth.mythra.enums.AbilityEnum;
-import ru.maleth.mythra.enums.ActionCostEnum;
 import ru.maleth.mythra.enums.RaceEnum;
-import ru.maleth.mythra.enums.RestEnum;
 import ru.maleth.mythra.model.Ability;
 import ru.maleth.mythra.model.CharRaceAbility;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.AbilityRepo;
-import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharRaceAbilityRepo;
-import ru.maleth.mythra.service.character.CharacterCalculator;
+import ru.maleth.mythra.utility.CharacterCalculator;
 
 import java.util.ArrayList;
 import java.util.List;

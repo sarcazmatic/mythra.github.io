@@ -11,7 +11,7 @@ import ru.maleth.mythra.model.CharClassAbility;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.AbilityRepo;
 import ru.maleth.mythra.repo.CharClassAbilityRepo;
-import ru.maleth.mythra.service.character.CharacterCalculator;
+import ru.maleth.mythra.utility.CharacterCalculator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -11,12 +11,11 @@ import ru.maleth.mythra.dto.NumberModifierDto;
 import ru.maleth.mythra.model.CharClassAbility;
 import ru.maleth.mythra.model.CharRaceAbility;
 import ru.maleth.mythra.model.Character;
-import ru.maleth.mythra.model.Race;
 import ru.maleth.mythra.repo.CharClassAbilityRepo;
 import ru.maleth.mythra.repo.CharRaceAbilityRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
 import ru.maleth.mythra.repo.RaceRepo;
-import ru.maleth.mythra.service.character.CharacterCalculator;
+import ru.maleth.mythra.utility.CharacterCalculator;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
 import java.util.ArrayList;
@@ -42,6 +41,9 @@ public class CharsheetServiceImpl implements CharsheetService {
         List<AbilityJsonResponseDto> abilList = new ArrayList<>();
         abilList.addAll(ccaList);
         abilList.addAll(craList);
+        for (AbilityJsonResponseDto a : abilList) {
+            log.info("Добавлена абилка: " + a.getName());
+        }
         Gson gson = new Gson();
         String response = gson.toJson(abilList);
         return response;

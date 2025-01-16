@@ -491,7 +491,7 @@
         incomingExp = document.getElementById("incoming-exp").value;
         expModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', '/charsheet/calcExp');
+        ourRequest.open('PUT', '/api/calcExp');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
             charName: charName,
@@ -500,7 +500,7 @@
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
             if (ourData.isLevelUpReady === true) {
-                window.location.replace("levelup");
+                window.location.replace("levelup?charId="+charId);
             } else {
                 renderThis(ourData);
             }
@@ -566,7 +566,7 @@
         incomingHeal = document.getElementById("incoming-heal").value;
         healModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', '/charsheet/calcHeal');
+        ourRequest.open('PUT', '/api/calcHeal');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
             charName: charName,
@@ -619,7 +619,7 @@
         incomingDamage = document.getElementById("incoming-damage").value;
         dmgModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', '/charsheet/calcDmg');
+        ourRequest.open('PUT', '/api/calcDmg');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
             charName: charName,
@@ -650,7 +650,7 @@
 <script>
     var charId = document.getElementById("char-id").innerText;
 
-    var uriText = "/charsheet/charAbil/" + charId;
+    var uriText = "/api/charAbil/" + charId;
     var elementToAdd = document.getElementById("abilities-locator");
 
     function loadLine() {
@@ -755,7 +755,7 @@
             currentCharge--;
             button.innerText = currentCharge;
             var abilRequest = new XMLHttpRequest();
-            abilRequest.open('PUT', '/charsheet/abilCharge');
+            abilRequest.open('PUT', '/api/abilCharge');
             abilRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
             const body = JSON.stringify({
                 charId: charId,

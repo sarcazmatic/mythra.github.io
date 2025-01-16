@@ -100,6 +100,7 @@
 <body>
 <div class="creation-box">
     <h2>Новый уровень!</h2>
+    <p id="char-name" hidden>${charName}</p>
     <div class="form-container">
         <form id="class-choice-form">
             <label>Выбери класс:</label>
@@ -130,20 +131,21 @@
             newDiv2.innerText = classText + " : " + levelText + " -> " + levelUpText;
             newDiv2.setAttribute("onclick", "setValue(" + i + ")");
             document.getElementById('put-classes-here').appendChild(newDiv2);
-            console.log(newDiv2.onclick);
-            console.log(classText);
         }
     }
 
-    function setValue(i) {
-        var popp = arrayWithClassesAndLevels[i];
+    async function setValue(i) {
+        var uriText = "/api/levelup";
+        var classToLevelUp = arrayWithClassesAndLevels[i];
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', 'charsheet/updCharacterLevel');
-        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        ourRequest.open('PUT', uriText);
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+        const searchParams = new URLSearchParams(location.search);
+        var charId = searchParams.get("charId");
         const newBody = JSON.stringify({
-            "charClassToLevelUp": popp
+            "charId": charId,
+            "charClassToLevelUp": classToLevelUp
         });
-        console.log(newBody);
         ourRequest.send(newBody);
         document.getElementById('class-choice-form').method = "get";
         document.getElementById('class-choice-form').action = "charsheet";

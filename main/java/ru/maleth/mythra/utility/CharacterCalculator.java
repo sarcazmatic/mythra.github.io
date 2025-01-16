@@ -1,4 +1,4 @@
-package ru.maleth.mythra.service.character;
+package ru.maleth.mythra.utility;
 
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;

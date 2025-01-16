@@ -41,7 +41,7 @@ public class Character {
     @JoinColumn(name = "main_class_id")
     private CharClass mainClass;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "characters_proficiencies",
             joinColumns = {@JoinColumn(name = "fk_character")},
             inverseJoinColumns = {@JoinColumn(name = "fk_proficiency")})
