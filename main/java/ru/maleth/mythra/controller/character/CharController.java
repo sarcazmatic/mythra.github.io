@@ -17,6 +17,7 @@ import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
 import ru.maleth.mythra.service.character.CharacterCreationService;
 import ru.maleth.mythra.service.character.CharacterService;
+import ru.maleth.mythra.service.sheet.CharsheetService;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -29,6 +30,8 @@ public class CharController {
 
     private final CharacterService characterService;
     private final CharacterCreationService characterCreationService;
+    private final CharsheetService charsheetService;
+
     private static final String PAGE = "directToPage";
 
     @PostMapping("/attributes")
@@ -59,10 +62,11 @@ public class CharController {
 
     @GetMapping("/charsheet")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    //loading charsheet for >1 time
     public String getSheet(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
         Character character = characterService.findByUserNameAndCharName(userName, charName);
         Callable<String> callable = () -> {
-            Map<String, String> attributes = characterCreationService.formSheet(character);
+            Map<String, String> attributes = charsheetService.getSheet(character);
             model.addAllAttributes(attributes);
             return attributes.get(PAGE);
         };

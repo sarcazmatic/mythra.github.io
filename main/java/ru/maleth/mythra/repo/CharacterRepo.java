@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.maleth.mythra.model.Character;
+import ru.maleth.mythra.model.Proficiency;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CharacterRepo extends JpaRepository<Character, Long> {

@@ -1,10 +1,14 @@
 package ru.maleth.mythra.service.sheet;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.maleth.mythra.dto.AbilityChargeModifierDto;
 import ru.maleth.mythra.dto.NumberModifierDto;
+import ru.maleth.mythra.model.Character;
+
+import java.util.Map;
 
 public interface CharsheetService {
+
+    Map<String, String> getSheet(Character character);
 
     String abilityLoader(Long charId);
 
