@@ -13,6 +13,7 @@ import ru.maleth.mythra.model.CharClassLevel;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
+import ru.maleth.mythra.service.levelup.LevelUpService;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
 @RestController
@@ -22,13 +23,13 @@ import ru.maleth.mythra.service.sheet.CharsheetService;
 public class UpdateController {
 
     private final CharsheetService charsheetService;
-    private final CharacterRepo characterRepo;
-    private final CharClassLevelRepo charClassLevelRepo;
+    private final LevelUpService levelUpService;
 
 
     @GetMapping("/charAbil/{charId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public String abilityLoader(@PathVariable (name = "charId") Long charId) {
+    public String abilityLoader(@PathVariable(name = "charId") Long charId) {
+        log.info("Пришел запрос на загрузку абилок для персонажа с id {}", charId);
         String response = charsheetService.abilityLoader(charId);
         return response;
     }
@@ -36,6 +37,10 @@ public class UpdateController {
     @PutMapping("/abilCharge")
     @ResponseStatus(HttpStatus.OK)
     public String updAbilityCharge(@RequestBody AbilityChargeModifierDto abilityChargeModifierDto) {
+        log.info("Пришел запрос на обновление кол-ва использований персонажем с id {} абилки '{}'. Новое значение: {} единиц",
+                abilityChargeModifierDto.getAbilName(),
+                abilityChargeModifierDto.getCharId(),
+                abilityChargeModifierDto.getModifier());
         String response = charsheetService.updAbilityCharge(abilityChargeModifierDto);
         return response;
     }
@@ -43,6 +48,9 @@ public class UpdateController {
     @PutMapping("/calcExp")
     @ResponseStatus(HttpStatus.OK)
     public String updExp(@RequestBody NumberModifierDto numberModifierDto) {
+        log.info("Пришел запрос на изменение опыта для персонажа {} на {}",
+                numberModifierDto.getCharName(),
+                numberModifierDto.getModifier());
         String response = charsheetService.updExp(numberModifierDto);
         return response;
     }
@@ -50,6 +58,9 @@ public class UpdateController {
     @PutMapping("/calcHeal")
     @ResponseStatus(HttpStatus.OK)
     public String updHeal(@RequestBody NumberModifierDto numberModifierDto) {
+        log.info("Пришел запрос на лечение для персонажа {} на {} hp",
+                numberModifierDto.getCharName(),
+                numberModifierDto.getModifier());
         String response = charsheetService.updHeal(numberModifierDto);
         return response;
     }
@@ -57,23 +68,20 @@ public class UpdateController {
     @PutMapping("/calcDmg")
     @ResponseStatus(HttpStatus.OK)
     public String updDamage(@RequestBody NumberModifierDto numberModifierDto) {
+        log.info("Пришел запрос на урон по персонажу {} на {} hp",
+                numberModifierDto.getCharName(),
+                numberModifierDto.getModifier());
         String response = charsheetService.updDamage(numberModifierDto);
         return response;
     }
 
     @PutMapping("/levelup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void testMethod(Model model, @RequestBody CharClassToLevelUp charClassToLevelUp) {
-        Character character =  characterRepo.findById(charClassToLevelUp.getCharId()).get();
-        CharClassLevel ccl = charClassLevelRepo.findAllByCharacter_IdOrderByCharClass(character.getId())
-                .stream()
-                .filter(c -> c.getCharClass().getName().equals(ClassEnum.getClassByName(charClassToLevelUp.getCharClassToLevelUp()).toString()))
-                .findFirst().get();
-        ccl.setClassLevel(ccl.getClassLevel()+1);
-        log.info("Повышаем уровень класса персонажа: {} c {} до {}", ccl.getCharClass().getName(), ccl.getClassLevel()-1, ccl.getClassLevel());
-        character.setIsLevelUpReady(false);
-        characterRepo.save(character);
-        charClassLevelRepo.save(ccl);
+    public void levelUp(Model model, @RequestBody CharClassToLevelUp charClassToLevelUp) {
+        log.info("Пришел запрос на повышение уровня персонажа с id {} для его класса {}",
+                charClassToLevelUp.getCharId(),
+                charClassToLevelUp.getCharClassToLevelUp());
+        levelUpService.levelUp(charClassToLevelUp);
     }
 
 }

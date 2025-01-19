@@ -1,4 +1,4 @@
-package ru.maleth.mythra.controller;
+package ru.maleth.mythra.controller.auth;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import ru.maleth.mythra.service.user.UserService;
 
 @Controller
 @Data
-public class StartController {
+public class AuthController {
 
     private final UserService userService;
 

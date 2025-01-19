@@ -463,8 +463,8 @@
             <h2>${experience}</h2>
         </div>
         <div class="modal-body">
-            <input type="number" id="incoming-exp">
-            <button class="heal-button" id="sec-exp-button" name="sec-heal-button">ОПЫТ</button>
+            <input type="number" id="incoming-exp" min="1" required placeholder="От 1">
+            <button class="heal-button" id="sec-exp-button" name="sec-exp-button">ОПЫТ</button>
         </div>
     </div>
 </div>
@@ -479,16 +479,19 @@
 
     function expShow() {
         expModal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === expModal) {
-            expModal.style.display = "none";
+        window.onclick = function (event) {
+            if (event.target === expModal) {
+                expModal.style.display = "none";
+            }
         }
     }
 
     expButton.addEventListener("click", function () {
         incomingExp = document.getElementById("incoming-exp").value;
+        if (incomingExp < 1) {
+            alert("Значение не может быть меньше 1")
+            return;
+        }
         expModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
         ourRequest.open('PUT', '/api/calcExp');
@@ -538,7 +541,7 @@
             <h2>${curHitPoints}</h2>
         </div>
         <div class="modal-body">
-            <input type="number" id="incoming-heal">
+            <input type="number" id="incoming-heal" min="1" required placeholder="От 1">
             <button class="heal-button" id="sec-heal-button" name="sec-heal-button">ЛЕЧЕНИЕ</button>
         </div>
     </div>
@@ -554,16 +557,19 @@
 
     function hpHealShow() {
         healModal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === healModal) {
-            healModal.style.display = "none";
+        window.onclick = function (event) {
+            if (event.target === healModal) {
+                healModal.style.display = "none";
+            }
         }
     }
 
     healButton.addEventListener("click", function () {
         incomingHeal = document.getElementById("incoming-heal").value;
+        if (incomingHeal < 1) {
+            alert("Значение не может быть меньше 1")
+            return;
+        }
         healModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
         ourRequest.open('PUT', '/api/calcHeal');
@@ -591,7 +597,7 @@
             <h2>${curHitPoints}</h2>
         </div>
         <div class="modal-body">
-            <input type="number" id="incoming-damage">
+            <input type="number" id="incoming-damage" min="1" required placeholder="От 1">
             <button class="dmg-button" id="sec-dmg-button" name="sec-dmg-button">УРОН</button>
         </div>
     </div>
@@ -607,16 +613,19 @@
 
     function hpDmgShow() {
         dmgModal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === dmgModal) {
-            dmgModal.style.display = "none";
+        window.onclick = function (event) {
+            if (event.target === dmgModal) {
+                dmgModal.style.display = "none";
+            }
         }
     }
 
     dmgButton.addEventListener("click", function () {
         incomingDamage = document.getElementById("incoming-damage").value;
+        if (incomingDamage < 1) {
+            alert("Значение не может быть меньше 1")
+            return;
+        }
         dmgModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
         ourRequest.open('PUT', '/api/calcDmg');
@@ -630,6 +639,7 @@
             renderHTML(ourData);
         }
         ourRequest.send(body);
+
     })
 
     function renderHTML(data) {

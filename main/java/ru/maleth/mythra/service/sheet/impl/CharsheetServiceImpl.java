@@ -19,7 +19,6 @@ import ru.maleth.mythra.repo.CharClassAbilityRepo;
 import ru.maleth.mythra.repo.CharRaceAbilityRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
 import ru.maleth.mythra.repo.ProficiencyRepo;
-import ru.maleth.mythra.repo.RaceRepo;
 import ru.maleth.mythra.utility.CharacterCalculator;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 import ru.maleth.mythra.utility.classes.ClassUtils;
@@ -41,10 +40,10 @@ public class CharsheetServiceImpl implements CharsheetService {
     private final CharacterRepo characterRepo;
     private final CharClassAbilityRepo charClassAbilityRepo;
     private final CharRaceAbilityRepo charRaceAbilityRepo;
-    private final ProficiencyRepo proficiencyRepo;
     private final ClassUtils classUtils;
     private final RaceUtils raceUtils;
 
+    private final Gson gson;
     private static final String PAGE = "directToPage";
 
     @Override
@@ -183,21 +182,20 @@ public class CharsheetServiceImpl implements CharsheetService {
         }
 
         /*
-        В зависимости от класса и уровня этого класса, у персонажа есть умения.
+        В зависимости от класса и уровня этого класса, у персонажа есть умения (абилки).
         Зачастую кол-во раз использования умений зависит от персонажа.
         Тут мы формируем список умений (по сути одно умение на класс) и сохраняем его в двух репозиториях.
         В AbilityRepo и в CharClassAbilityRepo (cca).
         Второй репо нужен, чтобы у нас не было миллиона одинаковых Ability, разница в которых исключительно в кол-ве
         применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
         */
-        log.info("Собираем возможности " + character.getCharName() + " на основе возможностей классов!");
-
+        log.info("Собираем абилки " + character.getCharName() + " на основе возможностей классов!");
         /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
         classUtils.charClassAbilityFormer(character);
+        log.info("Собираем абилки " + character.getCharName() + " на основе возможнтей расы!");
         raceUtils.charRaceAbilityFormer(character);
 
         /*
-        Строчка выше подгружается абилки для расы.
         Из интересного – сперва я передавал все абилки в атрибуты и там выводил, а потом научился динамически формировать
         список в SheetController – поэтому эти вот два списка сверху спорно актуальны.
          */
@@ -237,7 +235,6 @@ public class CharsheetServiceImpl implements CharsheetService {
 
         attributes.put("charId", String.valueOf(character.getId()));
         attributes.put(PAGE, "charsheet");
-
         log.info("Отправляем персонажа " + character.getCharName() + " на фронт!");
         return attributes;
     }
@@ -251,10 +248,17 @@ public class CharsheetServiceImpl implements CharsheetService {
 
     @Override
     public String abilityLoader(Long charId) {
+        log.info("Собираем список абилок для вывода на чаршите персонажа с id {}", charId);
         Character character = characterRepo.findById(charId).get();
+        /*
         List<AbilityJsonResponseDto> ccaList = charClassAbilityRepo.findAllByCharacter_IdOrderByAbilityAsc(charId)
                 .stream().map(AbilityJsonResponseMapper::fromCharClassAbility).toList();
         List<AbilityJsonResponseDto> craList = charRaceAbilityRepo.findAllByCharacter_IdAndRaceLimitByLevelOrderByAbility_Name(character, character.getCharRace(), CharacterCalculator.getLevel(character.getExperience()))
+                .stream().map(AbilityJsonResponseMapper::fromCharRaceAbility).toList();
+         */
+        List<AbilityJsonResponseDto> ccaList = classUtils.charClassAbilityFormer(character)
+                .stream().map(AbilityJsonResponseMapper::fromCharClassAbility).toList();
+        List<AbilityJsonResponseDto> craList = raceUtils.charRaceAbilityFormer(character)
                 .stream().map(AbilityJsonResponseMapper::fromCharRaceAbility).toList();
         List<AbilityJsonResponseDto> abilList = new ArrayList<>();
         abilList.addAll(ccaList);
@@ -262,8 +266,8 @@ public class CharsheetServiceImpl implements CharsheetService {
         for (AbilityJsonResponseDto a : abilList) {
             log.info("Добавлена абилка: " + a.getName());
         }
-        Gson gson = new Gson();
         String response = gson.toJson(abilList);
+        log.info("Cписок абилок для вывода на чаршите персонажа с id {} собран в стрингу Json", charId);
         return response;
     }
 
@@ -273,14 +277,12 @@ public class CharsheetServiceImpl implements CharsheetService {
             CharClassAbility cca = charClassAbilityRepo.findByCharacter_IdAndAbility_Name(abilityChargeModifierDto.getCharId(), abilityChargeModifierDto.getAbilName());
             cca.setNumberOfUses(abilityChargeModifierDto.getModifier());
             charClassAbilityRepo.updateCharges(cca.getAbility().getName(), cca.getCharacter().getCharName(), cca.getCharClass().getName(), cca.getNumberOfUses());
-            Gson gson = new Gson();
             String response = gson.toJson(cca);
             return response;
         } else {
             CharRaceAbility cra = charRaceAbilityRepo.findByCharacter_IdAndAbility_Name(abilityChargeModifierDto.getCharId(), abilityChargeModifierDto.getAbilName());
             cra.setNumberOfUses(abilityChargeModifierDto.getModifier());
             charRaceAbilityRepo.updateCharges(cra.getAbility().getName(), cra.getCharacter().getCharName(), cra.getRace(), cra.getNumberOfUses());
-            Gson gson = new Gson();
             String response = gson.toJson(cra);
             return response;
         }
@@ -289,7 +291,6 @@ public class CharsheetServiceImpl implements CharsheetService {
     @Override
     public String updExp(NumberModifierDto numberModifierDto) {
         Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
-        Gson gson = new Gson();
         if (CharacterCalculator.getLevel(character.getExperience() + numberModifierDto.getModifier()) > CharacterCalculator.getLevel(character.getExperience())) {
             character.setIsLevelUpReady(true);
         }
@@ -304,7 +305,6 @@ public class CharsheetServiceImpl implements CharsheetService {
         Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
         character.setCurrentHP(character.getCurrentHP() + numberModifierDto.getModifier());
         characterRepo.updateHP(character.getCharName(), character.getCurrentHP());
-        Gson gson = new Gson();
         String response = gson.toJson(character);
         return response;
     }
@@ -314,7 +314,6 @@ public class CharsheetServiceImpl implements CharsheetService {
         Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
         character.setCurrentHP(character.getCurrentHP() - numberModifierDto.getModifier());
         characterRepo.updateHP(character.getCharName(), character.getCurrentHP());
-        Gson gson = new Gson();
         String response = gson.toJson(character);
         return response;
     }

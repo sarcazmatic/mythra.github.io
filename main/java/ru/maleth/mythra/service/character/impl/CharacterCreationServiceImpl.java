@@ -239,7 +239,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
                 .build();
         charClassLevelRepo.save(charClassLevel);
 
-        log.info("Персонаж под именем " + character.getCharName() + " для пользователя " + character.getCreator().getName() + "создан!");
+        log.info("Персонаж под именем " + character.getCharName() + " для пользователя " + character.getCreator().getName() + " создан!");
 
         return character;
     }
@@ -383,7 +383,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
         Второй репо нужен, чтобы у нас не было миллиона одинаковых Ability, разница в которых исключительно в кол-ве
         применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
         */
-        log.info("Собираем возможности " + character.getCharName() + " на основе возможностей классов!");
+        log.info("Собираем абилки '{}' на основе возможностей классов!", character.getCharName());
 
         /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
         List<CharClassAbility> abilities = classUtils.charClassAbilityFormer(character);
@@ -400,7 +400,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
                         + CharacterCalculator.calculateAttributeModifier(character.getConstitution()));
             }
         }
-
+        log.info("Собираем абилки '{}' на основе возможностей расы!", character.getCharName());
         raceUtils.charRaceAbilityFormer(character);
         /*
         Строчка выше подгружается абилки для расы.

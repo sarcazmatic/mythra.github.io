@@ -14,10 +14,8 @@ import java.util.List;
 public interface CharRaceAbilityRepo extends JpaRepository<CharRaceAbility, Long> {
 
     @Query("SELECT cra FROM CharRaceAbility cra " +
-            "JOIN Race r on cra.race.id=r.id " +
-            "JOIN Ability a on cra.ability.id=a.id " +
-            "AND cra.character = :character " +
             "WHERE cra.race = :race " +
+            "AND cra.character = :character " +
             "AND cra.ability.levelAvailable <= :level " +
             "ORDER BY cra.ability.name asc")
     List<CharRaceAbility> findAllByCharacter_IdAndRaceLimitByLevelOrderByAbility_Name(Character character, Race race, Integer level);
