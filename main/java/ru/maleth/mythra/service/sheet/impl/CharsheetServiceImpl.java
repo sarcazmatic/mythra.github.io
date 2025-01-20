@@ -189,11 +189,11 @@ public class CharsheetServiceImpl implements CharsheetService {
         Второй репо нужен, чтобы у нас не было миллиона одинаковых Ability, разница в которых исключительно в кол-ве
         применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
         */
-        log.info("Собираем абилки " + character.getCharName() + " на основе возможностей классов!");
+        //log.info("Собираем абилки " + character.getCharName() + " на основе возможностей классов!");
         /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
-        classUtils.charClassAbilityFormer(character);
-        log.info("Собираем абилки " + character.getCharName() + " на основе возможнтей расы!");
-        raceUtils.charRaceAbilityFormer(character);
+        //classUtils.charClassAbilityFormer(character);
+        //log.info("Собираем абилки " + character.getCharName() + " на основе возможнтей расы!");
+        //raceUtils.charRaceAbilityFormer(character);
 
         /*
         Из интересного – сперва я передавал все абилки в атрибуты и там выводил, а потом научился динамически формировать
