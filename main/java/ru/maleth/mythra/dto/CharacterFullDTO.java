@@ -3,9 +3,11 @@ package ru.maleth.mythra.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Builder
 @Data
-public class NewCharacterFullDto {
+public class CharacterFullDTO {
 
     private String charName;
     private String charClass;
@@ -16,5 +18,7 @@ public class NewCharacterFullDto {
     private int intelligence;
     private int wisdom;
     private int charisma;
+    private int hitPoints;
+    private List<String> profs;
 
 }

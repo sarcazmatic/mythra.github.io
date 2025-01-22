@@ -272,7 +272,7 @@
                 </div>
             </div>
             <button type="submit" class="submit-button">Дальше</button>
-            <input type="text" name="charName" value=${charName} hidden>
+            <input type="text" name="charName" value="${charName}" hidden>
             <input type="text" name="charRace" value="${charRace}" hidden>
             <input type="text" name="charClass" value="${charClass}" hidden>
 

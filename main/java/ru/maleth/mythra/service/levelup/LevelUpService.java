@@ -1,6 +1,6 @@
 package ru.maleth.mythra.service.levelup;
 
-import ru.maleth.mythra.dto.CharClassToLevelUp;
+import ru.maleth.mythra.dto.CharClassToLevelUpDTO;
 
 import java.util.Map;
 
@@ -9,8 +9,10 @@ public interface LevelUpService {
 
     Map<String, String> formLvlUpPage(String userName, String charName);
 
-    void levelUp(CharClassToLevelUp charClassToLevelUp);
+    Map<String, String> formRaiseAttributesPage(String userName, String charName);
 
-    void multiClass(CharClassToLevelUp charClassToLevelUp);
+    void levelUp(CharClassToLevelUpDTO charClassToLevelUp);
+
+    void multiClass(CharClassToLevelUpDTO charClassToLevelUp);
 
 }

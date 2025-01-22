@@ -2,22 +2,19 @@ package ru.maleth.mythra.controller.character;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.runtime.internal.cflowstack.ThreadStack;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.maleth.mythra.dto.CharacterFullDto;
-import ru.maleth.mythra.dto.NewCharacterDto;
-import ru.maleth.mythra.dto.NewCharacterFullDto;
-import ru.maleth.mythra.model.Character;
+import ru.maleth.mythra.dto.CharacterFullDTO;
+import ru.maleth.mythra.dto.NewCharacterDTO;
+import ru.maleth.mythra.dto.NewCharacterFullDTO;
 import ru.maleth.mythra.service.character.CharacterCreationService;
 import ru.maleth.mythra.service.character.CharacterService;
 import ru.maleth.mythra.service.levelup.LevelUpService;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 @Controller
 @Data
@@ -33,7 +30,7 @@ public class CharController {
 
     @PostMapping("/attributes")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public String setAttributes(NewCharacterDto newCharacterDto, Model model) {
+    public String setAttributes(NewCharacterDTO newCharacterDto, Model model) {
         log.info("Пришел запрос на внесение значений атрибутов для персонажа {}, главный класс {}, раса {}",
                 newCharacterDto.getCharName(),
                 newCharacterDto.getCharClass(),
@@ -45,7 +42,7 @@ public class CharController {
 
     @PostMapping("/skills")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public String setSkills(NewCharacterFullDto newCharacterFullDto, Model model) {
+    public String setSkills(NewCharacterFullDTO newCharacterFullDto, Model model) {
         log.info("Пришел запрос на внесение значений навыков для персонажа {}, главный класс {}, раса {}",
                 newCharacterFullDto.getCharName(),
                 newCharacterFullDto.getCharClass(),
@@ -58,7 +55,7 @@ public class CharController {
     @PostMapping("/charsheet")
     @ResponseStatus(HttpStatus.CREATED)
     //first time loading charsheet
-    public String formSheet(@PathVariable("name") String userName, CharacterFullDto characterFullDto, Model model) {
+    public String formSheet(@PathVariable("name") String userName, CharacterFullDTO characterFullDto, Model model) {
         log.info("Пришел запрос на формирование чаршита для персонажа {}, главный класс {}, раса {}",
                 characterFullDto.getCharName(),
                 characterFullDto.getCharClass(),
@@ -81,10 +78,19 @@ public class CharController {
     @GetMapping("/levelup")
     @ResponseStatus(HttpStatus.OK)
     public String getLvlUpPage(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
+        log.info("Пришел запрос на загрузку страницы повышения уровня для персонажа {}", charName);
         Map<String, String> attributes = levelUpService.formLvlUpPage(userName, charName);
         model.addAllAttributes(attributes);
         return attributes.get(PAGE);
     }
 
+    @GetMapping("/raiseattributes")
+    @ResponseStatus(HttpStatus.OK)
+    public String raiseAttributes(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
+        log.info("Пришел запрос на загрузку страницы поднятия атрибутов для персонажа {}", charName);
+        Map<String, String> attributes = levelUpService.formRaiseAttributesPage(userName, charName);
+        model.addAllAttributes(attributes);
+        return attributes.get(PAGE);
+    }
 
 }

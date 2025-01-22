@@ -3,11 +3,11 @@ package ru.maleth.mythra.controller.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.maleth.mythra.dto.AbilityChargeModifierDto;
-import ru.maleth.mythra.dto.CharClassToLevelUp;
-import ru.maleth.mythra.dto.NumberModifierDto;
+import ru.maleth.mythra.dto.AbilityChargeModifierDTO;
+import ru.maleth.mythra.dto.AttributesRaiserDTO;
+import ru.maleth.mythra.dto.CharClassToLevelUpDTO;
+import ru.maleth.mythra.dto.NumberModifierDTO;
 import ru.maleth.mythra.service.levelup.LevelUpService;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
@@ -31,7 +31,7 @@ public class UpdateController {
 
     @PutMapping("/abilCharge")
     @ResponseStatus(HttpStatus.OK)
-    public String updAbilityCharge(@RequestBody AbilityChargeModifierDto abilityChargeModifierDto) {
+    public String updAbilityCharge(@RequestBody AbilityChargeModifierDTO abilityChargeModifierDto) {
         log.info("Пришел запрос на обновление кол-ва использований персонажем с id {} абилки '{}'. Новое значение: {} единиц",
                 abilityChargeModifierDto.getCharId(),
                 abilityChargeModifierDto.getAbilName(),
@@ -40,9 +40,19 @@ public class UpdateController {
         return response;
     }
 
+    @PutMapping("/updateAttributes")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateAttributes(@RequestBody AttributesRaiserDTO attributesRaiserDTO) {
+        log.info("Пришел запрос на повышение характеристик персонажа с id {} '{}'. Меняем: {}",
+                attributesRaiserDTO.getCharId(),
+                attributesRaiserDTO.getCharName(),
+                attributesRaiserDTO.getAttrsArray());
+        charsheetService.raiseAttributes(attributesRaiserDTO);
+    }
+
     @PutMapping("/calcExp")
     @ResponseStatus(HttpStatus.OK)
-    public String updExp(@RequestBody NumberModifierDto numberModifierDto) {
+    public String updExp(@RequestBody NumberModifierDTO numberModifierDto) {
         log.info("Пришел запрос на изменение опыта для персонажа {} c id {} на {}",
                 numberModifierDto.getCharName(),
                 numberModifierDto.getCharId(),
@@ -53,7 +63,7 @@ public class UpdateController {
 
     @PutMapping("/calcHeal")
     @ResponseStatus(HttpStatus.OK)
-    public String updHeal(@RequestBody NumberModifierDto numberModifierDto) {
+    public String updHeal(@RequestBody NumberModifierDTO numberModifierDto) {
         log.info("Пришел запрос на лечение для персонажа {} на {} hp",
                 numberModifierDto.getCharName(),
                 numberModifierDto.getModifier());
@@ -63,7 +73,7 @@ public class UpdateController {
 
     @PutMapping("/calcDmg")
     @ResponseStatus(HttpStatus.OK)
-    public String updDamage(@RequestBody NumberModifierDto numberModifierDto) {
+    public String updDamage(@RequestBody NumberModifierDTO numberModifierDto) {
         log.info("Пришел запрос на урон по персонажу {} на {} hp",
                 numberModifierDto.getCharName(),
                 numberModifierDto.getModifier());
@@ -73,7 +83,7 @@ public class UpdateController {
 
     @PutMapping("/levelup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void levelUp(@RequestBody CharClassToLevelUp charClassToLevelUp) {
+    public void levelUp(@RequestBody CharClassToLevelUpDTO charClassToLevelUp) {
         log.info("Пришел запрос на повышение уровня персонажа с id {} для его класса {}",
                 charClassToLevelUp.getCharId(),
                 charClassToLevelUp.getCharClassToLevelUp());
@@ -82,7 +92,7 @@ public class UpdateController {
 
     @PostMapping("/multiclass")
     @ResponseStatus(HttpStatus.CREATED)
-    public void multiclass(@RequestBody CharClassToLevelUp charClassToLevelUp) {
+    public void multiclass(@RequestBody CharClassToLevelUpDTO charClassToLevelUp) {
         log.info("Пришел запрос на мультиклассирование персонажа с id {} в класс {}",
                 charClassToLevelUp.getCharId(),
                 charClassToLevelUp.getCharClassToLevelUp());

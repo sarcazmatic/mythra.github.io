@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.maleth.mythra.dto.UserDto;
+import ru.maleth.mythra.dto.UserDTO;
 import ru.maleth.mythra.model.User;
 import ru.maleth.mythra.repo.UserRepo;
 import ru.maleth.mythra.service.user.UserService;
@@ -19,7 +19,7 @@ public class JsonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String postJson(@RequestBody UserDto userDto) {
+    public String postJson(@RequestBody UserDTO userDto) {
         //System.out.println(userDto);
         //User user = User.builder().email("pp@pp").name("ppp").password("password").build();
         userService.registerUser(userDto);

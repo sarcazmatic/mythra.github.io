@@ -4,7 +4,7 @@ import ru.maleth.mythra.model.User;
 
 public class UserMapper {
 
-    public static User fromUserDto(UserDto userDto) {
+    public static User fromUserDto(UserDTO userDto) {
         return User.builder()
                 .name(userDto.getName())
                 .email(userDto.getEmail())

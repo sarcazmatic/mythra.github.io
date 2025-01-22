@@ -3,17 +3,15 @@ package ru.maleth.mythra.service.character.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.maleth.mythra.dto.CharacterFullDto;
-import ru.maleth.mythra.dto.NewCharacterDto;
-import ru.maleth.mythra.dto.NewCharacterFullDto;
+import ru.maleth.mythra.dto.CharacterFullDTO;
+import ru.maleth.mythra.dto.NewCharacterDTO;
+import ru.maleth.mythra.dto.NewCharacterFullDTO;
 import ru.maleth.mythra.enums.*;
 import ru.maleth.mythra.model.*;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.*;
 import ru.maleth.mythra.utility.CharacterCalculator;
 import ru.maleth.mythra.service.character.CharacterCreationService;
-import ru.maleth.mythra.utility.classes.ClassUtils;
-import ru.maleth.mythra.utility.races.RaceUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +33,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
 
     @Override
     //срабатывает на шаге /register -> /attributes
-    public Map<String, String> goToAttributes(NewCharacterDto newCharacterDto) {
+    public Map<String, String> goToAttributes(NewCharacterDTO newCharacterDto) {
         log.info("Собираем атрибуты для персонажа " + newCharacterDto.getCharName() + "!");
 
         String charName = newCharacterDto.getCharName();
@@ -106,7 +104,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
 
     @Override
     //срабатывает на шаге /attributes -> /skills
-    public Map<String, String> goToSkills(NewCharacterFullDto newCharacterFullDto) {
+    public Map<String, String> goToSkills(NewCharacterFullDTO newCharacterFullDto) {
         log.info("Собираем навыки для персонажа " + newCharacterFullDto.getCharName() + "!");
 
         String charName = newCharacterFullDto.getCharName();
@@ -166,7 +164,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
 
     @Override
     //срабатывает ПЕРВЫМ на шаге /skills -> /charsheet
-    public Character createCharacter(String userName, CharacterFullDto characterFullDto) {
+    public Character createCharacter(String userName, CharacterFullDTO characterFullDto) {
         log.info("Создаем персонажа для пользователя под именем '{}'", userName);
 
         Optional<Character> characterOptional = characterRepo.findByCreator_NameAndCharName(userName, characterFullDto.getCharName());
@@ -244,7 +242,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
 
     @Override
     //срабатывает ВТОРЫМ на шаге /skills -> /charsheet
-    public Map<String, String> formSheet(String userName, CharacterFullDto characterFullDto) {
+    public Map<String, String> formSheet(String userName, CharacterFullDTO characterFullDto) {
         Character character = createCharacter(userName, characterFullDto);
         log.info("Собираем модель персонажа " + character.getCharName() + " для вывода на чаршит!");
 

@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class UserDto {
+public class UserDTO {
 
     @NotBlank
     private String name;

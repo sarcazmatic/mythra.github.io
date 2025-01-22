@@ -120,6 +120,8 @@
     let arrayWithClassesAndLevels = ${existingCharClasses};
     let classesForMultiClass = ${classesForMultiClass};
     let numberOfClassesForMultiClass = ${numberOfClassesForMultiClass};
+    const searchParams = new URLSearchParams(location.search);
+    var charId = searchParams.get("charId");
 
 
     function loadLine() {
@@ -135,7 +137,6 @@
             document.getElementById('put-classes-here').appendChild(newDiv2);
         }
         for (let k = 0; k < numberOfClassesForMultiClass; k = k + 1) {
-            console.log("abra-cadabra")
             var newDivMC = document.createElement("button");
             newDivMC.className = "submit-button";
             let multiClassText = classesForMultiClass[k];
@@ -152,15 +153,19 @@
         var ourRequest = new XMLHttpRequest();
         ourRequest.open('PUT', uriText);
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-        const searchParams = new URLSearchParams(location.search);
-        var charId = searchParams.get("charId");
         const newBody = JSON.stringify({
             "charId": charId,
             "charClassToLevelUp": classToLevelUp
         });
         ourRequest.send(newBody);
-        document.getElementById('class-choice-form').method = "get";
-        document.getElementById('class-choice-form').action = "charsheet";
+        var levelToLevelUp = parseInt(arrayWithClassesAndLevels[i + 1]) + 1;
+        if ((classToLevelUp == "Бард" || "Варвар") && levelToLevelUp % 4 == 0) {
+            document.getElementById('class-choice-form').method = "get";
+            document.getElementById('class-choice-form').action = "raiseattributes";
+        } else {
+            document.getElementById('class-choice-form').method = "get";
+            document.getElementById('class-choice-form').action = "charsheet";
+        }
     }
 
     async function multiClass(k) {

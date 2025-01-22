@@ -1,13 +1,15 @@
 package ru.maleth.mythra.service.sheet.impl;
 
 import com.google.gson.Gson;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.maleth.mythra.dto.AbilityChargeModifierDto;
-import ru.maleth.mythra.dto.AbilityJsonResponseDto;
+import ru.maleth.mythra.dto.AbilityChargeModifierDTO;
+import ru.maleth.mythra.dto.AbilityJsonResponseDTO;
 import ru.maleth.mythra.dto.AbilityJsonResponseMapper;
-import ru.maleth.mythra.dto.NumberModifierDto;
+import ru.maleth.mythra.dto.AttributesRaiserDTO;
+import ru.maleth.mythra.dto.NumberModifierDTO;
 import ru.maleth.mythra.enums.AttribEnum;
 import ru.maleth.mythra.enums.ClassEnum;
 import ru.maleth.mythra.enums.ProfEnum;
@@ -20,7 +22,6 @@ import ru.maleth.mythra.repo.CharClassAbilityRepo;
 import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharRaceAbilityRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
-import ru.maleth.mythra.repo.ProficiencyRepo;
 import ru.maleth.mythra.service.character.CharacterService;
 import ru.maleth.mythra.utility.CharacterCalculator;
 import ru.maleth.mythra.service.sheet.CharsheetService;
@@ -30,7 +31,6 @@ import ru.maleth.mythra.utility.races.RaceUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -210,8 +210,6 @@ public class CharsheetServiceImpl implements CharsheetService {
             }
         } else {
             charClassesStringBuilder.append(ClassEnum.valueOf(charClasses.get(0).getCharClass().getName()).getName());
-            charClassesStringBuilder.append(" ");
-            charClassesStringBuilder.append(charClasses.get(0).getClassLevel());
         }
 
         String charClassesString = charClassesStringBuilder.toString();
@@ -220,53 +218,30 @@ public class CharsheetServiceImpl implements CharsheetService {
         Тут переносим атрибуты в мапу. И указываем адрес страницы.
         */
         attributes.put("charName", character.getCharName());
-        attributes.put("charRace", character.getCharRace().
-
-                getRaceEnum().
-
-                getName());
+        attributes.put("charRace", character.getCharRace().getRaceEnum().getName());
         attributes.put("charClass", charClassesString);
         attributes.put("ac", String.valueOf(character.getArmorClass()));
-        attributes.put("speed", String.valueOf(character.getCharRace().
-
-                getSpeed()));
-        attributes.put("initiative",
-
-                formatMods(character.getInitiative()));
+        attributes.put("speed", String.valueOf(character.getCharRace().getSpeed()));
+        attributes.put("initiative", formatMods(character.getInitiative()));
         attributes.put("experience", String.valueOf(experience));
         attributes.put("level", String.valueOf(CharacterCalculator.getLevel(experience)));
-        attributes.put("proficiency",
-
-                formatMods(CharacterCalculator.getProfBonus(experience)));
+        attributes.put("proficiency", formatMods(CharacterCalculator.getProfBonus(experience)));
         attributes.put("strength", String.valueOf(strength));
-        attributes.put("strengthmod",
-
-                formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
+        attributes.put("strengthmod", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
         attributes.put("dexterity", String.valueOf(dexterity));
-        attributes.put("dexteritymod",
-
-                formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
+        attributes.put("dexteritymod", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
         attributes.put("constitution", String.valueOf(constitution));
-        attributes.put("constitutionmod",
-
-                formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
+        attributes.put("constitutionmod", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
         attributes.put("intelligence", String.valueOf(intelligence));
-        attributes.put("intelligencemod",
-
-                formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
+        attributes.put("intelligencemod", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
         attributes.put("wisdom", String.valueOf(wisdom));
-        attributes.put("wisdommod",
-
-                formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
+        attributes.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
         attributes.put("charisma", String.valueOf(charisma));
-        attributes.put("charismamod",
-
-                formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
+        attributes.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
         attributes.put("curHitPoints", String.valueOf(curHitPoints));
         attributes.put("maxHitPoints", String.valueOf(maxHitPoints));
 
         if (character.getCharRace().
-
                 isHasDarkvision()) {
             attributes.put("darkvision", "Да");
         } else {
@@ -290,14 +265,14 @@ public class CharsheetServiceImpl implements CharsheetService {
     public String abilityLoader(Long charId) {
         log.info("Собираем список абилок для вывода на чаршите персонажа с id {}", charId);
         Character character = characterRepo.findById(charId).get();
-        List<AbilityJsonResponseDto> ccaList = classUtils.charClassAbilityFormer(character)
+        List<AbilityJsonResponseDTO> ccaList = classUtils.charClassAbilityFormer(character)
                 .stream().map(AbilityJsonResponseMapper::fromCharClassAbility).toList();
-        List<AbilityJsonResponseDto> craList = raceUtils.charRaceAbilityFormer(character)
+        List<AbilityJsonResponseDTO> craList = raceUtils.charRaceAbilityFormer(character)
                 .stream().map(AbilityJsonResponseMapper::fromCharRaceAbility).toList();
-        List<AbilityJsonResponseDto> abilList = new ArrayList<>();
+        List<AbilityJsonResponseDTO> abilList = new ArrayList<>();
         abilList.addAll(ccaList);
         abilList.addAll(craList);
-        for (AbilityJsonResponseDto a : abilList) {
+        for (AbilityJsonResponseDTO a : abilList) {
             log.info("Добавлена абилка: {}, кол-во использований: {}", a.getName(), a.getNumberOfCharges());
         }
         String response = gson.toJson(abilList);
@@ -306,7 +281,7 @@ public class CharsheetServiceImpl implements CharsheetService {
     }
 
     @Override
-    public String updAbilityCharge(AbilityChargeModifierDto abilityChargeModifierDto) {
+    public String updAbilityCharge(AbilityChargeModifierDTO abilityChargeModifierDto) {
         if (abilityChargeModifierDto.getIsFromClass()) {
             CharClassAbility cca = charClassAbilityRepo.findByCharacter_IdAndAbility_Name(abilityChargeModifierDto.getCharId(), abilityChargeModifierDto.getAbilName());
             cca.setNumberOfUses(abilityChargeModifierDto.getModifier());
@@ -323,7 +298,7 @@ public class CharsheetServiceImpl implements CharsheetService {
     }
 
     @Override
-    public String updExp(NumberModifierDto numberModifierDto) {
+    public String updExp(NumberModifierDTO numberModifierDto) {
         Character character = characterRepo.findById(numberModifierDto.getCharId())
                 .orElseThrow(() -> new RuntimeException("Не нашли пользователя"));
         if (CharacterCalculator.getLevel(character.getExperience() + numberModifierDto.getModifier()) > CharacterCalculator.getLevel(character.getExperience())) {
@@ -336,7 +311,7 @@ public class CharsheetServiceImpl implements CharsheetService {
     }
 
     @Override
-    public String updHeal(NumberModifierDto numberModifierDto) {
+    public String updHeal(NumberModifierDTO numberModifierDto) {
         Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
         character.setCurrentHP(character.getCurrentHP() + numberModifierDto.getModifier());
         characterRepo.updateHP(character.getCharName(), character.getCurrentHP());
@@ -345,12 +320,30 @@ public class CharsheetServiceImpl implements CharsheetService {
     }
 
     @Override
-    public String updDamage(NumberModifierDto numberModifierDto) {
+    public String updDamage(NumberModifierDTO numberModifierDto) {
         Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
         character.setCurrentHP(character.getCurrentHP() - numberModifierDto.getModifier());
         characterRepo.updateHP(character.getCharName(), character.getCurrentHP());
         String response = gson.toJson(character);
         return response;
+    }
+
+    @Override
+    @Transactional
+    public void raiseAttributes(AttributesRaiserDTO attributesRaiserDTO) {
+        log.info("Обновляем для персонажа '{}' характеристики {}", attributesRaiserDTO.getCharName(), attributesRaiserDTO.getAttrsArray());
+        Character character = characterRepo.findById(attributesRaiserDTO.getCharId()).orElseThrow(() -> new RuntimeException("Не нашли по id"));
+        for (String attrToRaise : attributesRaiserDTO.getAttrsArray()) {
+            switch (attrToRaise) {
+                case "strength" -> character.setStrength(character.getStrength()+1);
+                case "dexterity" -> character.setDexterity(character.getDexterity()+1);
+                case "constitution" -> character.setConstitution(character.getConstitution()+1);
+                case "wisdom" -> character.setWisdom(character.getWisdom()+1);
+                case "intelligence" -> character.setIntelligence(character.getIntelligence()+1);
+                case "charisma" -> character.setCharisma(character.getCharisma()+1);
+            }
+        }
+        characterRepo.save(character);
     }
 
 }

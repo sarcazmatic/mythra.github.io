@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class AbilityJsonResponseDto {
+public class AbilityJsonResponseDTO {
     private String name;
     private String description;
     private Integer numberOfCharges;

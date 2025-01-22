@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserShortDto {
+public class UserShortDTO {
 
     @NotBlank
     private String name;
