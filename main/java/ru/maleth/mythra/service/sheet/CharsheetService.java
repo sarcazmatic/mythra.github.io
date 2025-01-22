@@ -2,13 +2,12 @@ package ru.maleth.mythra.service.sheet;
 
 import ru.maleth.mythra.dto.AbilityChargeModifierDto;
 import ru.maleth.mythra.dto.NumberModifierDto;
-import ru.maleth.mythra.model.Character;
 
 import java.util.Map;
 
 public interface CharsheetService {
 
-    Map<String, String> getSheet(Character character);
+    Map<String, String> getSheet(String userName, String charName);
 
     String abilityLoader(Long charId);
 

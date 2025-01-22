@@ -22,8 +22,8 @@ public interface CharacterRepo extends JpaRepository<Character, Long> {
     @Modifying
     @Query("UPDATE Character c " +
             "SET c.experience = :experience " +
-            "WHERE c.charName = :charName")
-    void updateExp(String charName, Integer experience);
+            "WHERE c.id = :charId")
+    void updateExp(Long charId, Integer experience);
 
     @Transactional
     @Modifying

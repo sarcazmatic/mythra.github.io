@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class NumberModifierDto {
 
+    private Long charId;
     private String charName;
     private Integer modifier;
 

@@ -29,8 +29,6 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
     private final ProficiencyRepo proficiencyRepo;
     private final CharClassLevelRepo charClassLevelRepo;
     private final UserRepo userRepo;
-    private final ClassUtils classUtils;
-    private final RaceUtils raceUtils;
 
 
     private static final String PAGE = "directToPage";
@@ -101,7 +99,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
         */
         attributes.put(PAGE, "attributes");
 
-        log.info("Атрибуты персонажа " + newCharacterDto.getCharName() + " собраны, отправляем на страницу навыков");
+        log.info("Атрибуты персонажа '{}' собраны. Следующая -- страницы навыков", newCharacterDto.getCharName());
 
         return attributes;
     }
@@ -161,7 +159,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
 
         attributes.put(PAGE, "skills");
 
-        log.info("Навыки персонажа " + newCharacterFullDto.getCharName() + " собраны, отправляем на создание персонажа!");
+        log.info("Навыки персонажа '{}' собраны. Следующая -- чаршит", newCharacterFullDto.getCharName());
 
         return attributes;
     }
@@ -169,7 +167,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
     @Override
     //срабатывает ПЕРВЫМ на шаге /skills -> /charsheet
     public Character createCharacter(String userName, CharacterFullDto characterFullDto) {
-        log.info("Создаем персонажа для пользователя под именем " + userName + "!");
+        log.info("Создаем персонажа для пользователя под именем '{}'", userName);
 
         Optional<Character> characterOptional = characterRepo.findByCreator_NameAndCharName(userName, characterFullDto.getCharName());
         if (characterOptional.isPresent()) {
@@ -246,7 +244,8 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
 
     @Override
     //срабатывает ВТОРЫМ на шаге /skills -> /charsheet
-    public Map<String, String> formSheet(Character character) {
+    public Map<String, String> formSheet(String userName, CharacterFullDto characterFullDto) {
+        Character character = createCharacter(userName, characterFullDto);
         log.info("Собираем модель персонажа " + character.getCharName() + " для вывода на чаршит!");
 
         /*
@@ -374,39 +373,6 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
                 default -> throw new RuntimeException("Не получилось проставить спасброски");
             }
         }
-
-        /*
-        В зависимости от класса и уровня этого класса, у персонажа есть умения.
-        Зачастую кол-во раз использования умений зависит от персонажа.
-        Тут мы формируем список умений (по сути одно умение на класс) и сохраняем его в двух репозиториях.
-        В AbilityRepo и в CharClassAbilityRepo (cca).
-        Второй репо нужен, чтобы у нас не было миллиона одинаковых Ability, разница в которых исключительно в кол-ве
-        применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
-        */
-        log.info("Собираем абилки '{}' на основе возможностей классов!", character.getCharName());
-
-        /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
-        List<CharClassAbility> abilities = classUtils.charClassAbilityFormer(character);
-        /*Тут, стало быть, убираем дубль, если он случится*/
-        if (character.getExperience() < 1) {
-            if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("МОНАХ: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
-                character.setArmorClass(10
-                        + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
-                        + CharacterCalculator.calculateAttributeModifier(character.getWisdom()));
-            }
-            if (abilities.stream().anyMatch(a -> a.getAbility().getName().equals("ВАРВАР: ЗАЩИТА БЕЗ ДОСПЕХОВ"))) {
-                character.setArmorClass(10
-                        + CharacterCalculator.calculateAttributeModifier(character.getDexterity())
-                        + CharacterCalculator.calculateAttributeModifier(character.getConstitution()));
-            }
-        }
-        log.info("Собираем абилки '{}' на основе возможностей расы!", character.getCharName());
-        raceUtils.charRaceAbilityFormer(character);
-        /*
-        Строчка выше подгружается абилки для расы.
-        Из интересного – сперва я передавал все абилки в атрибуты и там выводил, а потом научился динамически формировать
-        список в SheetController – поэтому эти вот два списка сверху спорно актуальны.
-         */
 
         /*
         Тут переносим атрибуты в мапу. И указываем адрес страницы.

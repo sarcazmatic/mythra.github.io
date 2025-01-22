@@ -417,7 +417,6 @@
     </style>
 </head>
 <body>
-
 <div class="container-left">
     <div class="box-top">
         <div class="input-field">
@@ -470,7 +469,7 @@
 </div>
 <script>
     var charName = document.getElementById("char-name").innerText;
-
+    var charId = document.getElementById("char-id").innerText;
     var expModal = document.getElementById("expModal");
     var expButton = document.getElementById("sec-exp-button");
 
@@ -497,6 +496,7 @@
         ourRequest.open('PUT', '/api/calcExp');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
+            charId: charId,
             charName: charName,
             modifier: incomingExp
         });

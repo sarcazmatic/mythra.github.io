@@ -11,4 +11,6 @@ public interface LevelUpService {
 
     void levelUp(CharClassToLevelUp charClassToLevelUp);
 
+    void multiClass(CharClassToLevelUp charClassToLevelUp);
+
 }

@@ -8,11 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.maleth.mythra.dto.AbilityChargeModifierDto;
 import ru.maleth.mythra.dto.CharClassToLevelUp;
 import ru.maleth.mythra.dto.NumberModifierDto;
-import ru.maleth.mythra.enums.ClassEnum;
-import ru.maleth.mythra.model.CharClassLevel;
-import ru.maleth.mythra.model.Character;
-import ru.maleth.mythra.repo.CharClassLevelRepo;
-import ru.maleth.mythra.repo.CharacterRepo;
 import ru.maleth.mythra.service.levelup.LevelUpService;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
@@ -38,8 +33,8 @@ public class UpdateController {
     @ResponseStatus(HttpStatus.OK)
     public String updAbilityCharge(@RequestBody AbilityChargeModifierDto abilityChargeModifierDto) {
         log.info("Пришел запрос на обновление кол-ва использований персонажем с id {} абилки '{}'. Новое значение: {} единиц",
-                abilityChargeModifierDto.getAbilName(),
                 abilityChargeModifierDto.getCharId(),
+                abilityChargeModifierDto.getAbilName(),
                 abilityChargeModifierDto.getModifier());
         String response = charsheetService.updAbilityCharge(abilityChargeModifierDto);
         return response;
@@ -48,8 +43,9 @@ public class UpdateController {
     @PutMapping("/calcExp")
     @ResponseStatus(HttpStatus.OK)
     public String updExp(@RequestBody NumberModifierDto numberModifierDto) {
-        log.info("Пришел запрос на изменение опыта для персонажа {} на {}",
+        log.info("Пришел запрос на изменение опыта для персонажа {} c id {} на {}",
                 numberModifierDto.getCharName(),
+                numberModifierDto.getCharId(),
                 numberModifierDto.getModifier());
         String response = charsheetService.updExp(numberModifierDto);
         return response;
@@ -77,11 +73,20 @@ public class UpdateController {
 
     @PutMapping("/levelup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void levelUp(Model model, @RequestBody CharClassToLevelUp charClassToLevelUp) {
+    public void levelUp(@RequestBody CharClassToLevelUp charClassToLevelUp) {
         log.info("Пришел запрос на повышение уровня персонажа с id {} для его класса {}",
                 charClassToLevelUp.getCharId(),
                 charClassToLevelUp.getCharClassToLevelUp());
         levelUpService.levelUp(charClassToLevelUp);
+    }
+
+    @PostMapping("/multiclass")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void multiclass(@RequestBody CharClassToLevelUp charClassToLevelUp) {
+        log.info("Пришел запрос на мультиклассирование персонажа с id {} в класс {}",
+                charClassToLevelUp.getCharId(),
+                charClassToLevelUp.getCharClassToLevelUp());
+        levelUpService.multiClass(charClassToLevelUp);
     }
 
 }

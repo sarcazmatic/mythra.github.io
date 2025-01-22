@@ -63,8 +63,7 @@ public class CharController {
                 characterFullDto.getCharName(),
                 characterFullDto.getCharClass(),
                 characterFullDto.getCharRace());
-        Character character = characterCreationService.createCharacter(userName, characterFullDto);
-        Map<String, String> attributes = characterCreationService.formSheet(character);
+        Map<String, String> attributes = characterCreationService.formSheet(userName, characterFullDto);
         model.addAllAttributes(attributes);
         return attributes.get(PAGE);
     }
@@ -74,22 +73,9 @@ public class CharController {
     //loading charsheet for >1 time
     public String getSheet(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
         log.info("Пришел запрос на загрузку чаршита для персонажа {}", charName);
-        Character character = characterService.findByUserNameAndCharName(userName, charName);
-        Callable<String> pageAttributesGetter = () -> {
-            Map<String, String> attributes = charsheetService.getSheet(character);
-            model.addAllAttributes(attributes);
-            return attributes.get(PAGE);
-        };
-        FutureTask<String> futureTask = new FutureTask<>(pageAttributesGetter);
-        Thread th1 = new Thread(futureTask);
-        th1.setName("abilityUpdaterThread");
-        th1.start();
-        try {
-            th1.join();
-            return futureTask.get();
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        Map<String, String> attributes = charsheetService.getSheet(userName, charName);
+        model.addAllAttributes(attributes);
+        return attributes.get(PAGE);
     }
 
     @GetMapping("/levelup")
@@ -99,7 +85,6 @@ public class CharController {
         model.addAllAttributes(attributes);
         return attributes.get(PAGE);
     }
-
 
 
 }

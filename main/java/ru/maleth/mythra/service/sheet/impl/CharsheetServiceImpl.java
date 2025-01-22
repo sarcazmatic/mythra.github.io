@@ -12,13 +12,16 @@ import ru.maleth.mythra.enums.AttribEnum;
 import ru.maleth.mythra.enums.ClassEnum;
 import ru.maleth.mythra.enums.ProfEnum;
 import ru.maleth.mythra.model.CharClassAbility;
+import ru.maleth.mythra.model.CharClassLevel;
 import ru.maleth.mythra.model.CharRaceAbility;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.model.Proficiency;
 import ru.maleth.mythra.repo.CharClassAbilityRepo;
+import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharRaceAbilityRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
 import ru.maleth.mythra.repo.ProficiencyRepo;
+import ru.maleth.mythra.service.character.CharacterService;
 import ru.maleth.mythra.utility.CharacterCalculator;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 import ru.maleth.mythra.utility.classes.ClassUtils;
@@ -27,6 +30,7 @@ import ru.maleth.mythra.utility.races.RaceUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,14 +44,16 @@ public class CharsheetServiceImpl implements CharsheetService {
     private final CharacterRepo characterRepo;
     private final CharClassAbilityRepo charClassAbilityRepo;
     private final CharRaceAbilityRepo charRaceAbilityRepo;
+    private final CharClassLevelRepo charClassLevelRepo;
     private final ClassUtils classUtils;
     private final RaceUtils raceUtils;
-
+    private final CharacterService characterService;
     private final Gson gson;
     private static final String PAGE = "directToPage";
 
     @Override
-    public Map<String, String> getSheet(Character character) {
+    public Map<String, String> getSheet(String userName, String charName) {
+        Character character = characterService.findByUserNameAndCharName(userName, charName);
         log.info("Собираем модель персонажа " + character.getCharName() + " для вывода на чаршит!");
 
         /*
@@ -170,64 +176,98 @@ public class CharsheetServiceImpl implements CharsheetService {
                 И засовывается в мапу. Формат навыка, который отправляется в мапу в итоге получается sleight_of_hand.
                  */
                 switch (s.toString()) {
-                    case "STRENGTH" -> attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
-                    case "DEXTERITY" -> attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
-                    case "CONSTITUTION" -> attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
-                    case "INTELLIGENCE" -> attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
-                    case "WISDOM" -> attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
-                    case "CHARISMA" -> attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
+                    case "STRENGTH" ->
+                            attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
+                    case "DEXTERITY" ->
+                            attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
+                    case "CONSTITUTION" ->
+                            attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
+                    case "INTELLIGENCE" ->
+                            attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
+                    case "WISDOM" ->
+                            attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
+                    case "CHARISMA" ->
+                            attributes.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
                     default -> throw new RuntimeException("Не получилось проставить спасброски");
                 }
             }
         }
 
         /*
-        В зависимости от класса и уровня этого класса, у персонажа есть умения (абилки).
-        Зачастую кол-во раз использования умений зависит от персонажа.
-        Тут мы формируем список умений (по сути одно умение на класс) и сохраняем его в двух репозиториях.
-        В AbilityRepo и в CharClassAbilityRepo (cca).
-        Второй репо нужен, чтобы у нас не было миллиона одинаковых Ability, разница в которых исключительно в кол-ве
-        применений. Плюс, полагаю, в дальнейшем именно этим репо буду пользоваться, чтобы обновлять кол-во использований.
+        Тут собираем классы для вывода на экран
         */
-        //log.info("Собираем абилки " + character.getCharName() + " на основе возможностей классов!");
-        /*!!!ВОЗМОЖНО ТУТ НЕ НУЖНЫ ВСЕ АБИЛКИ, А ТОЛЬКО ТЕ, КОТОРЫЕ ВЛИЯЮТ НА ${values} НА ЧАРШИТЕ!!!*/
-        //classUtils.charClassAbilityFormer(character);
-        //log.info("Собираем абилки " + character.getCharName() + " на основе возможнтей расы!");
-        //raceUtils.charRaceAbilityFormer(character);
+        List<CharClassLevel> charClasses = charClassLevelRepo.findAllByCharacter_IdOrderByCharClass(character.getId());
+        StringBuilder charClassesStringBuilder = new StringBuilder();
+        if (charClasses.size() > 1) {
+            charClassesStringBuilder.append(ClassEnum.valueOf(charClasses.get(0).getCharClass().getName()).getName());
+            charClassesStringBuilder.append(" ");
+            charClassesStringBuilder.append(charClasses.get(0).getClassLevel());
+            for (int i = 1; i < charClasses.size(); i++) {
+                charClassesStringBuilder.append(" / ");
+                charClassesStringBuilder.append(ClassEnum.valueOf(charClasses.get(i).getCharClass().getName()).getName());
+                charClassesStringBuilder.append(" ");
+                charClassesStringBuilder.append(charClasses.get(i).getClassLevel());
+            }
+        } else {
+            charClassesStringBuilder.append(ClassEnum.valueOf(charClasses.get(0).getCharClass().getName()).getName());
+            charClassesStringBuilder.append(" ");
+            charClassesStringBuilder.append(charClasses.get(0).getClassLevel());
+        }
 
-        /*
-        Из интересного – сперва я передавал все абилки в атрибуты и там выводил, а потом научился динамически формировать
-        список в SheetController – поэтому эти вот два списка сверху спорно актуальны.
-         */
+        String charClassesString = charClassesStringBuilder.toString();
 
         /*
         Тут переносим атрибуты в мапу. И указываем адрес страницы.
         */
         attributes.put("charName", character.getCharName());
-        attributes.put("charRace", character.getCharRace().getRaceEnum().getName());
-        attributes.put("charClass", ClassEnum.valueOf(character.getMainClass().getName()).getName());
+        attributes.put("charRace", character.getCharRace().
+
+                getRaceEnum().
+
+                getName());
+        attributes.put("charClass", charClassesString);
         attributes.put("ac", String.valueOf(character.getArmorClass()));
-        attributes.put("speed", String.valueOf(character.getCharRace().getSpeed()));
-        attributes.put("initiative", formatMods(character.getInitiative()));
+        attributes.put("speed", String.valueOf(character.getCharRace().
+
+                getSpeed()));
+        attributes.put("initiative",
+
+                formatMods(character.getInitiative()));
         attributes.put("experience", String.valueOf(experience));
         attributes.put("level", String.valueOf(CharacterCalculator.getLevel(experience)));
-        attributes.put("proficiency", formatMods(CharacterCalculator.getProfBonus(experience)));
+        attributes.put("proficiency",
+
+                formatMods(CharacterCalculator.getProfBonus(experience)));
         attributes.put("strength", String.valueOf(strength));
-        attributes.put("strengthmod", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
+        attributes.put("strengthmod",
+
+                formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
         attributes.put("dexterity", String.valueOf(dexterity));
-        attributes.put("dexteritymod", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
+        attributes.put("dexteritymod",
+
+                formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
         attributes.put("constitution", String.valueOf(constitution));
-        attributes.put("constitutionmod", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
+        attributes.put("constitutionmod",
+
+                formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
         attributes.put("intelligence", String.valueOf(intelligence));
-        attributes.put("intelligencemod", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
+        attributes.put("intelligencemod",
+
+                formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
         attributes.put("wisdom", String.valueOf(wisdom));
-        attributes.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
+        attributes.put("wisdommod",
+
+                formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
         attributes.put("charisma", String.valueOf(charisma));
-        attributes.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
+        attributes.put("charismamod",
+
+                formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
         attributes.put("curHitPoints", String.valueOf(curHitPoints));
         attributes.put("maxHitPoints", String.valueOf(maxHitPoints));
 
-        if (character.getCharRace().isHasDarkvision()) {
+        if (character.getCharRace().
+
+                isHasDarkvision()) {
             attributes.put("darkvision", "Да");
         } else {
             attributes.put("darkvision", "Нет");
@@ -250,12 +290,6 @@ public class CharsheetServiceImpl implements CharsheetService {
     public String abilityLoader(Long charId) {
         log.info("Собираем список абилок для вывода на чаршите персонажа с id {}", charId);
         Character character = characterRepo.findById(charId).get();
-        /*
-        List<AbilityJsonResponseDto> ccaList = charClassAbilityRepo.findAllByCharacter_IdOrderByAbilityAsc(charId)
-                .stream().map(AbilityJsonResponseMapper::fromCharClassAbility).toList();
-        List<AbilityJsonResponseDto> craList = charRaceAbilityRepo.findAllByCharacter_IdAndRaceLimitByLevelOrderByAbility_Name(character, character.getCharRace(), CharacterCalculator.getLevel(character.getExperience()))
-                .stream().map(AbilityJsonResponseMapper::fromCharRaceAbility).toList();
-         */
         List<AbilityJsonResponseDto> ccaList = classUtils.charClassAbilityFormer(character)
                 .stream().map(AbilityJsonResponseMapper::fromCharClassAbility).toList();
         List<AbilityJsonResponseDto> craList = raceUtils.charRaceAbilityFormer(character)
@@ -264,7 +298,7 @@ public class CharsheetServiceImpl implements CharsheetService {
         abilList.addAll(ccaList);
         abilList.addAll(craList);
         for (AbilityJsonResponseDto a : abilList) {
-            log.info("Добавлена абилка: " + a.getName());
+            log.info("Добавлена абилка: {}, кол-во использований: {}", a.getName(), a.getNumberOfCharges());
         }
         String response = gson.toJson(abilList);
         log.info("Cписок абилок для вывода на чаршите персонажа с id {} собран в стрингу Json", charId);
@@ -290,13 +324,14 @@ public class CharsheetServiceImpl implements CharsheetService {
 
     @Override
     public String updExp(NumberModifierDto numberModifierDto) {
-        Character character = characterRepo.findByCharName(numberModifierDto.getCharName());
+        Character character = characterRepo.findById(numberModifierDto.getCharId())
+                .orElseThrow(() -> new RuntimeException("Не нашли пользователя"));
         if (CharacterCalculator.getLevel(character.getExperience() + numberModifierDto.getModifier()) > CharacterCalculator.getLevel(character.getExperience())) {
             character.setIsLevelUpReady(true);
         }
         character.setExperience(character.getExperience() + numberModifierDto.getModifier());
         String response = gson.toJson(character);
-        characterRepo.updateExp(character.getCharName(), character.getExperience());
+        characterRepo.updateExp(character.getId(), character.getExperience());
         return response;
     }
 

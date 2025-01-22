@@ -8,10 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.maleth.mythra.dto.CharClassToLevelUp;
 import ru.maleth.mythra.enums.ClassEnum;
+import ru.maleth.mythra.model.CharClass;
 import ru.maleth.mythra.model.CharClassLevel;
 import ru.maleth.mythra.model.Character;
 import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
+import ru.maleth.mythra.repo.ClassesRepo;
 import ru.maleth.mythra.service.levelup.LevelUpService;
 
 import java.util.ArrayList;
@@ -26,26 +28,43 @@ public class LevelUpServiceImpl implements LevelUpService {
 
     private final CharacterRepo characterRepo;
     private final CharClassLevelRepo charClassLevelRepo;
+    private final ClassesRepo charClassRepo;
+    private final Gson gson = new Gson();
+
     private static final String PAGE = "directToPage";
 
     @Override
     public Map<String, String> formLvlUpPage(String userName, String charName) {
+        log.info("Создаем страницу для лвл-апа для персонажа '{}'", charName);
         Map<String, String> attributes = new HashMap<>();
         Character character = characterRepo.findByCreator_NameAndCharName(userName, charName).orElseThrow(()
                 -> new RuntimeException("Не нашли персонажа в таблице Персонажи по имени " + charName));
         List<CharClassLevel> cclList = charClassLevelRepo.findAllByCharacter_IdOrderByCharClass(character.getId());
+        log.info("Находим все пары Персонаж-Класс для '{}'. Их {}", charName, cclList.size());
+        List<CharClass> charClassListForMultiClass = charClassRepo.findAll();
         List<String> characterClassesWithLevels = new ArrayList<>();
+        log.info("Находим все связки Персонаж-Класс-Уровень для определения имеющихся у персонажа '{}' классов на лвл-ап", charName);
         for (CharClassLevel charClassLevel : cclList) {
             String className = ClassEnum.valueOf(charClassLevel.getCharClass().getName()).getName();
+            charClassListForMultiClass.remove(charClassLevel.getCharClass());
             characterClassesWithLevels.add(className);
             characterClassesWithLevels.add(String.valueOf(charClassLevel.getClassLevel()));
+            log.info("Класс '{}' уже есть у персонажа '{}' на уровне {}. Добавляем в список лвл-апа, убираем из списка мультикласса", className, charName, charClassLevel.getClassLevel());
         }
-        Gson gson = new Gson();
+        List<String> characterClassesForMultiClassNames = charClassListForMultiClass.stream().map(charClass -> ClassEnum.valueOf(charClass.getName()).getName()).toList();
+        String numberOfClassesForMultiClass = String.valueOf(characterClassesForMultiClassNames.size());
+        log.info("Формируем список классов для мультикласса. Имеем {} кандидатов", numberOfClassesForMultiClass);
         String characterClassesWithLevelsJson = gson.toJson(characterClassesWithLevels);
-        attributes.put("array", characterClassesWithLevelsJson);
+        log.info("Сформировали строчку Json с классами для лвл-апа на фронт: {}", characterClassesWithLevelsJson);
+        String charClassListForMultiClassJson = gson.toJson(characterClassesForMultiClassNames);
+        log.info("Сформировали строчку Json с классами для мультикласса на фронт: {}", charClassListForMultiClassJson);
+        attributes.put("numberOfClassesForMultiClass", numberOfClassesForMultiClass);
+        attributes.put("existingCharClasses", characterClassesWithLevelsJson);
+        attributes.put("classesForMultiClass", charClassListForMultiClassJson);
         attributes.put("charName", charName);
         attributes.put("size", String.valueOf(characterClassesWithLevels.size()));
         attributes.put(PAGE, "levelup");
+        log.info("Возвращаем атрибуты для страницы повышения уровня");
         return attributes;
     }
 
@@ -68,5 +87,22 @@ public class LevelUpServiceImpl implements LevelUpService {
         log.info("Меняем запись в таблице персонажа '{}' isLevelUpReady на false (assert: {})", character.getCharName(), character.getIsLevelUpReady());
         characterRepo.save(character);
         charClassLevelRepo.save(ccl);
+    }
+
+    @Override
+    public void multiClass(CharClassToLevelUp charClassToLevelUp) {
+        Character character = characterRepo.findById(charClassToLevelUp.getCharId()).orElseThrow(()
+                -> new RuntimeException("Не нашли записи в таблице Персонажи подходящей под условие фильтра id персонажа = " + charClassToLevelUp.getCharId()));
+        log.info("Нашли персонажа с именем {} и id {} для мультиклассирования в {}",
+                character.getCharName(),
+                character.getId(),
+                ClassEnum.getClassByName(charClassToLevelUp.getCharClassToLevelUp()).toString());
+        CharClass charClass = charClassRepo.findByName(ClassEnum.getClassByName(charClassToLevelUp.getCharClassToLevelUp()).toString());
+        CharClassLevel charClassLevel = CharClassLevel.builder()
+                .charClass(charClass)
+                .character(character)
+                .classLevel(1)
+                .build();
+        charClassLevelRepo.save(charClassLevel);
     }
 }

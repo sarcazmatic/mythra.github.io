@@ -15,6 +15,6 @@ public interface CharacterCreationService {
 
     Map<String, String> goToSkills(NewCharacterFullDto newCharacterFullDto);
 
-    Map<String, String> formSheet(Character character);
+    Map<String, String> formSheet(String userName, CharacterFullDto characterFullDto);
 
 }

@@ -117,7 +117,9 @@
 
 <script>
     var numOfClasses = document.getElementById("amount-of-classes").innerText;
-    let arrayWithClassesAndLevels = ${array};
+    let arrayWithClassesAndLevels = ${existingCharClasses};
+    let classesForMultiClass = ${classesForMultiClass};
+    let numberOfClassesForMultiClass = ${numberOfClassesForMultiClass};
 
 
     function loadLine() {
@@ -132,6 +134,16 @@
             newDiv2.setAttribute("onclick", "setValue(" + i + ")");
             document.getElementById('put-classes-here').appendChild(newDiv2);
         }
+        for (let k = 0; k < numberOfClassesForMultiClass; k = k + 1) {
+            console.log("abra-cadabra")
+            var newDivMC = document.createElement("button");
+            newDivMC.className = "submit-button";
+            let multiClassText = classesForMultiClass[k];
+            newDivMC.id = multiClassText;
+            newDivMC.innerText = multiClassText;
+            newDivMC.setAttribute("onclick", "multiClass(" + k + ")");
+            document.getElementById('put-multiclasses-here').appendChild(newDivMC);
+        }
     }
 
     async function setValue(i) {
@@ -139,6 +151,23 @@
         var classToLevelUp = arrayWithClassesAndLevels[i];
         var ourRequest = new XMLHttpRequest();
         ourRequest.open('PUT', uriText);
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+        const searchParams = new URLSearchParams(location.search);
+        var charId = searchParams.get("charId");
+        const newBody = JSON.stringify({
+            "charId": charId,
+            "charClassToLevelUp": classToLevelUp
+        });
+        ourRequest.send(newBody);
+        document.getElementById('class-choice-form').method = "get";
+        document.getElementById('class-choice-form').action = "charsheet";
+    }
+
+    async function multiClass(k) {
+        var uriText = "/api/multiclass";
+        var classToLevelUp = classesForMultiClass[k];
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('POST', uriText);
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
         const searchParams = new URLSearchParams(location.search);
         var charId = searchParams.get("charId");
