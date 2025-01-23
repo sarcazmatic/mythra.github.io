@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.maleth.mythra.dto.UserDTO;
-import ru.maleth.mythra.dto.UserMapper;
+import ru.maleth.mythra.dto.mapper.UserMapper;
 import ru.maleth.mythra.encrypter.PassEncTech;
 import ru.maleth.mythra.model.User;
 import ru.maleth.mythra.repo.UserRepo;

@@ -41,7 +41,7 @@
             top: 2.5%;
             left: 5%;
             width: 15%;
-            height: 50%;
+            height: 70%;
             background-color: #222;
             border-radius: 10px;
             border: solid 1px #444;
@@ -67,6 +67,10 @@
             border-bottom: solid 1px #444;
         }
 
+        .container-left .box-top .img-upload_bttn {
+            padding-top: 10px;
+        }
+
         .box-bottom {
             margin-left: 10px;
         }
@@ -81,20 +85,20 @@
             color: orangered;
         }
 
-        .container-left-bottom {
+        .container-second-left .container-left-bottom {
             display: block;
             position: absolute;
-            top: 54.5%;
-            left: 5%;
-            width: 15%;
-            height: 18%;
+            top: 83%;
+            left: 3%;
+            width: 43%;
+            height: 15.5%;
             background-color: #222;
             border-radius: 10px;
             border: solid 1px #444;
         }
 
         @media (max-width: 414px) {
-            .container-left-bottom {
+            .container-second-left .container-left-bottom {
                 display: block;
                 position: absolute;
                 top: 57%;
@@ -108,7 +112,7 @@
         }
 
         .box-hp-top {
-            margin-top: 10%;
+            margin-top: 7%;
             margin-left: 25px;
             margin-right: 25px;
             text-align: center;
@@ -120,7 +124,7 @@
         }
 
         .buttons-class {
-            margin-top: 10%;
+            margin-top: 3%;
             margin-left: 4.73%;
         }
 
@@ -419,6 +423,10 @@
 <body>
 <div class="container-left">
     <div class="box-top">
+        <div class="img-upload_bttn" id="avatar-bttn">
+            <img id="avatar" src="http://localhost:8080/file/asd/asd" width="265" height="265" onclick="inputFile()"/>
+            <input type="file" id="avatarLoader" class="file_field" style="display:none"/>
+        </div>
         <div class="input-field">
             <p>Имя: ${charName}</p>
             <p id="char-name" hidden>${charName}</p>
@@ -503,7 +511,7 @@
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
             if (ourData.isLevelUpReady === true) {
-                window.location.replace("levelup?charId="+charId);
+                window.location.replace("levelup?charId=" + charId);
             } else {
                 renderThis(ourData);
             }
@@ -512,29 +520,57 @@
     })
 
     function renderThis(data) {
-            currentExperience.innerText = data.experience;
+        currentExperience.innerText = data.experience;
     }
 
+    function inputFile() {
+        document.getElementById("avatarLoader").click()
+    }
+
+    function handle_file_select(evt) {
+        let fl_files = evt.target.files;
+        let fl_file = fl_files[0];
+        let reader = new FileReader();
+        let display_file = ( e ) => {
+            fireUp(fl_file, e.target.result)
+        };
+
+        let on_reader_load = ( fl_file ) => {
+            return display_file; // a function
+        };
+        reader.onload = on_reader_load( fl_file );
+        reader.readAsArrayBuffer( fl_file );
+    }
+
+    function fireUp(fl_file, mpFile) {
+        var imgRequest = new XMLHttpRequest();
+        imgRequest.open('POST', '/file/asd/asd/upload');
+        imgRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        var base64 = mpFile
+        const body = JSON.stringify({
+            name: fl_file.name,
+            originalFilename: fl_file.name,
+            contentType: fl_file.type,
+            size: fl_file.size,
+            "content": base64
+        });
+        console.log(base64)
+        imgRequest.send(body);
+    }
+
+    <!--
+        function encode(mpFile) {
+            const byteA = new Uint8Array(mpFile);
+            const s = new TextDecoder().decode(byteA);
+            return s
+        }
+        -->
+
+    document.getElementById('avatarLoader').addEventListener( 'change', handle_file_select, false )
 </script>
-
-<div class="container-left-bottom">
-    <div class=box-hp-top>
-        <div class="input-field">
-            <output id="currentHP" class="savethrow-text">${curHitPoints}</output>
-        </div>
-    </div>
-    <div class=box-hp-bottom>
-        <div class="input-field">
-            <output id="max-hit-points" class="savethrow-text">${maxHitPoints}</output>
-        </div>
-    </div>
-    <div class="buttons-class">
-        <button class="heal-button" id="heal-button" name="heal-button" onclick="hpHealShow()">ЛЕЧЕНИЕ</button>
-        <button class="rest-button" id="rest-button" name="rest-button">ОТДЫХ</button>
-        <button class="dmg-button" id="dmg-button" name="dmg-button" onclick="hpDmgShow()">УРОН</button>
-    </div>
-</div>
-
+<!--
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+-->
 <div class="modal" id="healModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -869,6 +905,23 @@
                 <output>${animal_handling} Уход за животными</output>
                 <br>
             </div>
+        </div>
+    </div>
+    <div class="container-left-bottom">
+        <div class=box-hp-top>
+            <div class="input-field">
+                <output id="currentHP" class="savethrow-text">${curHitPoints}</output>
+            </div>
+        </div>
+        <div class=box-hp-bottom>
+            <div class="input-field">
+                <output id="max-hit-points" class="savethrow-text">${maxHitPoints}</output>
+            </div>
+        </div>
+        <div class="buttons-class">
+            <button class="heal-button" id="heal-button" name="heal-button" onclick="hpHealShow()">ЛЕЧЕНИЕ</button>
+            <button class="rest-button" id="rest-button" name="rest-button">ОТДЫХ</button>
+            <button class="dmg-button" id="dmg-button" name="dmg-button" onclick="hpDmgShow()">УРОН</button>
         </div>
     </div>
     <div class="atrbs-rows-left">

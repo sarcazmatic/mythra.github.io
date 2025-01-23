@@ -1,5 +1,6 @@
-package ru.maleth.mythra.dto;
+package ru.maleth.mythra.dto.mapper;
 
+import ru.maleth.mythra.dto.UserDTO;
 import ru.maleth.mythra.model.User;
 
 public class UserMapper {

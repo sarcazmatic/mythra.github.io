@@ -1,5 +1,6 @@
-package ru.maleth.mythra.dto;
+package ru.maleth.mythra.dto.mapper;
 
+import ru.maleth.mythra.dto.AbilityJsonResponseDTO;
 import ru.maleth.mythra.model.CharClassAbility;
 import ru.maleth.mythra.model.CharRaceAbility;
 

@@ -16,6 +16,9 @@ public interface CharacterRepo extends JpaRepository<Character, Long> {
 
     Character findByCharName(String charName);
 
+    @Query("SELECT c FROM Character c " +
+            "WHERE c.charName = :charName " +
+            "AND c.creator.name = :userName")
     Optional<Character> findByCreator_NameAndCharName(String userName, String charName);
 
     @Transactional

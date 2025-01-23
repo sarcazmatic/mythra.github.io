@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.maleth.mythra.dto.AbilityChargeModifierDTO;
 import ru.maleth.mythra.dto.AbilityJsonResponseDTO;
-import ru.maleth.mythra.dto.AbilityJsonResponseMapper;
+import ru.maleth.mythra.dto.mapper.AbilityJsonResponseMapper;
 import ru.maleth.mythra.dto.AttributesRaiserDTO;
 import ru.maleth.mythra.dto.NumberModifierDTO;
 import ru.maleth.mythra.enums.AttribEnum;
