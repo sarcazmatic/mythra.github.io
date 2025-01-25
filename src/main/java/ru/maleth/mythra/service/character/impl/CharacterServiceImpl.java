@@ -2,6 +2,7 @@ package ru.maleth.mythra.service.character.impl;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.maleth.mythra.enums.AttribEnum;
 import ru.maleth.mythra.enums.ProfEnum;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CharacterServiceImpl implements CharacterService {
 
     private final CharacterRepo characterRepo;
@@ -29,6 +31,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public String loadAttrsAndSkills(Long charId) {
+        log.info("Собираем атрибуты и навыки для персонажа с id {}", charId);
         Character character = characterRepo.findById(charId).get();
         Map<String, String> attrsAndSkills = new HashMap<>();
 
@@ -96,6 +99,18 @@ public class CharacterServiceImpl implements CharacterService {
                 }
             }
         }
+        attrsAndSkills.put("strength", String.valueOf(character.getStrength()));
+        attrsAndSkills.put("strengthmod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getStrength())));
+        attrsAndSkills.put("dexterity", String.valueOf(character.getDexterity()));
+        attrsAndSkills.put("dexteritymod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getDexterity())));
+        attrsAndSkills.put("constitution", String.valueOf(character.getConstitution()));
+        attrsAndSkills.put("constitutionmod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getConstitution())));
+        attrsAndSkills.put("intelligence", String.valueOf(character.getIntelligence()));
+        attrsAndSkills.put("intelligencemod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getIntelligence())));
+        attrsAndSkills.put("wisdom", String.valueOf(character.getWisdom()));
+        attrsAndSkills.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getWisdom())));
+        attrsAndSkills.put("charisma", String.valueOf(character.getCharisma()));
+        attrsAndSkills.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getCharisma())));
         String result = gson.toJson(attrsAndSkills);
         return result;
     }

@@ -159,7 +159,7 @@
         });
         ourRequest.send(newBody);
         var levelToLevelUp = parseInt(arrayWithClassesAndLevels[i + 1]) + 1;
-        if ((classToLevelUp == "Бард" || "Варвар") && levelToLevelUp % 4 == 0) {
+        if ((classToLevelUp == "Бард" || "Варвар") && (levelToLevelUp % 4 == 0 || levelToLevelUp == 19)) {
             document.getElementById('class-choice-form').method = "get";
             document.getElementById('class-choice-form').action = "raiseattributes";
         } else {

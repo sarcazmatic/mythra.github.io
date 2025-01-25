@@ -539,7 +539,7 @@
     const form = document.getElementById('imgForm');
     document.getElementById('avatarLoader').addEventListener('change', button_clicker, true)
 
-    function button_clicker( evt ) {
+    function button_clicker(evt) {
         evt.preventDefault();
         uploadFiles();
     }
@@ -547,7 +547,7 @@
     function uploadFiles() {
         const userName = document.getElementById('user-name').innerText
         const charName = document.getElementById('char-name').innerText
-        const url = '/file/'+userName+'/'+charName+'/upload';
+        const url = '/file/' + userName + '/' + charName + '/upload';
         console.log(url)
         const method = 'post';
         const xhr = new XMLHttpRequest();
@@ -806,91 +806,91 @@
 <div class="container-second-left">
     <div class="atrbs-rows-left">
         <div class="input-field-attr-withname">
-            <p>Сила: ${strength}</p>
+            <p id="str"></p>
         </div>
         <div class="atrbs-collumns">
             <div class="input-field-attr">
-                <h2>${strengthmod}</h2>
+                <h2 id="strMod"></h2>
             </div>
             <div class="input-field-attr">
                 <br>
-                <output class="savethrow-text">${strengthsave} Спасбросок</output>
+                <output id="strSave" class="savethrow-text"></output>
                 <br>
-                <output>${athletics} Атлетика</output>
+                <output id="athSkill">${athletics} Атлетика</output>
                 <br>
             </div>
         </div>
     </div>
     <div class="atrbs-rows-right">
         <div class="input-field-attr-withname">
-            <p>Интеллект: ${intelligence}</p>
+            <p id="int"></p>
         </div>
         <div class="atrbs-collumns">
             <div class="input-field-attr">
-                <h2>${intelligencemod}</h2>
+                <h2 id="intMod"></h2>
             </div>
             <div class="input-field-attr">
                 <br>
-                <output class="savethrow-text">${intelligencesave} Спасбросок</output>
+                <output id="intSave" class="savethrow-text"></output>
                 <br>
-                <output>${arcana} Аркана</output>
+                <output id="arcSkill">${arcana} Аркана</output>
                 <br>
-                <output>${history} История</output>
+                <output id="hisSkill">${history} История</output>
                 <br>
-                <output>${investigation} Расследование</output>
+                <output id="invSkill">${investigation} Расследование</output>
                 <br>
-                <output>${nature} Природа</output>
+                <output id="natSkill">${nature} Природа</output>
                 <br>
-                <output>${religion} Религия</output>
+                <output id="relSkill">${religion} Религия</output>
                 <br>
             </div>
         </div>
     </div>
     <div class="atrbs-rows-left">
         <div class="input-field-attr-withname">
-            <p>Ловкость: ${dexterity}</p>
+            <p id="dex"></p>
         </div>
         <div class="atrbs-collumns">
             <div class="input-field-attr">
-                <h2>${dexteritymod}</h2>
+                <h2 id="dexMod"></h2>
             </div>
             <div class="input-field-attr">
                 <br>
-                <output class="savethrow-text">${dexteritysave} Спасбросок</output>
+                <output id="dexSave" class="savethrow-text"></output>
                 <br>
-                <output>${acrobatics} Акробатика</output>
+                <output id="acrSkill">${acrobatics} Акробатика</output>
                 <br>
-                <output>${sleight_of_hand} Ловкость рук</output>
+                <output id="sohSkill">${sleight_of_hand} Ловкость рук</output>
                 <br>
-                <output>${stealth} Скрытность</output>
+                <output id="steSkill">${stealth} Скрытность</output>
                 <br>
                 <br>
-                <output> ${initiative} Инициатива</output>
+                <output id="iniSkill"> ${initiative} Инициатива</output>
                 <br>
             </div>
         </div>
     </div>
     <div class="atrbs-rows-right">
         <div class="input-field-attr-withname">
-            <p>Мудрость: ${wisdom}</p>
+            <p id="wis"></p>
         </div>
         <div class="atrbs-collumns">
             <div class="input-field-attr">
-                <h2>${wisdommod}</h2>
+                <h2 id="wisMod"></h2>
             </div>
             <div class="input-field-attr">
                 <br>
-                <output class="savethrow-text">${wisdomsave} Спасбросок</output>
+                <output id="wisSave" class="savethrow-text"></output>
                 <br>
-                <output>${insight} Проницательность</output>
+                <output id="insSkill">${insight} Проницательность</output>
                 <br>
-                <output>${medicine} Медицина</output>
+                <output id="medSkill">${medicine} Медицина</output>
                 <br>
-                <output>${perception} Восприятие</output>
+                <output id="percSkill">${perception} Восприятие</output>
                 <br>
-                <output>${survival} Выживание</output>
+                <output id="surSkill">${survival} Выживание</output>
                 <br>
-                <output>${animal_handling} Уход за животными</output>
+                <output id="anhSkill">${animal_handling} Уход за животными</output>
                 <br>
             </div>
         </div>
@@ -914,38 +914,38 @@
     </div>
     <div class="atrbs-rows-left">
         <div class="input-field-attr-withname">
-            <p>Телосложение: ${constitution}</p>
+            <p id="con"></p>
         </div>
         <div class="atrbs-collumns">
             <div class="input-field-attr">
-                <h2>${constitutionmod}</h2>
+                <h2 id="conMod"></h2>
             </div>
             <div class="input-field-attr">
                 <br>
-                <output class="savethrow-text">${constitutionsave} Спасбросок</output>
+                <output id="conSave" class="savethrow-text"></output>
                 <br>
             </div>
         </div>
     </div>
     <div class="atrbs-rows-right">
         <div class="input-field-attr-withname">
-            <p>Харизма: ${charisma}</p>
+            <p id="cha"></p>
         </div>
         <div class="atrbs-collumns">
             <div class="input-field-attr">
-                <h2>${charismamod}</h2>
+                <h2 id="chaMod"></h2>
             </div>
             <div class="input-field-attr">
                 <br>
-                <output class="savethrow-text">${charismasave} Спасбросок</output>
+                <output id="chaSave" class="savethrow-text"></output>
                 <br>
-                <output>${deception} Обман</output>
+                <output id="desSkill">${deception} Обман</output>
                 <br>
-                <output>${intimidation} Запугивание</output>
+                <output id="intSkill">${intimidation} Запугивание</output>
                 <br>
-                <output>${performance} Выступление</output>
+                <output id="perfSkill">${performance} Выступление</output>
                 <br>
-                <output>${persuasion} Убеждение</output>
+                <output id="persSkill">${persuasion} Убеждение</output>
                 <br>
             </div>
         </div>
@@ -1112,39 +1112,100 @@
 <script>
     var userName = document.getElementById("user-name").innerText;
     var charName = document.getElementById("char-name").innerText;
+    var charId = document.getElementById("char-id").innerText;
+
     var currentHP = document.getElementById("currentHP");
+
+    var currentStr = document.getElementById("str");
+    var currentStrMod = document.getElementById("strMod");
+    var currentStrSave = document.getElementById("strSave");
+
+    var currentDex = document.getElementById("dex");
+    var currentDexMod = document.getElementById("dexMod");
+    var currentDexSave = document.getElementById("dexSave");
+
+    var currentCon = document.getElementById("con");
+    var currentConMod = document.getElementById("conMod");
+    var currentConSave = document.getElementById("conSave");
+
+    var currentInt = document.getElementById("int");
+    var currentIntMod = document.getElementById("intMod");
+    var currentIntSave = document.getElementById("intSave");
+
+    var currentWis = document.getElementById("wis");
+    var currentWisMod = document.getElementById("wisMod");
+    var currentWisSave = document.getElementById("wisSave");
+
+    var currentCha = document.getElementById("cha");
+    var currentChaMod = document.getElementById("chaMod");
+    var currentChaSave = document.getElementById("chaSave");
 
     window.onload = loadHP();
     window.onload = loadImg();
     window.onload = loadAttrsAndSkills();
 
-    function loadHP(){
+    function loadHP() {
         currentHP.innerText = ${curHitPoints};
     }
 
-    function loadImg(){
+    function loadImg() {
         var img = document.createElement("img");
-        img.class="img-class"
-        img.id="avatar"
-        img.alt="avatar"
+        img.class = "img-class"
+        img.id = "avatar"
+        img.alt = "avatar"
         img.setAttribute("onclick", "inputFile()")
         document.getElementById('imgForm').appendChild(img);
         renderImg(img)
     }
 
-    function renderImg(img){
+    function renderImg(img) {
         var host = window.location.protocol
-        img.width="251"
-        img.height="251"
-        img.src=host+"/file/"+userName+"/"+charName
+        img.width = "251"
+        img.height = "251"
+        img.src = host + "/file/" + userName + "/" + charName
     }
 
-    function loadHP(){
+    function loadHP() {
         currentHP.innerText = ${curHitPoints};
     }
 
-    function loadAttrsAndSkills(){
-        currentHP.innerText = ${curHitPoints};
+    function loadAttrsAndSkills() {
+        var attrsAndSkillRequest = new XMLHttpRequest()
+        var uri = "/api/attrsAndSkills/"+charId
+        attrsAndSkillRequest.open('GET', uri);
+        attrsAndSkillRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        attrsAndSkillRequest.send();
+        attrsAndSkillRequest.onload = function () {
+            var responseData = JSON.parse(attrsAndSkillRequest.responseText);
+            console.log(responseData)
+            updateFields(responseData);
+        }
+    }
+
+    function updateFields(responseData) {
+        currentStr.innerText = "Сила: " +responseData.strength;
+        currentStrMod.innerText = responseData.strengthmod;
+        currentStrSave.innerText = "${strengthsave} Спасбросок";
+
+        currentDex.innerText = "Ловкость: " +responseData.dexterity;
+        currentDexMod.innerText = responseData.dexteritymod;
+        currentDexSave.innerText = "${dexteritysave} Спасбросок";
+
+        currentCon.innerText = "Телосложение: " +responseData.constitution;
+        currentConMod.innerText = responseData.constitutionmod;
+        currentConSave.innerText = "${constitutionsave} Спасбросок";
+
+        currentInt.innerText = "Интеллект: " +responseData.intelligence;
+        currentIntMod.innerText = responseData.intelligencemod;
+        currentIntSave.innerText = "${intelligencesave} Спасбросок";
+
+        currentWis.innerText = "Мудрость: " +responseData.wisdom;
+        currentWisMod.innerText = responseData.wisdommod;
+        currentWisSave.innerText = "${wisdomsave} Спасбросок";
+
+        currentCha.innerText = "Харизма: " +responseData.charisma;
+        currentChaMod.innerText = responseData.charismamod;
+        currentChaSave.innerText = "${charismasave} Спасбросок";
     }
 
 </script>

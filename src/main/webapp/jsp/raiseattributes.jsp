@@ -199,7 +199,7 @@
                 attrsArray.push(checkedValue)
             }
         }
-        if (attrsArray.length > 2) {
+        if (attrsArray.length != 2) {
             alert("Либо одну хар-ку на два очка, либо две на одно.")
             return;
         }

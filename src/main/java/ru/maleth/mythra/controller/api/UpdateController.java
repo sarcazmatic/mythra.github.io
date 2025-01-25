@@ -20,7 +20,6 @@ public class UpdateController {
 
     private final CharsheetService charsheetService;
     private final CharacterService characterService;
-
     private final LevelUpService levelUpService;
 
 
@@ -38,7 +37,6 @@ public class UpdateController {
         log.info("Пришел запрос на загрузку атрибутов и навыков для персонажа с id {}", charId);
         String response = characterService.loadAttrsAndSkills(charId);
         return response;
-        //return response;
     }
 
     @PutMapping("/abilCharge")

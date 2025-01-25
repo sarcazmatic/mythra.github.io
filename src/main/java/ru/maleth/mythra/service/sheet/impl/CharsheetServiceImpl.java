@@ -227,18 +227,6 @@ public class CharsheetServiceImpl implements CharsheetService {
         attributes.put("experience", String.valueOf(experience));
         attributes.put("level", String.valueOf(CharacterCalculator.getLevel(experience)));
         attributes.put("proficiency", formatMods(CharacterCalculator.getProfBonus(experience)));
-        attributes.put("strength", String.valueOf(strength));
-        attributes.put("strengthmod", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
-        attributes.put("dexterity", String.valueOf(dexterity));
-        attributes.put("dexteritymod", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
-        attributes.put("constitution", String.valueOf(constitution));
-        attributes.put("constitutionmod", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
-        attributes.put("intelligence", String.valueOf(intelligence));
-        attributes.put("intelligencemod", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
-        attributes.put("wisdom", String.valueOf(wisdom));
-        attributes.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
-        attributes.put("charisma", String.valueOf(charisma));
-        attributes.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
         attributes.put("curHitPoints", String.valueOf(curHitPoints));
         attributes.put("maxHitPoints", String.valueOf(maxHitPoints));
 

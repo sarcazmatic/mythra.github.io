@@ -596,11 +596,6 @@ VALUES ('КОМПЕТЕНТНОСТЬ',
         false, 'BLANK', false, 'NONE', 3, 10, null);
 INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
                        class_source_id, race_source_id)
-VALUES ('УВЕЛИЧЕНИЕ ХАРАКТЕРИСТИК',
-        'Вы можете повысить значение одной из ваших характеристик на 2 или двух характеристик на 1. Как обычно, значение характеристики при этом не должно превысить 20.',
-        'CLASS', false, 'BLANK', false, 'NONE', 4, 10, null);
-INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
-                       class_source_id, race_source_id)
 VALUES ('ВДОХНОВЕНИЕ БАРДА (к8)',
         'Вы можете вдохновлять других словами или музыкой. Бонусным действием выберите существо в пределах 60 футов, которое может услышать вас. Это существо получает кость бардовского вдохновения (к8). В течение следующих 10 минут оно может один раз бросить эту кость и добавить результат к проверке характеристики, броску атаки или спасброску. Кость исчезает после броска. Вы можете использовать это умение число раз, равное модификатору вашей Харизмы, но как минимум один раз. Потраченные использования восстанавливаются после продолжительного отдыха.',
         'CLASS', true, 'BONUS_ACTION', true, 'SHORT', 5, 10, null);
@@ -614,11 +609,6 @@ INSERT INTO abilities (name, description, ability_source, is_active, cost, requi
 VALUES ('КОНТРОЧАРОВАНИЕ',
         'Вы получаете возможность использовать звуки или слова силы для разрушения воздействующих на разум эффектов. Вы можете действием начать исполнение, которое продлится до конца вашего следующего хода. В течение этого времени вы и все дружественные существа в пределах 30 футов от вас совершают спасброски от запугивания и очарования с преимуществом. Чтобы получить это преимущество, существа должны слышать вас. Исполнение заканчивается преждевременно, если вы оказываетесь недееспособны, теряете способность говорить, или прекращаете исполнение добровольно (на это не требуется действие).',
         'CLASS', true, 'ACTION', false, 'NONE', 6, 10, null);
-INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
-                       class_source_id, race_source_id)
-VALUES ('УВЕЛИЧЕНИЕ ХАРАКТЕРИСТИК',
-        'Вы можете повысить значение одной из ваших характеристик на 2 или двух характеристик на 1. Как обычно, значение характеристики при этом не должно превысить 20.',
-        'CLASS', false, 'BLANK', false, 'NONE', 8, 10, null);
 INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
                        class_source_id, race_source_id)
 VALUES ('ПЕСНЬ ОТДЫХА (к8)',
@@ -641,11 +631,6 @@ VALUES ('ТАЙНЫ МАГИИ',
         'CLASS', false, 'BLANK', false, 'NONE', 10, 10, null);
 INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
                        class_source_id, race_source_id)
-VALUES ('УВЕЛИЧЕНИЕ ХАРАКТЕРИСТИК',
-        'Вы можете повысить значение одной из ваших характеристик на 2 или двух характеристик на 1. Как обычно, значение характеристики при этом не должно превысить 20.',
-        'CLASS', false, 'BLANK', false, 'NONE', 12, 10, null);
-INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
-                       class_source_id, race_source_id)
 VALUES ('ПЕСНЬ ОТДЫХА (к10)',
         'Вы с помощью успокаивающей музыки или речей можете помочь своим раненым союзникам восстановить их силы во время короткого отдыха. Если вы, или любые союзные существа, способные слышать ваше исполнение, восстанавливаете хиты в конце короткого отдыха, каждый из вас восстанавливает дополнительно 1к10)хитов. Для того, чтобы восстановить дополнительные хиты, существо должно потратить в конце короткого отдыха как минимум одну Кость Хитов.',
         'CLASS', true, 'FREE_ACTION', false, 'NONE', 13, 10, null);
@@ -659,11 +644,6 @@ INSERT INTO abilities (name, description, ability_source, is_active, cost, requi
 VALUES ('ВДОХНОВЕНИЕ БАРДА (к12)',
         'Вы можете вдохновлять других словами или музыкой. Бонусным действием выберите существо в пределах 60 футов, которое может услышать вас. Это существо получает кость бардовского вдохновения (к12). В течение следующих 10 минут оно может один раз бросить эту кость и добавить результат к проверке характеристики, броску атаки или спасброску. Кость исчезает после броска. Вы можете использовать это умение число раз, равное модификатору вашей Харизмы, но как минимум один раз. Потраченные использования восстанавливаются после продолжительного отдыха.',
         'CLASS', true, 'BONUS_ACTION', true, 'SHORT', 15, 10, null);
-INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
-                       class_source_id, race_source_id)
-VALUES ('УВЕЛИЧЕНИЕ ХАРАКТЕРИСТИК',
-        'Вы можете повысить значение одной из ваших характеристик на 2 или двух характеристик на 1. Как обычно, значение характеристики при этом не должно превысить 20.',
-        'CLASS', true, 'ACTION', true, 'NONE', 16, 10, null);
 INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
                        class_source_id, race_source_id)
 VALUES ('ПЕСНЬ ОТДЫХА (к12)',
