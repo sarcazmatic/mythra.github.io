@@ -217,6 +217,7 @@ public class CharsheetServiceImpl implements CharsheetService {
         /*
         Тут переносим атрибуты в мапу. И указываем адрес страницы.
         */
+        attributes.put("userName", userName);
         attributes.put("charName", character.getCharName());
         attributes.put("charRace", character.getCharRace().getRaceEnum().getName());
         attributes.put("charClass", charClassesString);

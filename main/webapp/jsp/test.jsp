@@ -46,5 +46,10 @@
 
 </script>
 
+<form action="http://localhost:8080/file/asd/asd/upload" method="post" enctype="multipart/form-data">
+    <input name="file" type="file" multiple>
+    <button type="submit">Upload</button>
+</form>
+
 </body>
 </html>

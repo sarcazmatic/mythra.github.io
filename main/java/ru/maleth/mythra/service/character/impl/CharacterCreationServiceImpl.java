@@ -375,6 +375,7 @@ public class CharacterCreationServiceImpl implements CharacterCreationService {
         /*
         Тут переносим атрибуты в мапу. И указываем адрес страницы.
         */
+        attributes.put("userName", userName);
         attributes.put("charName", character.getCharName());
         attributes.put("charRace", character.getCharRace().getRaceEnum().getName());
         attributes.put("charClass", ClassEnum.valueOf(character.getMainClass().getName()).getName());

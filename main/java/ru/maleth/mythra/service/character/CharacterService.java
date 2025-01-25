@@ -6,4 +6,6 @@ public interface CharacterService {
 
     Character findByUserNameAndCharName(String userName, String charName);
 
+    String loadAttrsAndSkills(Long charId);
+
 }

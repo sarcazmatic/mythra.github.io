@@ -26,7 +26,6 @@ import ru.maleth.mythra.service.character.CharacterService;
 import ru.maleth.mythra.service.file.FileService;
 import ru.maleth.mythra.service.levelup.LevelUpService;
 import ru.maleth.mythra.service.sheet.CharsheetService;
-import org.springframework.mock.web.MockMultipartFile;
 
 
 import java.io.ByteArrayOutputStream;
@@ -46,25 +45,15 @@ public class FileController {
     private static final String PAGE = "directToPage";
 
     @PostMapping(value = "/upload")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     public void uploadFile(@PathVariable(name = "name") String userName,
                            @PathVariable String charName,
-                           @RequestBody IncomingFileDTO incomingFileDTO,
+                           @RequestParam(name = "file") MultipartFile mpFile,
                            HttpServletRequest request) throws IOException {
         log.info("Получен запрос на загрузку файла для персонажа '{}'. Эндпоинт {}. Метод {}",
                 charName, request.getRequestURL(), request.getMethod());
-        /*System.out.println(incomingFileDTO.getContent());
-        System.out.println(incomingFileDTO.getOriginalFilename());
-        System.out.println(incomingFileDTO.getSize());
-        System.out.println(incomingFileDTO.getContentType());
-        byte[] bytes = incomingFileDTO.getContent().getBytes();
-        MultipartFile mpFile = new MockMultipartFile(incomingFileDTO.getName(), incomingFileDTO.getOriginalFilename(), incomingFileDTO.getContentType(), bytes);
-        System.out.println(mpFile.getBytes());
-        fileService.save(mpFile, userName, charName);*/
-        String base64 = incomingFileDTO.getContent();
-        System.out.println(base64);
-        byte[] bitmapData = base64.getBytes();
-        System.out.println(bitmapData);
+        fileService.save(mpFile, userName, charName);
+        System.out.println(mpFile.getOriginalFilename());
     }
 
     @GetMapping("")

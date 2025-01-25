@@ -8,6 +8,7 @@ import ru.maleth.mythra.dto.AbilityChargeModifierDTO;
 import ru.maleth.mythra.dto.AttributesRaiserDTO;
 import ru.maleth.mythra.dto.CharClassToLevelUpDTO;
 import ru.maleth.mythra.dto.NumberModifierDTO;
+import ru.maleth.mythra.service.character.CharacterService;
 import ru.maleth.mythra.service.levelup.LevelUpService;
 import ru.maleth.mythra.service.sheet.CharsheetService;
 
@@ -18,6 +19,8 @@ import ru.maleth.mythra.service.sheet.CharsheetService;
 public class UpdateController {
 
     private final CharsheetService charsheetService;
+    private final CharacterService characterService;
+
     private final LevelUpService levelUpService;
 
 
@@ -27,6 +30,15 @@ public class UpdateController {
         log.info("Пришел запрос на загрузку абилок для персонажа с id {}", charId);
         String response = charsheetService.abilityLoader(charId);
         return response;
+    }
+
+    @GetMapping("/attrsAndSkills/{charId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String attrsAndSkillsLoader(@PathVariable(name = "charId") Long charId) {
+        log.info("Пришел запрос на загрузку атрибутов и навыков для персонажа с id {}", charId);
+        String response = characterService.loadAttrsAndSkills(charId);
+        return response;
+        //return response;
     }
 
     @PutMapping("/abilCharge")

@@ -71,6 +71,11 @@
             padding-top: 10px;
         }
 
+        .container-left .box-top .img-class {
+            width: 100px;
+            height: 100px;
+        }
+
         .box-bottom {
             margin-left: 10px;
         }
@@ -424,11 +429,14 @@
 <div class="container-left">
     <div class="box-top">
         <div class="img-upload_bttn" id="avatar-bttn">
-            <img id="avatar" src="http://localhost:8080/file/asd/asd" width="265" height="265" onclick="inputFile()"/>
-            <input type="file" id="avatarLoader" class="file_field" style="display:none"/>
+            <form id="imgForm" enctype="multipart/form-data">
+                <input type="file" id="avatarLoader" name="file" class="file_field" style="display:none" multiple/>
+                <button id="avatar-submit" type="submit" hidden>Upload</button>
+            </form>
         </div>
         <div class="input-field">
             <p>Имя: ${charName}</p>
+            <p id="user-name" hidden>${userName}</p>
             <p id="char-name" hidden>${charName}</p>
             <p id="char-id" hidden>${charId}</p>
         </div>
@@ -476,6 +484,7 @@
     </div>
 </div>
 <script>
+    var userName = document.getElementById("user-name").innerText;
     var charName = document.getElementById("char-name").innerText;
     var charId = document.getElementById("char-id").innerText;
     var expModal = document.getElementById("expModal");
@@ -513,64 +522,43 @@
             if (ourData.isLevelUpReady === true) {
                 window.location.replace("levelup?charId=" + charId);
             } else {
-                renderThis(ourData);
+                renderExp(ourData);
             }
         }
         ourRequest.send(body);
     })
 
-    function renderThis(data) {
+    function renderExp(data) {
         currentExperience.innerText = data.experience;
     }
 
     function inputFile() {
-        document.getElementById("avatarLoader").click()
+        document.getElementById('avatarLoader').click()
     }
 
-    function handle_file_select(evt) {
-        let fl_files = evt.target.files;
-        let fl_file = fl_files[0];
-        let reader = new FileReader();
-        let display_file = ( e ) => {
-            fireUp(fl_file, e.target.result)
-        };
+    const form = document.getElementById('imgForm');
+    document.getElementById('avatarLoader').addEventListener('change', button_clicker, true)
 
-        let on_reader_load = ( fl_file ) => {
-            return display_file; // a function
-        };
-        reader.onload = on_reader_load( fl_file );
-        reader.readAsArrayBuffer( fl_file );
+    function button_clicker( evt ) {
+        evt.preventDefault();
+        uploadFiles();
     }
 
-    function fireUp(fl_file, mpFile) {
-        var imgRequest = new XMLHttpRequest();
-        imgRequest.open('POST', '/file/asd/asd/upload');
-        imgRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
-        var base64 = mpFile
-        const body = JSON.stringify({
-            name: fl_file.name,
-            originalFilename: fl_file.name,
-            contentType: fl_file.type,
-            size: fl_file.size,
-            "content": base64
-        });
-        console.log(base64)
-        imgRequest.send(body);
+    function uploadFiles() {
+        const userName = document.getElementById('user-name').innerText
+        const charName = document.getElementById('char-name').innerText
+        const url = '/file/'+userName+'/'+charName+'/upload';
+        console.log(url)
+        const method = 'post';
+        const xhr = new XMLHttpRequest();
+        const data = new FormData(form);
+        console.log(data)
+        xhr.open(method, url);
+        xhr.send(data);
+        location.reload()
     }
 
-    <!--
-        function encode(mpFile) {
-            const byteA = new Uint8Array(mpFile);
-            const s = new TextDecoder().decode(byteA);
-            return s
-        }
-        -->
-
-    document.getElementById('avatarLoader').addEventListener( 'change', handle_file_select, false )
 </script>
-<!--
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
--->
 <div class="modal" id="healModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -616,12 +604,12 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            renderHTML(ourData);
+            renderHeal(ourData);
         }
         ourRequest.send(body);
     })
 
-    function renderHTML(data) {
+    function renderHeal(data) {
         currentHP.innerText = data.currentHP;
     }
 
@@ -672,13 +660,13 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            renderHTML(ourData);
+            renderDmg(ourData);
         }
         ourRequest.send(body);
 
     })
 
-    function renderHTML(data) {
+    function renderDmg(data) {
         currentHP.innerText = data.currentHP;
     }
 
@@ -910,7 +898,7 @@
     <div class="container-left-bottom">
         <div class=box-hp-top>
             <div class="input-field">
-                <output id="currentHP" class="savethrow-text">${curHitPoints}</output>
+                <output id="currentHP" class="savethrow-text"></output>
             </div>
         </div>
         <div class=box-hp-bottom>
@@ -1121,5 +1109,45 @@
         </div>
     </div>
 </div>
+<script>
+    var userName = document.getElementById("user-name").innerText;
+    var charName = document.getElementById("char-name").innerText;
+    var currentHP = document.getElementById("currentHP");
+
+    window.onload = loadHP();
+    window.onload = loadImg();
+    window.onload = loadAttrsAndSkills();
+
+    function loadHP(){
+        currentHP.innerText = ${curHitPoints};
+    }
+
+    function loadImg(){
+        var img = document.createElement("img");
+        img.class="img-class"
+        img.id="avatar"
+        img.alt="avatar"
+        img.setAttribute("onclick", "inputFile()")
+        document.getElementById('imgForm').appendChild(img);
+        renderImg(img)
+    }
+
+    function renderImg(img){
+        var host = window.location.protocol
+        img.width="251"
+        img.height="251"
+        img.src=host+"/file/"+userName+"/"+charName
+    }
+
+    function loadHP(){
+        currentHP.innerText = ${curHitPoints};
+    }
+
+    function loadAttrsAndSkills(){
+        currentHP.innerText = ${curHitPoints};
+    }
+
+</script>
 </body>
+
 </html>
