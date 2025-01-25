@@ -548,14 +548,14 @@
         const userName = document.getElementById('user-name').innerText
         const charName = document.getElementById('char-name').innerText
         const url = '/file/' + userName + '/' + charName + '/upload';
-        console.log(url)
         const method = 'post';
         const xhr = new XMLHttpRequest();
         const data = new FormData(form);
-        console.log(data)
         xhr.open(method, url);
         xhr.send(data);
-        location.reload()
+        xhr.onload = function () {
+            location.reload()
+        }
     }
 
 </script>
@@ -1177,7 +1177,6 @@
         attrsAndSkillRequest.send();
         attrsAndSkillRequest.onload = function () {
             var responseData = JSON.parse(attrsAndSkillRequest.responseText);
-            console.log(responseData)
             updateFields(responseData);
         }
     }
