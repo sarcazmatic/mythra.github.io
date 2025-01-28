@@ -126,15 +126,15 @@
 
     function loadLine() {
         for (let i = 0; i < numOfClasses; i = i + 2) {
-            var newDiv2 = document.createElement("button");
-            newDiv2.className = "submit-button";
+            var newDivLevelUp = document.createElement("button");
+            newDivLevelUp.className = "submit-button";
             let classText = arrayWithClassesAndLevels[i];
             let levelText = arrayWithClassesAndLevels[i + 1];
             let levelUpText = parseInt(levelText) + 1;
-            newDiv2.id = classText;
-            newDiv2.innerText = classText + " : " + levelText + " -> " + levelUpText;
-            newDiv2.setAttribute("onclick", "setValue(" + i + ")");
-            document.getElementById('put-classes-here').appendChild(newDiv2);
+            newDivLevelUp.id = classText;
+            newDivLevelUp.innerText = classText + " : " + levelText + " -> " + levelUpText;
+            newDivLevelUp.setAttribute("onclick", "setValue(" + i + ")");
+            document.getElementById('put-classes-here').appendChild(newDivLevelUp);
         }
         for (let k = 0; k < numberOfClassesForMultiClass; k = k + 1) {
             var newDivMC = document.createElement("button");

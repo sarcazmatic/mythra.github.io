@@ -6,13 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.maleth.mythra.dto.CharClassToLevelUpDTO;
 import ru.maleth.mythra.enums.ClassEnum;
+import ru.maleth.mythra.enums.ProfEnum;
 import ru.maleth.mythra.model.CharClass;
 import ru.maleth.mythra.model.CharClassLevel;
 import ru.maleth.mythra.model.Character;
+import ru.maleth.mythra.model.Proficiency;
 import ru.maleth.mythra.repo.CharClassLevelRepo;
 import ru.maleth.mythra.repo.CharacterRepo;
 import ru.maleth.mythra.repo.ClassesRepo;
 import ru.maleth.mythra.service.levelup.LevelUpService;
+import ru.maleth.mythra.utility.CharacterCalculator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,6 +108,22 @@ public class LevelUpServiceImpl implements LevelUpService {
         return attributes;
     }
 
+    @Override
+    public Map<String, String> formCompetencePage(String userName, String charName) {
+        log.info("Создаем страницу для компетенция персонажа '{}'", charName);
+        Map<String, String> attributes = new HashMap<>();
+        Character character = characterRepo.findByCreator_NameAndCharName(userName, charName).orElseThrow(()
+                -> new RuntimeException("Не нашли персонажа в таблице Персонажи по имени " + charName));
+        List<String> proficienciesList = character.getProficiencies().stream().map(p -> ProfEnum.valueOf(p.getName()).getName()).toList();
+        attributes.put("proficienciesList", gson.toJson(proficienciesList));
+        attributes.put("proficiency", formatMods(CharacterCalculator.getProfBonus(character.getExperience())));
+        attributes.put("charName", character.getCharName());
+        attributes.put("charRace", character.getCharRace().getRaceEnum().getName());
+        attributes.put("charId", String.valueOf(character.getId()));
+        attributes.put(PAGE, "competence");
+        return attributes;
+    }
+
 
     @Override
     public void levelUp(CharClassToLevelUpDTO charClassToLevelUp) {
@@ -144,4 +163,12 @@ public class LevelUpServiceImpl implements LevelUpService {
         character.setIsLevelUpReady(false);
         charClassLevelRepo.save(charClassLevel);
     }
+
+    private String formatMods(int mod) {
+        if (mod > 0) {
+            return ("+" + mod);
+        }
+        return String.valueOf(mod);
+    }
+
 }

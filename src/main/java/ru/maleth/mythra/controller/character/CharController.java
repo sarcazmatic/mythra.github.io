@@ -93,4 +93,13 @@ public class CharController {
         return attributes.get(PAGE);
     }
 
+    @GetMapping("/competence")
+    @ResponseStatus(HttpStatus.OK)
+    public String applyCompetence(@PathVariable("name") String userName, @PathVariable("charName") String charName, Model model) {
+        log.info("Пришел запрос на загрузку страницы поднятия атрибутов для персонажа {}", charName);
+        Map<String, String> attributes = levelUpService.formCompetencePage(userName, charName);
+        model.addAllAttributes(attributes);
+        return attributes.get(PAGE);
+    }
+
 }
