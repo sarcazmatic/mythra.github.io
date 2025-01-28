@@ -41,7 +41,7 @@
             top: 2.5%;
             left: 5%;
             width: 15%;
-            height: 50%;
+            height: 70%;
             background-color: #222;
             border-radius: 10px;
             border: solid 1px #444;
@@ -67,6 +67,15 @@
             border-bottom: solid 1px #444;
         }
 
+        .container-left .box-top .img-upload_bttn {
+            padding-top: 10px;
+        }
+
+        .container-left .box-top .img-class {
+            width: 100px;
+            height: 100px;
+        }
+
         .box-bottom {
             margin-left: 10px;
         }
@@ -81,20 +90,20 @@
             color: orangered;
         }
 
-        .container-left-bottom {
+        .container-second-left .container-left-bottom {
             display: block;
             position: absolute;
-            top: 54.5%;
-            left: 5%;
-            width: 15%;
-            height: 18%;
+            top: 83%;
+            left: 3%;
+            width: 43%;
+            height: 15.5%;
             background-color: #222;
             border-radius: 10px;
             border: solid 1px #444;
         }
 
         @media (max-width: 414px) {
-            .container-left-bottom {
+            .container-second-left .container-left-bottom {
                 display: block;
                 position: absolute;
                 top: 57%;
@@ -108,7 +117,7 @@
         }
 
         .box-hp-top {
-            margin-top: 10%;
+            margin-top: 7%;
             margin-left: 25px;
             margin-right: 25px;
             text-align: center;
@@ -120,7 +129,7 @@
         }
 
         .buttons-class {
-            margin-top: 10%;
+            margin-top: 3%;
             margin-left: 4.73%;
         }
 
@@ -417,11 +426,17 @@
     </style>
 </head>
 <body>
-
 <div class="container-left">
     <div class="box-top">
+        <div class="img-upload_bttn" id="avatar-bttn">
+            <form id="imgForm" enctype="multipart/form-data">
+                <input type="file" id="avatarLoader" name="file" class="file_field" style="display:none" multiple/>
+                <button id="avatar-submit" type="submit" hidden>Upload</button>
+            </form>
+        </div>
         <div class="input-field">
             <p>Имя: ${charName}</p>
+            <p id="user-name" hidden>${userName}</p>
             <p id="char-name" hidden>${charName}</p>
             <p id="char-id" hidden>${charId}</p>
         </div>
@@ -463,14 +478,15 @@
             <h2>${experience}</h2>
         </div>
         <div class="modal-body">
-            <input type="number" id="incoming-exp">
-            <button class="heal-button" id="sec-exp-button" name="sec-heal-button">ОПЫТ</button>
+            <input type="number" id="incoming-exp" min="1" required placeholder="От 1">
+            <button class="heal-button" id="sec-exp-button" name="sec-exp-button">ОПЫТ</button>
         </div>
     </div>
 </div>
 <script>
+    var userName = document.getElementById("user-name").innerText;
     var charName = document.getElementById("char-name").innerText;
-
+    var charId = document.getElementById("char-id").innerText;
     var expModal = document.getElementById("expModal");
     var expButton = document.getElementById("sec-exp-button");
 
@@ -479,66 +495,77 @@
 
     function expShow() {
         expModal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === expModal) {
-            expModal.style.display = "none";
+        window.onclick = function (event) {
+            if (event.target === expModal) {
+                expModal.style.display = "none";
+            }
         }
     }
 
     expButton.addEventListener("click", function () {
         incomingExp = document.getElementById("incoming-exp").value;
+        if (incomingExp < 1) {
+            alert("Значение не может быть меньше 1")
+            return;
+        }
         expModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', '/charsheet/calcExp');
+        ourRequest.open('PUT', '/api/calcExp');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
+            charId: charId,
             charName: charName,
             modifier: incomingExp
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
             if (ourData.isLevelUpReady === true) {
-                window.location.replace("levelup");
+                window.location.replace("levelup?charId=" + charId);
             } else {
-                renderThis(ourData);
+                renderExp(ourData);
             }
         }
         ourRequest.send(body);
     })
 
-    function renderThis(data) {
-            currentExperience.innerText = data.experience;
+    function renderExp(data) {
+        currentExperience.innerText = data.experience;
+    }
+
+    function inputFile() {
+        document.getElementById('avatarLoader').click()
+    }
+
+    const form = document.getElementById('imgForm');
+    document.getElementById('avatarLoader').addEventListener('change', button_clicker, true)
+
+    function button_clicker( evt ) {
+        evt.preventDefault();
+        uploadFiles();
+    }
+
+    function uploadFiles() {
+        const userName = document.getElementById('user-name').innerText
+        const charName = document.getElementById('char-name').innerText
+        const url = '/file/'+userName+'/'+charName+'/upload';
+        console.log(url)
+        const method = 'post';
+        const xhr = new XMLHttpRequest();
+        const data = new FormData(form);
+        console.log(data)
+        xhr.open(method, url);
+        xhr.send(data);
+        location.reload()
     }
 
 </script>
-
-<div class="container-left-bottom">
-    <div class=box-hp-top>
-        <div class="input-field">
-            <output id="currentHP" class="savethrow-text">${curHitPoints}</output>
-        </div>
-    </div>
-    <div class=box-hp-bottom>
-        <div class="input-field">
-            <output id="max-hit-points" class="savethrow-text">${maxHitPoints}</output>
-        </div>
-    </div>
-    <div class="buttons-class">
-        <button class="heal-button" id="heal-button" name="heal-button" onclick="hpHealShow()">ЛЕЧЕНИЕ</button>
-        <button class="rest-button" id="rest-button" name="rest-button">ОТДЫХ</button>
-        <button class="dmg-button" id="dmg-button" name="dmg-button" onclick="hpDmgShow()">УРОН</button>
-    </div>
-</div>
-
 <div class="modal" id="healModal">
     <div class="modal-content">
         <div class="modal-header">
             <h2>${curHitPoints}</h2>
         </div>
         <div class="modal-body">
-            <input type="number" id="incoming-heal">
+            <input type="number" id="incoming-heal" min="1" required placeholder="От 1">
             <button class="heal-button" id="sec-heal-button" name="sec-heal-button">ЛЕЧЕНИЕ</button>
         </div>
     </div>
@@ -554,19 +581,22 @@
 
     function hpHealShow() {
         healModal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === healModal) {
-            healModal.style.display = "none";
+        window.onclick = function (event) {
+            if (event.target === healModal) {
+                healModal.style.display = "none";
+            }
         }
     }
 
     healButton.addEventListener("click", function () {
         incomingHeal = document.getElementById("incoming-heal").value;
+        if (incomingHeal < 1) {
+            alert("Значение не может быть меньше 1")
+            return;
+        }
         healModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', '/charsheet/calcHeal');
+        ourRequest.open('PUT', '/api/calcHeal');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
             charName: charName,
@@ -574,12 +604,12 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            renderHTML(ourData);
+            renderHeal(ourData);
         }
         ourRequest.send(body);
     })
 
-    function renderHTML(data) {
+    function renderHeal(data) {
         currentHP.innerText = data.currentHP;
     }
 
@@ -591,7 +621,7 @@
             <h2>${curHitPoints}</h2>
         </div>
         <div class="modal-body">
-            <input type="number" id="incoming-damage">
+            <input type="number" id="incoming-damage" min="1" required placeholder="От 1">
             <button class="dmg-button" id="sec-dmg-button" name="sec-dmg-button">УРОН</button>
         </div>
     </div>
@@ -607,19 +637,22 @@
 
     function hpDmgShow() {
         dmgModal.style.display = "block";
-    }
-
-    window.onclick = function (event) {
-        if (event.target === dmgModal) {
-            dmgModal.style.display = "none";
+        window.onclick = function (event) {
+            if (event.target === dmgModal) {
+                dmgModal.style.display = "none";
+            }
         }
     }
 
     dmgButton.addEventListener("click", function () {
         incomingDamage = document.getElementById("incoming-damage").value;
+        if (incomingDamage < 1) {
+            alert("Значение не может быть меньше 1")
+            return;
+        }
         dmgModal.style.display = "none";
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', '/charsheet/calcDmg');
+        ourRequest.open('PUT', '/api/calcDmg');
         ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
         const body = JSON.stringify({
             charName: charName,
@@ -627,12 +660,13 @@
         });
         ourRequest.onload = function () {
             var ourData = JSON.parse(ourRequest.responseText);
-            renderHTML(ourData);
+            renderDmg(ourData);
         }
         ourRequest.send(body);
+
     })
 
-    function renderHTML(data) {
+    function renderDmg(data) {
         currentHP.innerText = data.currentHP;
     }
 
@@ -650,7 +684,7 @@
 <script>
     var charId = document.getElementById("char-id").innerText;
 
-    var uriText = "/charsheet/charAbil/" + charId;
+    var uriText = "/api/charAbil/" + charId;
     var elementToAdd = document.getElementById("abilities-locator");
 
     function loadLine() {
@@ -755,7 +789,7 @@
             currentCharge--;
             button.innerText = currentCharge;
             var abilRequest = new XMLHttpRequest();
-            abilRequest.open('PUT', '/charsheet/abilCharge');
+            abilRequest.open('PUT', '/api/abilCharge');
             abilRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
             const body = JSON.stringify({
                 charId: charId,
@@ -859,6 +893,23 @@
                 <output>${animal_handling} Уход за животными</output>
                 <br>
             </div>
+        </div>
+    </div>
+    <div class="container-left-bottom">
+        <div class=box-hp-top>
+            <div class="input-field">
+                <output id="currentHP" class="savethrow-text"></output>
+            </div>
+        </div>
+        <div class=box-hp-bottom>
+            <div class="input-field">
+                <output id="max-hit-points" class="savethrow-text">${maxHitPoints}</output>
+            </div>
+        </div>
+        <div class="buttons-class">
+            <button class="heal-button" id="heal-button" name="heal-button" onclick="hpHealShow()">ЛЕЧЕНИЕ</button>
+            <button class="rest-button" id="rest-button" name="rest-button">ОТДЫХ</button>
+            <button class="dmg-button" id="dmg-button" name="dmg-button" onclick="hpDmgShow()">УРОН</button>
         </div>
     </div>
     <div class="atrbs-rows-left">
@@ -1058,5 +1109,45 @@
         </div>
     </div>
 </div>
+<script>
+    var userName = document.getElementById("user-name").innerText;
+    var charName = document.getElementById("char-name").innerText;
+    var currentHP = document.getElementById("currentHP");
+
+    window.onload = loadHP();
+    window.onload = loadImg();
+    window.onload = loadAttrsAndSkills();
+
+    function loadHP(){
+        currentHP.innerText = ${curHitPoints};
+    }
+
+    function loadImg(){
+        var img = document.createElement("img");
+        img.class="img-class"
+        img.id="avatar"
+        img.alt="avatar"
+        img.setAttribute("onclick", "inputFile()")
+        document.getElementById('imgForm').appendChild(img);
+        renderImg(img)
+    }
+
+    function renderImg(img){
+        var host = window.location.protocol
+        img.width="251"
+        img.height="251"
+        img.src=host+"/file/"+userName+"/"+charName
+    }
+
+    function loadHP(){
+        currentHP.innerText = ${curHitPoints};
+    }
+
+    function loadAttrsAndSkills(){
+        currentHP.innerText = ${curHitPoints};
+    }
+
+</script>
 </body>
+
 </html>

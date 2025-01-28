@@ -1,17 +1,17 @@
-package ru.maleth.mythra.controller;
+package ru.maleth.mythra.controller.auth;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.maleth.mythra.dto.UserDto;
+import ru.maleth.mythra.dto.UserDTO;
 import ru.maleth.mythra.encrypter.PassEncTech;
 import ru.maleth.mythra.service.user.UserService;
 
 @Controller
 @Data
-public class StartController {
+public class AuthController {
 
     private final UserService userService;
 
@@ -31,7 +31,7 @@ public class StartController {
 
     @PostMapping("{name}/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public String register(UserDto userDto) {
+    public String register(UserDTO userDto) {
         userDto.setPassword(PassEncTech.encryptPass(userDto.getPassword()));
         return userService.registerUser(userDto);
     }

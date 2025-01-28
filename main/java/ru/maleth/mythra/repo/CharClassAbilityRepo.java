@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.maleth.mythra.model.Ability;
+import ru.maleth.mythra.model.CharClass;
 import ru.maleth.mythra.model.CharClassAbility;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 public interface CharClassAbilityRepo extends JpaRepository<CharClassAbility, Long> {
 
     List<CharClassAbility> findAllByCharacter_IdOrderByAbilityAsc(Long charId);
+
+    List<CharClassAbility> findAllByCharacter_IdAndCharClassOrderByAbilityAsc(Long charId, CharClass charClass);
 
     CharClassAbility findByCharacter_IdAndAbility_Name(Long charId, String name);
 

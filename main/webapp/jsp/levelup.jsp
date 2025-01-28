@@ -100,6 +100,7 @@
 <body>
 <div class="creation-box">
     <h2>Новый уровень!</h2>
+    <p id="char-name" hidden>${charName}</p>
     <div class="form-container">
         <form id="class-choice-form">
             <label>Выбери класс:</label>
@@ -116,7 +117,11 @@
 
 <script>
     var numOfClasses = document.getElementById("amount-of-classes").innerText;
-    let arrayWithClassesAndLevels = ${array};
+    let arrayWithClassesAndLevels = ${existingCharClasses};
+    let classesForMultiClass = ${classesForMultiClass};
+    let numberOfClassesForMultiClass = ${numberOfClassesForMultiClass};
+    const searchParams = new URLSearchParams(location.search);
+    var charId = searchParams.get("charId");
 
 
     function loadLine() {
@@ -130,20 +135,51 @@
             newDiv2.innerText = classText + " : " + levelText + " -> " + levelUpText;
             newDiv2.setAttribute("onclick", "setValue(" + i + ")");
             document.getElementById('put-classes-here').appendChild(newDiv2);
-            console.log(newDiv2.onclick);
-            console.log(classText);
+        }
+        for (let k = 0; k < numberOfClassesForMultiClass; k = k + 1) {
+            var newDivMC = document.createElement("button");
+            newDivMC.className = "submit-button";
+            let multiClassText = classesForMultiClass[k];
+            newDivMC.id = multiClassText;
+            newDivMC.innerText = multiClassText;
+            newDivMC.setAttribute("onclick", "multiClass(" + k + ")");
+            document.getElementById('put-multiclasses-here').appendChild(newDivMC);
         }
     }
 
-    function setValue(i) {
-        var popp = arrayWithClassesAndLevels[i];
+    async function setValue(i) {
+        var uriText = "/api/levelup";
+        var classToLevelUp = arrayWithClassesAndLevels[i];
         var ourRequest = new XMLHttpRequest();
-        ourRequest.open('PUT', 'charsheet/updCharacterLevel');
-        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+        ourRequest.open('PUT', uriText);
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
         const newBody = JSON.stringify({
-            "charClassToLevelUp": popp
+            "charId": charId,
+            "charClassToLevelUp": classToLevelUp
         });
-        console.log(newBody);
+        ourRequest.send(newBody);
+        var levelToLevelUp = parseInt(arrayWithClassesAndLevels[i + 1]) + 1;
+        if ((classToLevelUp == "Бард" || "Варвар") && levelToLevelUp % 4 == 0) {
+            document.getElementById('class-choice-form').method = "get";
+            document.getElementById('class-choice-form').action = "raiseattributes";
+        } else {
+            document.getElementById('class-choice-form').method = "get";
+            document.getElementById('class-choice-form').action = "charsheet";
+        }
+    }
+
+    async function multiClass(k) {
+        var uriText = "/api/multiclass";
+        var classToLevelUp = classesForMultiClass[k];
+        var ourRequest = new XMLHttpRequest();
+        ourRequest.open('POST', uriText);
+        ourRequest.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+        const searchParams = new URLSearchParams(location.search);
+        var charId = searchParams.get("charId");
+        const newBody = JSON.stringify({
+            "charId": charId,
+            "charClassToLevelUp": classToLevelUp
+        });
         ourRequest.send(newBody);
         document.getElementById('class-choice-form').method = "get";
         document.getElementById('class-choice-form').action = "charsheet";

@@ -3,7 +3,6 @@ package ru.maleth.mythra.utility.classes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.maleth.mythra.model.CharClass;
 import ru.maleth.mythra.model.CharClassAbility;
 import ru.maleth.mythra.model.CharClassLevel;
 import ru.maleth.mythra.model.Character;
@@ -42,7 +41,10 @@ public class ClassUtils {
 
 
     public List<CharClassAbility> charClassAbilityFormer(Character character) {
+        log.info("Собираем абилки персонажа '{}' для вывода на чаршит", character.getCharName());
+        //в дальнейшем добавить сет классов
         List<CharClassLevel> cclList = charClassLevelRepo.findAllByCharacter_IdOrderByCharClass(character.getId());
+        log.info("Собираем список классов персонажа '{}'. Кол-во классов = {}", character.getCharName(), cclList.size());
         List<CharClassAbility> charClassAbilitiesList = new ArrayList<>();
         for (CharClassLevel ccl : cclList) {
             switch (ccl.getCharClass().getName()) {
@@ -59,8 +61,7 @@ public class ClassUtils {
                 default -> new ArrayList<>();
             }
         }
-        log.info("Передаем собранные возможности персонажа " + character.getCharName() + " обратно в метод!");
-
+        log.info("Передаем собранные абилки персонажа '{}' обратно в чаршит", character.getCharName());
         return charClassAbilitiesList;
     }
 

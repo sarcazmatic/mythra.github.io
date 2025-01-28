@@ -3,9 +3,8 @@ package ru.maleth.mythra.service.user.impl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import ru.maleth.mythra.dto.UserDto;
-import ru.maleth.mythra.dto.UserMapper;
+import ru.maleth.mythra.dto.UserDTO;
+import ru.maleth.mythra.dto.mapper.UserMapper;
 import ru.maleth.mythra.encrypter.PassEncTech;
 import ru.maleth.mythra.model.User;
 import ru.maleth.mythra.repo.UserRepo;
@@ -39,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String registerUser(@Valid UserDto userDto) {
+    public String registerUser(@Valid UserDTO userDto) {
         if (userRepo.findByNameOrEmail(userDto.getName(), userDto.getEmail()).isPresent()) {
             return "user_error";
         }

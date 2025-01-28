@@ -6,7 +6,7 @@ import lombok.*;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class AbilityChargeModifierDto {
+public class AbilityChargeModifierDTO {
 
     private Long charId;
     private String abilName;

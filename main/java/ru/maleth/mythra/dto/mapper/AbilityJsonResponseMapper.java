@@ -1,13 +1,13 @@
-package ru.maleth.mythra.dto;
+package ru.maleth.mythra.dto.mapper;
 
+import ru.maleth.mythra.dto.AbilityJsonResponseDTO;
 import ru.maleth.mythra.model.CharClassAbility;
 import ru.maleth.mythra.model.CharRaceAbility;
-import ru.maleth.mythra.model.User;
 
 public class AbilityJsonResponseMapper {
 
-    public static AbilityJsonResponseDto fromCharClassAbility (CharClassAbility charClassAbility) {
-        return AbilityJsonResponseDto.builder()
+    public static AbilityJsonResponseDTO fromCharClassAbility (CharClassAbility charClassAbility) {
+        return AbilityJsonResponseDTO.builder()
                 .name(charClassAbility.getAbility().getName())
                 .description(charClassAbility.getAbility().getDescription())
                 .numberOfCharges(charClassAbility.getNumberOfUses())
@@ -17,8 +17,8 @@ public class AbilityJsonResponseMapper {
                 .build();
     }
 
-    public static AbilityJsonResponseDto fromCharRaceAbility (CharRaceAbility charRaceAbility) {
-        return AbilityJsonResponseDto.builder()
+    public static AbilityJsonResponseDTO fromCharRaceAbility (CharRaceAbility charRaceAbility) {
+        return AbilityJsonResponseDTO.builder()
                 .name(charRaceAbility.getAbility().getName())
                 .description(charRaceAbility.getAbility().getDescription())
                 .numberOfCharges(charRaceAbility.getNumberOfUses())

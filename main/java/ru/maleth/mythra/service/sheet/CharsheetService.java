@@ -1,19 +1,25 @@
 package ru.maleth.mythra.service.sheet;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import ru.maleth.mythra.dto.AbilityChargeModifierDto;
-import ru.maleth.mythra.dto.NumberModifierDto;
+import ru.maleth.mythra.dto.AbilityChargeModifierDTO;
+import ru.maleth.mythra.dto.AttributesRaiserDTO;
+import ru.maleth.mythra.dto.NumberModifierDTO;
+
+import java.util.Map;
 
 public interface CharsheetService {
 
+    Map<String, String> getSheet(String userName, String charName);
+
     String abilityLoader(Long charId);
 
-    String updAbilityCharge(AbilityChargeModifierDto abilityChargeModifierDto);
+    String updAbilityCharge(AbilityChargeModifierDTO abilityChargeModifierDto);
 
-    String updExp(NumberModifierDto numberModifierDto);
+    String updExp(NumberModifierDTO numberModifierDto);
 
-    String updHeal(NumberModifierDto numberModifierDto);
+    String updHeal(NumberModifierDTO numberModifierDto);
 
-    String updDamage(NumberModifierDto numberModifierDto);
+    String updDamage(NumberModifierDTO numberModifierDto);
+
+    void raiseAttributes(AttributesRaiserDTO attributesRaiserDTO);
 
 }

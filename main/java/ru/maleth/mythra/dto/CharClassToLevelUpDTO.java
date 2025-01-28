@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CharClassToLevelUp {
+public class CharClassToLevelUpDTO {
 
     private String charClassToLevelUp;
-    private String charName;
+    private Long charId;
 
 }
