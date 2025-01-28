@@ -32,6 +32,7 @@ public class AarakocraUtils {
                         .race(character.getCharRace())
                         .character(character)
                         .numberOfUses(0)
+                        .maxNumberOfUses(0)
                         .build();
                 charRaceAbilityRepo.save(cra);
             } else {

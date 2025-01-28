@@ -23,5 +23,8 @@ public class CharClassAbility {
     @ManyToOne
     @JoinColumn(name = "ability_id")
     private Ability ability;
+    @Column(name = "number_of_uses")
     private Integer numberOfUses;
+    @Column(name = "max_number_of_uses")
+    private Integer maxNumberOfUses;
 }

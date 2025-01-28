@@ -35,6 +35,13 @@ public class CharacterServiceImpl implements CharacterService {
         Character character = characterRepo.findById(charId).get();
         Map<String, String> attrsAndSkills = new HashMap<>();
 
+        int strength = character.getStrength();
+        int dexterity = character.getDexterity();
+        int constitution = character.getConstitution();
+        int intelligence = character.getIntelligence();
+        int wisdom = character.getWisdom();
+        int charisma = character.getCharisma();
+        
         Set<String> characterProficiencies = character.getProficiencies().stream().map(p
                 -> p.getName().toUpperCase().replace('-', '_')).collect(Collectors.toSet());
 
@@ -61,20 +68,20 @@ public class CharacterServiceImpl implements CharacterService {
                 AttribEnum baseAttrib = AttribEnum.valueOf(proficiency.getBaseAttribute().toString());
                 switch (baseAttrib) {
                     case STRENGTH -> attrsAndSkills.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getStrength())
+                            formatMods(CharacterCalculator.calculateAttributeModifier(strength)
                                     + CharacterCalculator.getProfBonus(character.getExperience())));
                     case DEXTERITY -> attrsAndSkills.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getDexterity())
+                            formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)
                                     + CharacterCalculator.getProfBonus(character.getExperience())));
                     case INTELLIGENCE ->
                             attrsAndSkills.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                                    formatMods(CharacterCalculator.calculateAttributeModifier(character.getIntelligence())
+                                    formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)
                                             + CharacterCalculator.getProfBonus(character.getExperience())));
                     case WISDOM -> attrsAndSkills.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getWisdom())
+                            formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)
                                     + CharacterCalculator.getProfBonus(character.getExperience())));
                     case CHARISMA -> attrsAndSkills.put(ProfEnum.valueOf(proficiency.getName()).toString().toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getCharisma())
+                            formatMods(CharacterCalculator.calculateAttributeModifier(charisma)
                                     + CharacterCalculator.getProfBonus(character.getExperience())));
                     default -> throw new RuntimeException("Тут такое вообще произошло");
                 }
@@ -85,32 +92,81 @@ public class CharacterServiceImpl implements CharacterService {
                  */
                 switch (s) {
                     case "ATHLETICS" -> attrsAndSkills.put(s.toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getStrength())));
+                            formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
                     case "ACROBATICS", "STEALTH", "SLEIGHT_OF_HAND" -> attrsAndSkills.put(s.toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getDexterity())));
+                            formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
                     case "ARCANA", "HISTORY", "INVESTIGATION", "NATURE", "RELIGION" -> attrsAndSkills.put(s.toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getIntelligence())));
+                            formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
                     case "INSIGHT", "MEDICINE", "PERCEPTION", "SURVIVAL", "ANIMAL_HANDLING" ->
                             attrsAndSkills.put(s.toLowerCase(),
-                                    formatMods(CharacterCalculator.calculateAttributeModifier(character.getWisdom())));
+                                    formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
                     case "DECEPTION", "INTIMIDATION", "PERFORMANCE", "PERSUASION" -> attrsAndSkills.put(s.toLowerCase(),
-                            formatMods(CharacterCalculator.calculateAttributeModifier(character.getCharisma())));
+                            formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
                     default -> throw new RuntimeException("Тут такое вообще произошло");
                 }
             }
         }
-        attrsAndSkills.put("strength", String.valueOf(character.getStrength()));
-        attrsAndSkills.put("strengthmod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getStrength())));
-        attrsAndSkills.put("dexterity", String.valueOf(character.getDexterity()));
-        attrsAndSkills.put("dexteritymod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getDexterity())));
-        attrsAndSkills.put("constitution", String.valueOf(character.getConstitution()));
-        attrsAndSkills.put("constitutionmod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getConstitution())));
-        attrsAndSkills.put("intelligence", String.valueOf(character.getIntelligence()));
-        attrsAndSkills.put("intelligencemod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getIntelligence())));
-        attrsAndSkills.put("wisdom", String.valueOf(character.getWisdom()));
-        attrsAndSkills.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getWisdom())));
-        attrsAndSkills.put("charisma", String.valueOf(character.getCharisma()));
-        attrsAndSkills.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(character.getCharisma())));
+
+        List<AttribEnum> savingThrows = new ArrayList<>();
+        savingThrows.add(character.getMainClass().getSavingThrowOne());
+        savingThrows.add(character.getMainClass().getSavingThrowTwo());
+
+        List<AttribEnum> allSavingThrows = Arrays.stream(AttribEnum.values()).toList();
+
+        for (AttribEnum s : allSavingThrows) {
+            if (savingThrows.contains(s)) {
+                AttribEnum baseAttrib = AttribEnum.getAttribByName(s.getName());
+                switch (baseAttrib.toString()) {
+                    case "STRENGTH" -> attrsAndSkills.put(s.toString().toLowerCase() + "save",
+                            formatMods(CharacterCalculator.calculateAttributeModifier(strength) + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case "DEXTERITY" -> attrsAndSkills.put(s.toString().toLowerCase() + "save",
+                            formatMods(CharacterCalculator.calculateAttributeModifier(dexterity) + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case "CONSTITUTION" -> attrsAndSkills.put(s.toString().toLowerCase() + "save",
+                            formatMods(CharacterCalculator.calculateAttributeModifier(constitution) + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case "INTELLIGENCE" -> attrsAndSkills.put(s.toString().toLowerCase() + "save",
+                            formatMods(CharacterCalculator.calculateAttributeModifier(intelligence) + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case "WISDOM" -> attrsAndSkills.put(s.toString().toLowerCase() + "save",
+                            formatMods(CharacterCalculator.calculateAttributeModifier(wisdom) + CharacterCalculator.getProfBonus(character.getExperience())));
+                    case "CHARISMA" -> attrsAndSkills.put(s.toString().toLowerCase() + "save",
+                            formatMods(CharacterCalculator.calculateAttributeModifier(charisma) + CharacterCalculator.getProfBonus(character.getExperience())));
+                    default -> throw new RuntimeException("Не получилось проставить спасброски");
+                }
+            } else {
+                /*
+                Если навык из общего списка отсутствует в специализациях персонажа, ему присваивается базовое значение.
+                И засовывается в мапу. Формат навыка, который отправляется в мапу в итоге получается sleight_of_hand.
+                 */
+                switch (s.toString()) {
+                    case "STRENGTH" ->
+                            attrsAndSkills.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
+                    case "DEXTERITY" ->
+                            attrsAndSkills.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
+                    case "CONSTITUTION" ->
+                            attrsAndSkills.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
+                    case "INTELLIGENCE" ->
+                            attrsAndSkills.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
+                    case "WISDOM" ->
+                            attrsAndSkills.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
+                    case "CHARISMA" ->
+                            attrsAndSkills.put(s.toString().toLowerCase() + "save", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
+                    default -> throw new RuntimeException("Не получилось проставить спасброски");
+                }
+            }
+        }
+        
+        attrsAndSkills.put("initiative", formatMods(character.getInitiative()));
+        attrsAndSkills.put("strength", String.valueOf(strength));
+        attrsAndSkills.put("strengthmod", formatMods(CharacterCalculator.calculateAttributeModifier(strength)));
+        attrsAndSkills.put("dexterity", String.valueOf(dexterity));
+        attrsAndSkills.put("dexteritymod", formatMods(CharacterCalculator.calculateAttributeModifier(dexterity)));
+        attrsAndSkills.put("constitution", String.valueOf(constitution));
+        attrsAndSkills.put("constitutionmod", formatMods(CharacterCalculator.calculateAttributeModifier(constitution)));
+        attrsAndSkills.put("intelligence", String.valueOf(intelligence));
+        attrsAndSkills.put("intelligencemod", formatMods(CharacterCalculator.calculateAttributeModifier(intelligence)));
+        attrsAndSkills.put("wisdom", String.valueOf(wisdom));
+        attrsAndSkills.put("wisdommod", formatMods(CharacterCalculator.calculateAttributeModifier(wisdom)));
+        attrsAndSkills.put("charisma", String.valueOf(charisma));
+        attrsAndSkills.put("charismamod", formatMods(CharacterCalculator.calculateAttributeModifier(charisma)));
         String result = gson.toJson(attrsAndSkills);
         return result;
     }

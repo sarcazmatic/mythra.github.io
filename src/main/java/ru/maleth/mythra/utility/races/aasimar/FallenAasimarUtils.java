@@ -36,9 +36,18 @@ public class FallenAasimarUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ИСЦЕЛЯЮЩИЕ РУКИ" -> cra.setNumberOfUses(CharacterCalculator.getLevel(character.getExperience()));
-                    case "САВАН СМЕРТИ" -> cra.setNumberOfUses(1);
-                    default -> cra.setNumberOfUses(0);
+                    case "ИСЦЕЛЯЮЩИЕ РУКИ" -> {
+                        cra.setMaxNumberOfUses(CharacterCalculator.getLevel(character.getExperience()));
+                        cra.setNumberOfUses(CharacterCalculator.getLevel(character.getExperience()));
+                    }
+                    case "САВАН СМЕРТИ" -> {
+                        cra.setNumberOfUses(1);
+                        cra.setMaxNumberOfUses(1);
+                    }
+                    default -> {
+                        cra.setNumberOfUses(0);
+                        cra.setMaxNumberOfUses(0);
+                    }
                 }
                 charRaceAbilityRepo.save(cra);
             } else {

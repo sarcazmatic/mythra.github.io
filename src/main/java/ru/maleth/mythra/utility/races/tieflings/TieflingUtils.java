@@ -34,8 +34,14 @@ public class TieflingUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ДЬЯВОЛЬСКОЕ НАСЛЕДИЕ УР.2", "ДЬЯВОЛЬСКОЕ НАСЛЕДИЕ УР.3" -> cra.setNumberOfUses(1);
-                    default -> cra.setNumberOfUses(0);
+                    case "ДЬЯВОЛЬСКОЕ НАСЛЕДИЕ УР.2", "ДЬЯВОЛЬСКОЕ НАСЛЕДИЕ УР.3" -> {
+                        cra.setNumberOfUses(1);
+                        cra.setMaxNumberOfUses(1);
+                    }
+                    default -> {
+                        cra.setNumberOfUses(0);
+                        cra.setMaxNumberOfUses(0);
+                    }
                 }
                 charRaceAbilityRepo.save(cra);
             } else {

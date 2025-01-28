@@ -36,6 +36,7 @@ public class StoutHalflingUtils {
                         .character(character)
                         .build();
                 cra.setNumberOfUses(0);
+                cra.setMaxNumberOfUses(0);
                 charRaceAbilityRepo.save(cra);
             } else {
                 cra = craOptional.get();

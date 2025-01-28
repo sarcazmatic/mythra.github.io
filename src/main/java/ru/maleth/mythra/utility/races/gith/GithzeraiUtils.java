@@ -34,8 +34,14 @@ public class GithzeraiUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ПСИОНИКА ГИТЦЕРАЕВ" -> cra.setNumberOfUses(1);
-                    default -> cra.setNumberOfUses(0);
+                    case "ПСИОНИКА ГИТЦЕРАЕВ" -> {
+                        cra.setNumberOfUses(1);
+                        cra.setMaxNumberOfUses(1);
+                    }
+                    default -> {
+                        cra.setNumberOfUses(0);
+                        cra.setMaxNumberOfUses(0);
+                    }
                 }
                 charRaceAbilityRepo.save(cra);
             } else {

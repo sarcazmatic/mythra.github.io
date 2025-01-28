@@ -41,17 +41,19 @@ public class BarbarianUtils {
                         .character(character)
                         .build();
                 switch (a.getName()) {
-                    case "ЯРОСТЬ" -> cca.setNumberOfUses(2);
+                    case "ЯРОСТЬ" -> {
+                        cca.setMaxNumberOfUses(2);
+                        cca.setNumberOfUses(2);
+                    }
                     default -> cca.setNumberOfUses(0);
                 }
                 System.out.println(cca);
                 charClassAbilityRepo.save(cca);
             } else {
                 log.info("Абилка '{}' уже есть у класса '{}' на уровне {}", a.getName(), ccl.getCharClass().getName(), level);
-                if (ccaOptional.get().getAbility().getName().equals("ЯРОСТЬ")) {
+                cca = ccaOptional.get();
+                if (a.getName().contains("ЯРОСТЬ")) {
                     cca = rageNumberOfUsesUpdater(ccl, level);
-                } else {
-                    cca = ccaOptional.get();
                 }
             }
             ccaList.add(cca);
@@ -62,25 +64,25 @@ public class BarbarianUtils {
 
     CharClassAbility rageNumberOfUsesUpdater(CharClassLevel ccl, Integer barbLevel) {
         CharClassAbility rage = charClassAbilityRepo.findByCharacter_IdAndAbility_Name(ccl.getCharacter().getId(), "ЯРОСТЬ");
-        Integer numberOfUses;
+        int maxNumberOfUses;
         if (barbLevel >= 3 && barbLevel <= 5) {
-            numberOfUses = 3;
+            maxNumberOfUses = 3;
         } else if (barbLevel >= 6 && barbLevel <= 8) {
-            numberOfUses = 4;
+            maxNumberOfUses = 4;
         } else if (barbLevel >= 9 && barbLevel <= 11) {
-            numberOfUses = 4;
+            maxNumberOfUses = 4;
         } else if (barbLevel >= 12 && barbLevel <= 15) {
-            numberOfUses = 5;
+            maxNumberOfUses = 5;
         } else if (barbLevel == 16) {
-            numberOfUses = 5;
+            maxNumberOfUses = 5;
         } else if (barbLevel >= 17 && barbLevel <= 19) {
-            numberOfUses = 6;
+            maxNumberOfUses = 6;
         } else if (barbLevel >= 20) {
-            numberOfUses = 1000;
+            maxNumberOfUses = 1000;
         } else {
-            numberOfUses = 2;
+            maxNumberOfUses = 2;
         }
-        rage.setNumberOfUses(numberOfUses);
+        rage.setMaxNumberOfUses(maxNumberOfUses);
         charClassAbilityRepo.save(rage);
         return rage;
     }

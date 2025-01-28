@@ -58,8 +58,10 @@ public class DragonbornUtils {
                         .build();
                 if ("ОРУЖИЕ ДЫХАНИЯ".equals(cra.getAbility().getName())) {
                     cra.setNumberOfUses(1);
+                    cra.setMaxNumberOfUses(1);
                 } else {
                     cra.setNumberOfUses(0);
+                    cra.setMaxNumberOfUses(0);
                 }
                 charRaceAbilityRepo.save(cra);
             } else {

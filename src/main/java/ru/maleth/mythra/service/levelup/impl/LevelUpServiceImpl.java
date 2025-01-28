@@ -141,6 +141,7 @@ public class LevelUpServiceImpl implements LevelUpService {
                 .character(character)
                 .classLevel(1)
                 .build();
+        character.setIsLevelUpReady(false);
         charClassLevelRepo.save(charClassLevel);
     }
 }

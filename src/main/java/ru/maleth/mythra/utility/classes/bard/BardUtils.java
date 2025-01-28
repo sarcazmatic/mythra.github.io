@@ -41,8 +41,10 @@ public class BardUtils {
                         .character(character)
                         .build();
                 switch (a.getName()) {
-                    case "ВДОХНОВЕНИЕ БАРДА (к6)" ->
-                            cca.setNumberOfUses(Math.max(CharacterCalculator.calculateAttributeModifier(character.getCharisma()), 1));
+                    case "ВДОХНОВЕНИЕ БАРДА (к6)" -> {
+                        cca.setMaxNumberOfUses(Math.max(CharacterCalculator.calculateAttributeModifier(character.getCharisma()), 1));
+                        cca.setNumberOfUses(cca.getMaxNumberOfUses());
+                    }
                     case "ВДОХНОВЕНИЕ БАРДА (к8)" -> {
                         CharClassAbility ccaToDelete = charClassAbilityRepo.findByCharacter_IdAndAbility_Name(character.getId(), "ВДОХНОВЕНИЕ БАРДА (к6)");
                         cca.setNumberOfUses(ccaToDelete.getNumberOfUses());
@@ -64,6 +66,9 @@ public class BardUtils {
             } else {
                 log.info("Абилка '{}' уже есть у класса '{}' на уровне {}", a.getName(), ccl.getCharClass().getName(), level);
                 cca = ccaOptional.get();
+                if (a.getName().contains("ВДОХНОВЕНИЕ БАРДА")) {
+                    cca.setMaxNumberOfUses(Math.max(CharacterCalculator.calculateAttributeModifier(character.getCharisma()), 1));
+                }
             }
             ccaList.add(cca);
         }

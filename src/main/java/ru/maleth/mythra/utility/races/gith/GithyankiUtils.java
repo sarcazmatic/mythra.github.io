@@ -34,8 +34,14 @@ public class GithyankiUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ПСИОНИКА ГИТЪЯНКИ" -> cra.setNumberOfUses(1);
-                    default -> cra.setNumberOfUses(0);
+                    case "ПСИОНИКА ГИТЪЯНКИ" -> {
+                        cra.setNumberOfUses(1);
+                        cra.setMaxNumberOfUses(1);
+                    }
+                    default -> {
+                        cra.setNumberOfUses(0);
+                        cra.setMaxNumberOfUses(0);
+                    }
                 }
                 charRaceAbilityRepo.save(cra);
             } else {

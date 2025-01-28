@@ -65,7 +65,7 @@ VALUES (120, 'RANGER', 'STRENGTH', 'DEXTERITY');
 INSERT INTO classes (id, name, saving_throw_one, saving_throw_two)
 VALUES (130, 'SORCERER', 'CONSTITUTION', 'CHARISMA');
 
---дальше расовые абилки
+--дальше расы
 --changeset races:1
 INSERT INTO races (id, name, size, speed, has_darkvision, strength_bonus, dexterity_bonus, constitution_bonus,
                    intelligence_bonus, wisdom_bonus, charisma_bonus)
@@ -654,11 +654,6 @@ INSERT INTO abilities (name, description, ability_source, is_active, cost, requi
 VALUES ('ТАЙНЫ МАГИИ',
         'Вы успели набрать знаний из самого широкого спектра магических дисциплин. Выберите два заклинания любого класса, включая ваш собственный. Эти заклинания должны быть того уровня, который вы можете использовать, или являться заговорами. Теперь эти заклинания считаются для вас заклинаниями барда, и они уже включены в общее количество известных вам заклинаний согласно таблице «Бард».',
         'CLASS', false, 'BLANK', false, 'NONE', 18, 10, null);
-INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
-                       class_source_id, race_source_id)
-VALUES ('УВЕЛИЧЕНИЕ ХАРАКТЕРИСТИК',
-        'Вы можете повысить значение одной из ваших характеристик на 2 или двух характеристик на 1. Как обычно, значение характеристики при этом не должно превысить 20.',
-        'CLASS', false, 'BLANK', false, 'NONE', 19, 10, null);
 INSERT INTO abilities (name, description, ability_source, is_active, cost, requires_rest, type_of_rest, level_available,
                        class_source_id, race_source_id)
 VALUES ('ПРЕВОСХОДНОЕ ВДОХНОВЕНИЕ',

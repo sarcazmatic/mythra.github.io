@@ -34,8 +34,14 @@ public class GoliathUtils {
                         .character(character)
                         .build();
                 switch (cra.getAbility().getName()) {
-                    case "ВЫНОСЛИВОСТЬ КАМНЯ" -> cra.setNumberOfUses(1);
-                    default -> cra.setNumberOfUses(0);
+                    case "ВЫНОСЛИВОСТЬ КАМНЯ" -> {
+                        cra.setNumberOfUses(1);
+                        cra.setMaxNumberOfUses(1);
+                    }
+                    default -> {
+                        cra.setNumberOfUses(0);
+                        cra.setMaxNumberOfUses(0);
+                    }
                 }
                 charRaceAbilityRepo.save(cra);
             } else {

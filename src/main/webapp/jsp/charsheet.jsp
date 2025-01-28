@@ -816,7 +816,7 @@
                 <br>
                 <output id="strSave" class="savethrow-text"></output>
                 <br>
-                <output id="athSkill">${athletics} Атлетика</output>
+                <output id="athSkill"></output>
                 <br>
             </div>
         </div>
@@ -833,15 +833,15 @@
                 <br>
                 <output id="intSave" class="savethrow-text"></output>
                 <br>
-                <output id="arcSkill">${arcana} Аркана</output>
+                <output id="arcSkill"></output>
                 <br>
-                <output id="hisSkill">${history} История</output>
+                <output id="hisSkill"></output>
                 <br>
-                <output id="invSkill">${investigation} Расследование</output>
+                <output id="invSkill"></output>
                 <br>
-                <output id="natSkill">${nature} Природа</output>
+                <output id="natSkill"></output>
                 <br>
-                <output id="relSkill">${religion} Религия</output>
+                <output id="relSkill"></output>
                 <br>
             </div>
         </div>
@@ -858,14 +858,14 @@
                 <br>
                 <output id="dexSave" class="savethrow-text"></output>
                 <br>
-                <output id="acrSkill">${acrobatics} Акробатика</output>
+                <output id="acrSkill"></output>
                 <br>
-                <output id="sohSkill">${sleight_of_hand} Ловкость рук</output>
+                <output id="sohSkill"></output>
                 <br>
-                <output id="steSkill">${stealth} Скрытность</output>
+                <output id="steSkill"></output>
                 <br>
                 <br>
-                <output id="iniSkill"> ${initiative} Инициатива</output>
+                <output id="iniSkill"></output>
                 <br>
             </div>
         </div>
@@ -882,15 +882,15 @@
                 <br>
                 <output id="wisSave" class="savethrow-text"></output>
                 <br>
-                <output id="insSkill">${insight} Проницательность</output>
+                <output id="insSkill"></output>
                 <br>
-                <output id="medSkill">${medicine} Медицина</output>
+                <output id="medSkill"></output>
                 <br>
-                <output id="percSkill">${perception} Восприятие</output>
+                <output id="percSkill"></output>
                 <br>
-                <output id="surSkill">${survival} Выживание</output>
+                <output id="surSkill"></output>
                 <br>
-                <output id="anhSkill">${animal_handling} Уход за животными</output>
+                <output id="anhSkill"></output>
                 <br>
             </div>
         </div>
@@ -939,13 +939,13 @@
                 <br>
                 <output id="chaSave" class="savethrow-text"></output>
                 <br>
-                <output id="desSkill">${deception} Обман</output>
+                <output id="decSkill"></output>
                 <br>
-                <output id="intSkill">${intimidation} Запугивание</output>
+                <output id="intSkill"></output>
                 <br>
-                <output id="perfSkill">${performance} Выступление</output>
+                <output id="perfSkill"></output>
                 <br>
-                <output id="persSkill">${persuasion} Убеждение</output>
+                <output id="persSkill"></output>
                 <br>
             </div>
         </div>
@@ -1119,10 +1119,15 @@
     var currentStr = document.getElementById("str");
     var currentStrMod = document.getElementById("strMod");
     var currentStrSave = document.getElementById("strSave");
+    var athSkill = document.getElementById("athSkill");
 
     var currentDex = document.getElementById("dex");
     var currentDexMod = document.getElementById("dexMod");
     var currentDexSave = document.getElementById("dexSave");
+    var acrSkill = document.getElementById("acrSkill");
+    var steSkill = document.getElementById("steSkill");
+    var sohSkill = document.getElementById("sohSkill");
+    var iniSkill = document.getElementById("iniSkill");
 
     var currentCon = document.getElementById("con");
     var currentConMod = document.getElementById("conMod");
@@ -1131,14 +1136,30 @@
     var currentInt = document.getElementById("int");
     var currentIntMod = document.getElementById("intMod");
     var currentIntSave = document.getElementById("intSave");
+    var hisSkill = document.getElementById("hisSkill");
+    var invSkill = document.getElementById("invSkill");
+    var arcSkill = document.getElementById("arcSkill");
+    var natSkill = document.getElementById("natSkill");
+    var relSkill = document.getElementById("relSkill");
 
     var currentWis = document.getElementById("wis");
     var currentWisMod = document.getElementById("wisMod");
     var currentWisSave = document.getElementById("wisSave");
+    var percSkill = document.getElementById("percSkill");
+    var surSkill = document.getElementById("surSkill");
+    var medSkill = document.getElementById("medSkill");
+    var insSkill = document.getElementById("insSkill");
+    var anhSkill = document.getElementById("anhSkill");
+
 
     var currentCha = document.getElementById("cha");
     var currentChaMod = document.getElementById("chaMod");
     var currentChaSave = document.getElementById("chaSave");
+    var perfSkill = document.getElementById("perfSkill");
+    var intSkill = document.getElementById("intSkill");
+    var decSkill = document.getElementById("decSkill");
+    var persSkill = document.getElementById("persSkill");
+
 
     window.onload = loadHP();
     window.onload = loadImg();
@@ -1184,27 +1205,46 @@
     function updateFields(responseData) {
         currentStr.innerText = "Сила: " +responseData.strength;
         currentStrMod.innerText = responseData.strengthmod;
-        currentStrSave.innerText = "${strengthsave} Спасбросок";
+        currentStrSave.innerText = responseData.strengthsave + " Спасбросок";
+        athSkill.innerText = responseData.athletics + " Атлетика";
 
         currentDex.innerText = "Ловкость: " +responseData.dexterity;
         currentDexMod.innerText = responseData.dexteritymod;
-        currentDexSave.innerText = "${dexteritysave} Спасбросок";
+        currentDexSave.innerText = responseData.dexteritysave + " Спасбросок";
+        acrSkill.innerText = responseData.acrobatics + " Акробатика"
+        steSkill.innerText = responseData.stealth + " Скрытность"
+        sohSkill.innerText = responseData.sleight_of_hand + " Ловкость рук";
+        iniSkill.innerText = responseData.initiative + " Инициатива";
 
         currentCon.innerText = "Телосложение: " +responseData.constitution;
         currentConMod.innerText = responseData.constitutionmod;
-        currentConSave.innerText = "${constitutionsave} Спасбросок";
+        currentConSave.innerText = responseData.constitutionsave + " Спасбросок";
 
         currentInt.innerText = "Интеллект: " +responseData.intelligence;
         currentIntMod.innerText = responseData.intelligencemod;
-        currentIntSave.innerText = "${intelligencesave} Спасбросок";
+        currentIntSave.innerText = responseData.intelligencesave + " Спасбросок";
+        hisSkill.innerText = responseData.history + " История";
+        invSkill.innerText = responseData.investigation + " Расследование";
+        arcSkill.innerText = responseData.arcana + " Аркана";
+        natSkill.innerText = responseData.nature + " Природа"
+        relSkill.innerText = responseData.religion + " Религия"
 
         currentWis.innerText = "Мудрость: " +responseData.wisdom;
         currentWisMod.innerText = responseData.wisdommod;
-        currentWisSave.innerText = "${wisdomsave} Спасбросок";
+        currentWisSave.innerText = responseData.wisdomsave + " Спасбросок";
+        percSkill.innerText = responseData.perception + " Восприятие";
+        surSkill.innerText = responseData.survival + " Выживание"
+        medSkill.innerText = responseData.medicine + " Медицина";
+        insSkill.innerText = responseData.insight + " Проницательность";
+        anhSkill.innerText = responseData.animal_handling + " Обращение с животными";
 
         currentCha.innerText = "Харизма: " +responseData.charisma;
         currentChaMod.innerText = responseData.charismamod;
-        currentChaSave.innerText = "${charismasave} Спасбросок";
+        currentChaSave.innerText = responseData.charismasave + " Спасбросок";
+        perfSkill.innerText = responseData.performance + " Выступление";
+        intSkill.innerText = responseData.intimidation + " Запугивание";
+        decSkill.innerText = responseData.deception + " Обман"
+        persSkill.innerText = responseData.persuasion + " Убеждение";
     }
 
 </script>

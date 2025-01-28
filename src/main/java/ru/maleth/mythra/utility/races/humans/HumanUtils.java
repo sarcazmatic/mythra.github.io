@@ -33,7 +33,8 @@ public class HumanUtils {
                         .race(character.getCharRace())
                         .character(character)
                         .build();
-                cra.setNumberOfUses(1);
+                cra.setNumberOfUses(0);
+                cra.setMaxNumberOfUses(0);
                 charRaceAbilityRepo.save(cra);
             } else {
                 cra = craOptional.get();
