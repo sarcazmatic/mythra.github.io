@@ -191,9 +191,6 @@
     let proficiency = ${proficiency};
     const listOfProficiencies = ${proficienciesList};
 
-    console.log(proficiency)
-    console.log(listOfProficiencies)
-
     window.onload = formCompetenceList(listOfProficiencies)
 
     function formCompetenceList(listOfProficiencies) {
